@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+# Одновременные запуски одной ветки отменяются: экономим минуты CI
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Линтер, типы, тесты, сборка
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck (tsc -b --noEmit)
+        run: npm run typecheck
+
+      - name: Lint (eslint)
+        run: npm run lint
+
+      - name: Unit tests (node:test, 147 проверок бизнес-логики и каталога)
+        run: npm test
+
+      - name: Smoke render (все маршруты без браузера)
+        run: npm run smoke
+
+      - name: Sitemap generation (проверка, что карта сайта соответствует каталогу)
+        run: |
+          npm run seo
+          if ! git diff --quiet -- public/sitemap.xml; then
+            echo "::error::sitemap.xml устарел — выполните npm run seo и закоммитьте результат"
+            git --no-pager diff -- public/sitemap.xml
+            exit 1
+          fi
+
+      - name: Build (vite)
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Check bundle size (защита от разрастания)
+        run: |
+          node -e "
+            const { readdirSync, statSync } = require('fs');
+            const files = readdirSync('dist/assets').filter(f => f.endsWith('.js'));
+            let total = 0;
+            for (const f of files) total += statSync('dist/assets/' + f).size;
+            console.log('JS-бандлы:', files.length, '· суммарно', (total / 1024).toFixed(1), 'KiB');
+            if (total > 3 * 1024 * 1024) { console.error('Превышен лимит 3 MiB'); process.exit(1); }
+          "

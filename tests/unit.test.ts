@@ -364,12 +364,17 @@ describe('каталог HAVAL: согласованный список моде
     }
   })
 
-  it('у каждой модели источник — сайт дилера и фото (кроме «скоро в продаже» без цены)', () => {
+  it('у каждой модели официальный источник и фото (кроме «скоро в продаже» без цены)', () => {
+    const official = /^https:\/\/(haval\.ru|agat-ekb-haval\.ru|cdn\.perxis\.ru)\//
     for (const m of MODELS) {
-      assert.ok(m.sourceUrl.startsWith('https://agat-ekb-haval.ru/'), `${m.id}: источник не АГАТ`)
+      assert.ok(official.test(m.sourceUrl), `${m.id}: источник не официальный (${m.sourceUrl})`)
       if (m.availability === 'on-sale') assert.ok(m.image, `${m.id}: нет фотографии`)
       if (m.image) {
         assert.ok(existsSync(path.join(process.cwd(), 'public', m.image)), `${m.id}: файл фото отсутствует`)
+      }
+      // фотографии производителя — только официальный CDN
+      for (const img of m.officialImages) {
+        assert.ok(/^https:\/\/img\.perxis\.ru\//.test(img), `${m.id}: фото не с официального CDN`)
       }
     }
   })

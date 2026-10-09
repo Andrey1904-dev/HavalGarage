@@ -208,3 +208,89 @@ input[type="number"] {
     scroll-behavior: auto !important;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/*  Печатная версия интерфейса                                          */
+/*                                                                      */
+/*  Расчёты можно вывести на печать и сохранить в PDF через диалог       */
+/*  браузера (отдельная библиотека PDF не подключается). Для печати       */
+/*  убираются тёмные фоны, интерактивные элементы и декор, таблицы        */
+/*  переносятся целиком. Документ расчёта формируется в utils/export.ts.  */
+/* ------------------------------------------------------------------ */
+@media print {
+  html,
+  body {
+    background: #fff !important;
+    color: #14171a !important;
+    overflow: visible !important;
+  }
+
+  header,
+  footer,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  /* Карточки и таблицы — светлая печать, без разрывов внутри блока */
+  section,
+  article,
+  table,
+  [class*="rounded-["] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    background: #fff !important;
+    border-color: #c9ced3 !important;
+    color: #14171a !important;
+    box-shadow: none !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  span,
+  li,
+  td,
+  th,
+  a {
+    color: #14171a !important;
+    text-shadow: none !important;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9px;
+    color: #5b636d !important;
+    word-break: break-all;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    display: none !important;
+  }
+
+  img {
+    max-width: 100% !important;
+  }
+
+  /* Горизонтальный скролл таблиц в печати заменяется переносом */
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+  table {
+    min-width: 0 !important;
+    width: 100% !important;
+    font-size: 10.5px !important;
+  }
+  td,
+  th {
+    position: static !important;
+  }
+}

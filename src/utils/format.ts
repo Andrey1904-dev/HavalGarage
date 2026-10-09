@@ -31,7 +31,7 @@ export const fmtDateShort = (iso: string | Date): string => shortDateFmt.format(
 
 /** Парсинг числа из инпута: допускает пробелы и запятую как разделитель */
 export function parseLocaleNumber(raw: string): number {
-  const cleaned = raw.replace(/[\s ]/g, '').replace(',', '.')
+  const cleaned = raw.replace(/[\s\u00a0]/g, '').replace(',', '.')
   if (cleaned === '') return NaN
   return Number(cleaned)
 }

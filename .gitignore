@@ -5,3 +5,7 @@ coverage
 *.local
 .DS_Store
 image-search
+reports
+*.tsbuildinfo
+.eslintcache
+.tmp

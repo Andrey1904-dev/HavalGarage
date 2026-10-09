@@ -1,5 +1,24 @@
 import {
   AlertTriangle,
+  ArrowLeftRight,
+  ArrowRight,
+  Bookmark,
+  ChevronDown,
+  Columns3,
+  Eye,
+  Handshake,
+  Heart,
+  ListChecks,
+  Menu,
+  PiggyBank,
+  Printer,
+  Repeat,
+  Route,
+  Scale,
+  Search,
+  SlidersHorizontal,
+  Star,
+  Target,
   BadgeRussianRuble,
   BarChart3,
   Download,
@@ -212,4 +231,82 @@ export const TaxIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) 
 
 export const DownloadIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
   <Download className={base(className)} strokeWidth={strokeWidth} />
+)
+
+/* --- Иконки, добавленные для разделов сравнения, подбора, владения и плана --- */
+
+export const HeartIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Heart className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const MenuIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Menu className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const ScaleIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Scale className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const StarIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Star className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const PrinterIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Printer className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const SearchIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Search className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const FilterIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <SlidersHorizontal className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const CompareIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Columns3 className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const ChevronDownIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <ChevronDown className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const ArrowRightIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <ArrowRight className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const SwapIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <ArrowLeftRight className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const SavingsIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <PiggyBank className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const TargetIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Target className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const TradeInIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Handshake className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const BookmarkIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Bookmark className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const RouteIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Route className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const ListIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <ListChecks className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const ViewIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Eye className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const LoopIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Repeat className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
 )
