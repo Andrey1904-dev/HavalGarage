@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+@theme {
+  /* Визуальная система HAVAL Garage: тёмная тема,
+     акцент — фирменный красный HAVAL */
+  --color-bg: #0e1013;
+  --color-surface: #1a1d22;
+  --color-surface-2: #23272d;
+  --color-ink: #f3f4f4;
+  --color-muted: #a9afb7;
+  --color-line: #363b43;
+
+  --breakpoint-xs: 30rem;
+
+  /* Акцент HAVAL Red */
+  --color-sport: #e4002b;
+  --color-sport-hover: #b80023;
+  --color-sport-soft: rgba(228, 0, 43, 0.14);
+
+  /* Семантические цвета статусов */
+  --color-success: #16b374;
+  --color-warning: #f5a623;
+  --color-danger: #ef4444;
+
+  /* Типографика */
+  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Oswald", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  color-scheme: dark;
+  background-color: var(--color-bg);
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Выразительный узкий гротеск для коротких заголовков и сумм */
+.font-display-num {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+/* Технический фокус с клавиатуры */
+:focus-visible {
+  outline: 2px solid var(--color-sport);
+  outline-offset: 2px;
+}
+
+/* Аккуратные скроллбары */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #0e1013;
+}
+::-webkit-scrollbar-thumb {
+  background: #363b43;
+  border-radius: 3px;
+}
+
+/* Убираем стрелки у number-инпутов */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.996);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes car-in {
+  from {
+    opacity: 0;
+    transform: scale(1.035);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 180ms ease-out;
+}
+
+.animate-pop-in {
+  animation: pop-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-page-enter {
+  animation: page-enter 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-rise {
+  animation: rise-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-car-in {
+  animation: car-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Интерактивные карточки: лёгкий подъём и тень при наведении */
+.hover-lift {
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38);
+}
+.hover-lift:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Бегущий блик по главному кадру каталога */
+@keyframes scene-sheen {
+  0% {
+    transform: translateX(-120%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(220%) skewX(-12deg);
+  }
+}
+.animate-sheen {
+  animation: scene-sheen 5.5s ease-in-out 1.2s infinite;
+}
+
+/* Прогресс-бары вырастают слева направо при появлении */
+@keyframes bar-in {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.animate-bar {
+  transform-origin: left center;
+  animation: bar-in 900ms cubic-bezier(0.22, 0.8, 0.36, 1) both;
+}
+
+/* Учёт prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
