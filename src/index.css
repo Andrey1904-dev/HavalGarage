@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  /* Визуальная система HAVAL Garage (перенесена из LADA Granta Sport,
-     акцент заменён на фирменный красный HAVAL) */
+  /* Визуальная система HAVAL Garage: тёмная тема,
+     акцент — фирменный красный HAVAL */
   --color-bg: #0e1013;
   --color-surface: #1a1d22;
   --color-surface-2: #23272d;

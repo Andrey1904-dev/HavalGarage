@@ -15,7 +15,6 @@ ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip)
 
 /**
  * Структура платежей по годам: проценты и тело долга (stacked bar).
- * Переносит идею MonthlyChart из исходного проекта на кредитный график.
  */
 export default function ScheduleChart({
   creditAmount,

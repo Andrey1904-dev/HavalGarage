@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "HAVAL Гараж — каталог моделей HAVAL дилера АГАТ (Екатеринбург) и кредитный калькулятор. Бизнес-логика аннуитетных расчётов перенесена из архива GrantaCredit.zip (LadaGrantaCredit)",
+  "description": "HAVAL Гараж — каталог моделей HAVAL дилера АГАТ (Екатеринбург) и кредитный калькулятор",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -16,6 +16,7 @@
     "check": "npm run typecheck && npm test && npm run smoke && npm run build"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
     "chart.js": "^4.5.1",
     "lucide-react": "^1.54.0",
     "react": "^19.2.0",

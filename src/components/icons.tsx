@@ -18,6 +18,7 @@ import {
   Check,
   ChevronRight,
   CreditCard,
+  Database,
   Fuel,
   Gauge,
   Info,
@@ -147,6 +148,10 @@ export const SparklesIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconPr
 
 export const DropletIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
   <Droplet className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
+)
+
+export const DatabaseIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (
+  <Database className={base(className)} strokeWidth={strokeWidth} aria-hidden="true" />
 )
 
 export const ClockIcon = ({ className, strokeWidth = DEFAULT_STROKE }: IconProps) => (

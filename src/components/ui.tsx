@@ -8,9 +8,8 @@ import {
   type SelectHTMLAttributes,
 } from 'react'
 
-/** Базовые UI-примитивы дизайн-системы HAVAL Garage.
- *  Перенесены из исходного проекта LadaGrantaCredit (GrantaCredit.zip)
- *  с заменой акцента на фирменный красный HAVAL (#E4002B). */
+/** Базовые UI-примитивы дизайн-системы HAVAL Garage
+ *  (тёмная тема, акцент — фирменный красный HAVAL #E4002B). */
 
 export function Card({
   children,

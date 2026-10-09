@@ -1,6 +1,6 @@
 /**
  * Собирает smoke-render.mjs (рендер всех маршрутов через react-dom/server)
- * в CJS-бандл esbuild и запускает его в Node — перенесено из GrantaCredit.zip.
+ * в CJS-бандл esbuild и запускает его в Node.
  */
 import { build } from 'esbuild'
 import { execFileSync } from 'node:child_process'

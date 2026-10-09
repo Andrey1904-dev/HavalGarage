@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { SegmentedControl } from '../components/ui'
 import PurchaseCalculator from '../components/calculator/PurchaseCalculator'
+import ApplicationForm from '../components/calculator/ApplicationForm'
 import PrepaymentCalculator from '../components/calculator/PrepaymentCalculator'
 import SolverCalculator from '../components/calculator/SolverCalculator'
 import PdnCalculator from '../components/calculator/PdnCalculator'
@@ -8,8 +9,8 @@ import PdnCalculator from '../components/calculator/PdnCalculator'
 type Tab = 'credit' | 'prepay' | 'solver' | 'pdn'
 
 /**
- * Кредитный калькулятор HAVAL: расчётный сценарий покупки + перенесённые из
- * исходного проекта инструменты (досрочное погашение, подбор 4-го поля, ПДН).
+ * Кредитный калькулятор HAVAL: расчётный сценарий покупки + инструменты
+ * (досрочное погашение, подбор 4-го поля, ПДН).
  */
 export default function CalculatorPage() {
   const [tab, setTab] = useState<Tab>('credit')
@@ -40,7 +41,12 @@ export default function CalculatorPage() {
       />
 
       <div key={tab} className="animate-pop-in">
-        {tab === 'credit' && <PurchaseCalculator />}
+        {tab === 'credit' && (
+          <div className="flex flex-col gap-4">
+            <PurchaseCalculator />
+            <ApplicationForm />
+          </div>
+        )}
         {tab === 'prepay' && <PrepaymentCalculator />}
         {tab === 'solver' && <SolverCalculator />}
         {tab === 'pdn' && <PdnCalculator />}

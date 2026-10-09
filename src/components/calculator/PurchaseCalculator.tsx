@@ -11,8 +11,8 @@ import { AlertIcon, CheckIcon, PercentIcon, RefreshIcon } from '../icons'
 /**
  * Главный расчётный сценарий: модель → комплектация → цена → скидка →
  * взнос (₽ или %) → срок → ставка → мгновенный пересчёт.
- * Математика — аннуитет из исходного проекта (utils/loan.ts),
- * нулевая ставка обрабатывается отдельной веткой.
+ * Математика — аннуитет (utils/loan.ts), нулевая ставка обрабатывается
+ * отдельной веткой.
  */
 export default function PurchaseCalculator() {
   const { state, update, selectModel, trims, trim, offers, plan } = useCalculator()

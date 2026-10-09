@@ -34,15 +34,16 @@ import {
   activeOffersForModel,
   CATALOG_FIXED_AT,
 } from '../src/data/haval'
+import { isSupabaseConfigured, submitCreditApplication, SUPABASE_URL } from '../src/lib/supabase'
 
 const near = (actual: number, expected: number, eps = 0.5, msg?: string) =>
   assert.ok(Math.abs(actual - expected) <= eps, msg ?? `ожидалось ≈${expected}, получено ${actual}`)
 
 /* ------------------------------------------------------------------ */
-/* Перенесённые тесты исходного калькулятора (GrantaCredit.zip)        */
+/* Кредитная математика: аннуитет, обратные задачи, досрочка, ПДН     */
 /* ------------------------------------------------------------------ */
 
-describe('аннуитет (перенесено из LadaGrantaCredit)', () => {
+describe('аннуитет', () => {
   it('платёж по классической формуле', () => {
     near(annuityPayment(1_000_000, 12, 12), 88_848.79, 0.05)
     near(annuityPayment(1_050_000, 16.9, 60), 26_022, 50)
@@ -424,6 +425,35 @@ describe('каталог HAVAL: комплектации и цены', () => {
     const years = new Set(f7Current.map((t) => t.modelYear))
     assert.ok(years.has(2024) && years.has(2026))
     for (const t of f7Current) assert.ok(t.name.includes(`${t.modelYear} м.г.`), `${t.id}: год не отражён в названии`)
+  })
+
+  it('Supabase: отправка расчёта без ключей возвращает понятную ошибку и не падает', async () => {
+    const result = await submitCreditApplication({
+      model_id: 'm6',
+      model_name: 'HAVAL M6',
+      trim_id: 'm6-optimum-mt-2026',
+      trim_name: 'Оптимум, 1.5T MT 143',
+      vehicle_price: 2_099_000,
+      discount_applied: 0,
+      effective_price: 2_099_000,
+      down_payment: 419_800,
+      credit_amount: 1_679_200,
+      term_months: 60,
+      annual_rate: 16.4,
+      monthly_payment: 41_395,
+      total_paid: 2_483_700,
+      interest_overpay: 804_500,
+      extra_costs: 0,
+      total_cost: 2_903_500,
+      contact_name: 'Тест',
+      contact_phone: '+7 900 000-00-00',
+    })
+    if (!isSupabaseConfigured) {
+      assert.equal(result.ok, false)
+      assert.match(result.ok === false ? result.error : '', /не настроена/)
+    } else {
+      assert.ok(SUPABASE_URL.startsWith('https://'))
+    }
   })
 
   it('трейд-ин выгоды 200 000 ₽ для H3 и H7 подтверждены прайс-листами', () => {
