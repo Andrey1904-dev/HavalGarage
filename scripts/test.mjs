@@ -24,7 +24,7 @@ const root = path.resolve(here, '..')
 // каталог вне node_modules: тест-раннер Node игнорирует node_modules при поиске файлов
 const outdir = path.join(root, '.tmp', 'tests')
 
-const SUITES = ['unit.test.ts', 'catalog.test.ts', 'calculators.test.ts', 'imports.test.ts']
+const SUITES = ['unit.test.ts', 'catalog.test.ts', 'calculators.test.ts', 'imports.test.ts', 'import-pipeline.test.ts', 'advisor.test.ts']
 
 await build({
   entryPoints: SUITES.map((f) => path.join(root, 'tests', f)),
@@ -34,6 +34,7 @@ await build({
   target: 'node20',
   outdir,
   outExtension: { '.js': '.cjs' },
+  jsx: 'automatic',
   logLevel: 'error',
   define: {
     'process.env.NODE_ENV': '"test"',

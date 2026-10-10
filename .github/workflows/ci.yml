@@ -50,11 +50,16 @@ jobs:
       - name: Lint (eslint)
         run: npm run lint
 
-      - name: Unit tests (node:test, 147 проверок бизнес-логики и каталога)
+      - name: Unit tests (node:test, логика калькуляторов, каталог, импорт, помощник)
         run: npm test
 
       - name: Smoke render (все маршруты без браузера)
         run: npm run smoke
+
+      - name: Сверка каталога с текстом официальных прайс-листов (без сети)
+        # Прогоняет разбор и сравнение по сохранённому тексту документов из
+        # tests/fixtures/: цены приложения должны совпадать с официальными.
+        run: node scripts/verify-parsed-documents.mjs
 
       - name: Sitemap generation (проверка, что карта сайта соответствует каталогу)
         run: |

@@ -28,7 +28,8 @@ import { useCalculator } from '../context/CalculatorContext'
 import { useSaved } from '../context/SavedContext'
 import { computeTco } from '../utils/tco'
 import { fmtMoney, fmtNumber, parseLocaleNumber } from '../utils/format'
-import { openReport } from '../utils/export'
+import { openReport, type ReportOptions } from '../utils/export'
+import PdfExportButton from '../components/PdfExportButton'
 import { useSeo } from '../utils/seo'
 import { track } from '../utils/analytics'
 import { STORAGE_KEYS, loadJson, saveJson } from '../utils/storage'
@@ -169,10 +170,11 @@ export default function OwnershipPage() {
     setSavedNote('Расчёт владения сохранён в разделе «Избранное» (локально в браузере).')
   }
 
-  const handleExport = () => {
-    if (!result.ok) return
+  /** Отчёт строится один раз и используется и печатью, и экспортом в PDF */
+  const buildReportOptions = (): ReportOptions | null => {
+    if (!result.ok) return null
     const r = result.result
-    const ok = openReport({
+    return {
       title: 'Стоимость владения',
       subtitle: details ? `${details.model.name} ${details.trim.name}` : 'Параметры заданы вручную',
       sections: [
@@ -209,7 +211,13 @@ export default function OwnershipPage() {
         'Расчёт не является офертой.',
       ],
       sourceNote: 'Расход топлива — официальный прайс-лист haval.ru.',
-    })
+    }
+  }
+
+  const handleExport = () => {
+    const options = buildReportOptions()
+    if (!options) return
+    const ok = openReport(options)
     track('export_print', { kind: 'tco' })
     if (!ok) setSavedNote('Браузер заблокировал окно печати — разрешите всплывающие окна.')
   }
@@ -506,8 +514,9 @@ export default function OwnershipPage() {
 
               <div className="flex flex-wrap gap-2">
                 <Button type="button" onClick={handleExport}>
-                  <DownloadIcon className="h-4 w-4" /> Печать / PDF
+                  <DownloadIcon className="h-4 w-4" /> Печать
                 </Button>
+                <PdfExportButton getOptions={buildReportOptions} filename="stoimost-vladeniya" />
                 <Button type="button" variant="secondary" onClick={handleSave}>
                   Сохранить расчёт
                 </Button>

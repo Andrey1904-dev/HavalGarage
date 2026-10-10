@@ -11,6 +11,7 @@ import {
   TableCell,
   Tag,
 } from '../components/ui'
+import ChangesPanel from '../components/ChangesPanel'
 import { ArrowUpRightIcon, DatabaseIcon, DocIcon, HistoryIcon } from '../components/icons'
 import {
   CATALOG_FIXED_AT,
@@ -218,6 +219,12 @@ export default function SourcesPage() {
           </li>
         </ul>
       </Card>
+
+      {/* ---------------- Мониторинг изменений ---------------- */}
+      <SectionTitle tip="Журнал ведёт пайплайн импорта: новые модели и комплектации, изменение цен, новые версии прайс-листов, завершившиеся предложения. Подтверждённые цены каталога автоматически не перезаписываются.">
+        Мониторинг изменений каталога
+      </SectionTitle>
+      <ChangesPanel />
 
       {/* ---------------- История проверок ---------------- */}
       <SectionTitle tip="История не перезаписывается при ошибке источника: неудачная попытка фиксируется отдельной записью, последняя корректная цена остаётся в каталоге.">

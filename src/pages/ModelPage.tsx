@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import PriceHistorySection from '../components/PriceHistorySection'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   Button,
@@ -83,6 +84,7 @@ export default function ModelPage() {
   }, [model])
 
   const trimsCurrent = useMemo(() => (model ? trimsForModel(model.id, false) : []), [model])
+  const pricedTrims = useMemo(() => trimsCurrent.filter((t) => t.basePrice !== null), [trimsCurrent])
   const trimsArchive = useMemo(
     () => (model ? trimsForModel(model.id, true).filter((t) => t.status === 'archive') : []),
     [model],
@@ -372,6 +374,9 @@ export default function ModelPage() {
           })}
         </div>
       )}
+
+      {/* ---------------- История цен ---------------- */}
+      {pricedTrims.length > 0 && <PriceHistorySection model={model} trims={pricedTrims} />}
 
       {/* ---------------- Сравнение комплектаций (в пределах модели) ---------------- */}
       {trimsCurrent.length > 1 && (

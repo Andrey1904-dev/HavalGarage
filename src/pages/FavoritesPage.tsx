@@ -13,7 +13,8 @@ import { useSaved } from '../context/SavedContext'
 import { useCompare } from '../context/CompareContext'
 import { useCalculator } from '../context/CalculatorContext'
 import { fmtDate, fmtMoney } from '../utils/format'
-import { openReport, type ReportSection } from '../utils/export'
+import { openReport, type ReportOptions, type ReportSection } from '../utils/export'
+import PdfExportButton from '../components/PdfExportButton'
 import { clearAppStorage } from '../utils/storage'
 import { useSeo } from '../utils/seo'
 import { track } from '../utils/analytics'
@@ -71,9 +72,10 @@ export default function FavoritesPage() {
     navigate('/calculator')
   }
 
-  const exportCalculation = (id: string) => {
+  /** Отчёт строится один раз и используется и печатью, и экспортом в PDF */
+  const buildCalculationReport = (id: string): ReportOptions | null => {
     const c = calculations.find((x) => x.id === id)
-    if (!c) return
+    if (!c) return null
     const sections: ReportSection[] = [
       {
         title: 'Автомобиль',
@@ -104,7 +106,7 @@ export default function FavoritesPage() {
       },
       ...(c.tcoSummary ? [{ title: 'Стоимость владения', rows: [{ label: 'Итог', value: c.tcoSummary }] }] : []),
     ]
-    const ok = openReport({
+    return {
       title: 'Расчёт кредита',
       subtitle: `${c.modelName}${c.trimName ? ` · ${c.trimName}` : ''} · сохранён ${fmtDate(c.createdAt)}`,
       sections,
@@ -114,7 +116,13 @@ export default function FavoritesPage() {
         'Выгода применяется только при выполнении условий соответствующей программы.',
       ],
       sourceNote: 'Источник данных: официальные каталоги и прайс-листы haval.ru.',
-    })
+    }
+  }
+
+  const exportCalculation = (id: string) => {
+    const options = buildCalculationReport(id)
+    if (!options) return
+    const ok = openReport(options)
     track('export_print', { kind: 'calculation' })
     if (!ok) setNote('Браузер заблокировал окно печати — разрешите всплывающие окна для этого сайта.')
   }
@@ -278,13 +286,18 @@ export default function FavoritesPage() {
                         <Button type="button" variant="ghost" className="min-h-[34px] px-2" onClick={() => openCalculation(c.id)}>
                           Открыть
                         </Button>
+                        <PdfExportButton
+                          getOptions={() => buildCalculationReport(c.id)}
+                          filename={`raschet-${c.modelName}`}
+                          label="PDF"
+                        />
                         <Button
                           type="button"
                           variant="ghost"
                           className="min-h-[34px] px-2"
                           onClick={() => exportCalculation(c.id)}
                         >
-                          <DownloadIcon className="h-3.5 w-3.5" /> PDF
+                          <DownloadIcon className="h-3.5 w-3.5" /> Печать
                         </Button>
                         <Button
                           type="button"

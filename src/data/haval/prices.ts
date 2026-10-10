@@ -124,6 +124,12 @@ export function buildPriceRecords(todayIso: string = CATALOG_FIXED_AT): Price[] 
 
   // Автомобили в наличии — раньше выгод, чтобы детальная запись не дублировалась
   for (const item of STOCK_ITEMS) {
+    // Цена всегда связана с существующей комплектацией. Если автомобиль из
+    // наличия не совпадает ни с одной комплектацией официального прайс-листа,
+    // запись Price не создаётся (синтетический trimId означал бы выдуманную
+    // комплектацию): такая цена остаётся в разделе «В наличии» как позиция
+    // конкретного автомобиля, а не как цена комплектации каталога.
+    if (item.trimId === null || !TRIMS.some((t) => t.id === item.trimId)) continue
     push({
       id: `price-stock-${item.id}`,
       trimId: item.trimId ?? `stock-${item.id}`,

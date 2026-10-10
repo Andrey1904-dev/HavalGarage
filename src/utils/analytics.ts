@@ -30,6 +30,8 @@ export type AnalyticsEventName =
   | 'calculation_save'
   | 'favorite_toggle'
   | 'export_print'
+  | 'export_csv'
+  | 'advisor_query'
   | 'official_source_click'
   | 'program_view'
 

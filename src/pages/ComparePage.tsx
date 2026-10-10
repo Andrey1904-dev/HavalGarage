@@ -29,7 +29,8 @@ import { useCalculator } from '../context/CalculatorContext'
 import { useSaved } from '../context/SavedContext'
 import { annuityPayment } from '../utils/loan'
 import { fmtMoney, fmtNumber, parseLocaleNumber } from '../utils/format'
-import { openReport, type ReportSection } from '../utils/export'
+import { openReport, type ReportOptions, type ReportSection } from '../utils/export'
+import PdfExportButton from '../components/PdfExportButton'
 import { useSeo } from '../utils/seo'
 import { track } from '../utils/analytics'
 
@@ -215,7 +216,9 @@ export default function ComparePage() {
     setSavedNote('Сравнение сохранено в разделе «Избранное» (локально в браузере).')
   }
 
-  const handleExport = () => {
+  /** Отчёт строится один раз и используется и печатью, и экспортом в PDF */
+  const buildReportOptions = (): ReportOptions | null => {
+    if (details.length === 0) return null
     const sections: ReportSection[] = [
       {
         title: 'Участники сравнения',
@@ -261,7 +264,7 @@ export default function ComparePage() {
         ),
       },
     ]
-    const ok = openReport({
+    return {
       title: 'Сравнение комплектаций HAVAL',
       subtitle: details.map((d) => `${d.model.name} ${d.trim.name}`).join(' · '),
       sections,
@@ -271,7 +274,13 @@ export default function ComparePage() {
         'Цены — МЦП из официальных прайс-листов haval.ru; выгоды применяются только при выполнении условий.',
       ],
       sourceNote: 'Источник данных: официальные каталоги и прайс-листы haval.ru.',
-    })
+    }
+  }
+
+  const handleExport = () => {
+    const options = buildReportOptions()
+    if (!options) return
+    const ok = openReport(options)
     track('export_print', { kind: 'comparison', count: details.length })
     if (!ok) setSavedNote('Браузер заблокировал окно печати — разрешите всплывающие окна для этого сайта.')
   }
@@ -294,8 +303,9 @@ export default function ComparePage() {
               <HeartIcon className="h-3.5 w-3.5" /> Сохранить сравнение
             </Button>
             <Button type="button" className="min-h-[38px]" onClick={handleExport}>
-              <DownloadIcon className="h-3.5 w-3.5" /> Печать / PDF
+              <DownloadIcon className="h-3.5 w-3.5" /> Печать
             </Button>
+            <PdfExportButton getOptions={buildReportOptions} filename="sravnenie" />
           </div>
         </div>
 
