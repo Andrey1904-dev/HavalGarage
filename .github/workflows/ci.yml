@@ -27,8 +27,9 @@ jobs:
         # Секретный (service_role) ключ в отслеживаемых файлах недопустим.
         run: |
           # Ищем именно тело ключа, а не упоминания слова в документации:
-          # sb_secret_ + ≥16 символов тела или legacy-JWT сервисного ключа.
-          if git grep -nIE 'sb_secret_[A-Za-z0-9_-]{16,}|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'; then
+          # sb_secret_ + ≥16 символов тела или длинный legacy-JWT сервисного ключа.
+          # Паттерны не матчат сами себя (после префикса идёт '[' класса).
+          if git grep -nIE 'sb_secret_[A-Za-z0-9_-]{16,}|eyJ[A-Za-z0-9_-]{60,}'; then
             echo "::error::Найден секретный ключ Supabase в отслеживаемых файлах. Используйте publishable-ключ."
             exit 1
           fi
