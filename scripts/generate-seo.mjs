@@ -36,10 +36,12 @@ async function main() {
   const staticRoutes = [
     { path: '/', priority: '1.0', changefreq: 'weekly' },
     { path: '/catalog', priority: '0.9', changefreq: 'weekly' },
+    { path: '/trims', priority: '0.8', changefreq: 'weekly' },
     { path: '/calculator', priority: '0.9', changefreq: 'weekly' },
     { path: '/budget', priority: '0.8', changefreq: 'weekly' },
     { path: '/ownership', priority: '0.7', changefreq: 'monthly' },
     { path: '/plan', priority: '0.7', changefreq: 'monthly' },
+    { path: '/advisor', priority: '0.6', changefreq: 'monthly' },
     { path: '/programs', priority: '0.7', changefreq: 'weekly' },
     { path: '/sources', priority: '0.6', changefreq: 'weekly' },
   ]

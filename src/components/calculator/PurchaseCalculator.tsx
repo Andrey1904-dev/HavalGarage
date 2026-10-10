@@ -8,7 +8,8 @@ import { CREDIT_PROGRAMS, MODELS, programsForModel, programRateFor } from '../..
 import { TERM_OPTIONS, MAX_TERM, MIN_TERM } from '../../utils/credit'
 import { fmtMoney, parseLocaleNumber, plural } from '../../utils/format'
 import { AlertIcon, CheckIcon, DownloadIcon, HeartIcon, PercentIcon, RefreshIcon } from '../icons'
-import { openReport } from '../../utils/export'
+import { openReport, type ReportOptions } from '../../utils/export'
+import PdfExportButton from '../PdfExportButton'
 import { track } from '../../utils/analytics'
 
 /**
@@ -51,6 +52,59 @@ export default function PurchaseCalculator() {
 
   const dpPct = plan.ok ? plan.plan.downPaymentPct : 0
 
+
+  /** Отчёт строится один раз и используется и печатью, и экспортом в PDF */
+  const buildReportOptions = (): ReportOptions | null => {
+    if (!plan.ok) return null
+    return ({
+                  title: 'Расчёт кредита',
+                  subtitle: `${model?.name ?? ''}${trim ? ` · ${trim.name}` : ''}`,
+                  sections: [
+                    {
+                      title: 'Автомобиль',
+                      rows: [
+                        { label: 'Модель', value: model?.name ?? '—' },
+                        { label: 'Комплектация', value: trim?.name ?? '—' },
+                        { label: 'Цена', value: fmtMoney(plan.plan.vehiclePrice) },
+                        ...(plan.plan.discountApplied > 0
+                          ? [{ label: 'Подтверждённая скидка', value: `−${fmtMoney(plan.plan.discountApplied)}` }]
+                          : []),
+                        { label: 'Цена после скидки', value: fmtMoney(plan.plan.effectivePrice) },
+                      ],
+                      note: trim ? `Источник цены: ${trim.priceSourceUrl}` : undefined,
+                    },
+                    {
+                      title: 'Кредит',
+                      rows: [
+                        {
+                          label: 'Первоначальный взнос',
+                          value: `${fmtMoney(plan.plan.downPayment)} (${plan.plan.downPaymentPct.toFixed(0)}%)`,
+                        },
+                        { label: 'Сумма кредита', value: fmtMoney(plan.plan.creditAmount) },
+                        { label: 'Срок', value: `${plan.plan.termMonths} мес` },
+                        {
+                          label: 'Ставка',
+                          value: `${String(plan.plan.annualRate).replace('.', ',')}% годовых${
+                            program ? ` · программа «${program.name}»` : ''
+                          }`,
+                        },
+                        { label: 'Ежемесячный платёж', value: fmtMoney(plan.plan.monthlyPayment), tone: 'accent' },
+                        { label: 'Общая сумма выплат', value: fmtMoney(plan.plan.totalPaid) },
+                        { label: 'Переплата по процентам', value: fmtMoney(plan.plan.interestOverpay) },
+                        { label: 'Дополнительные расходы', value: fmtMoney(plan.plan.extraCosts) },
+                        { label: 'Итого затрат на приобретение', value: fmtMoney(plan.plan.totalCost), tone: 'accent' },
+                      ],
+                    },
+                  ],
+                  disclaimers: [
+                    'Расчёт является математической симуляцией аннуитетной схемы и не является офертой или одобрением кредита.',
+                    'Цены — МЦП из официальных прайс-листов haval.ru, не публичная оферта.',
+                    'Скидка применяется только при выполнении условий соответствующей программы.',
+                    ...(program ? program.requirements : []),
+                  ],
+                  sourceNote: trim ? `Источник: ${trim.priceSourceUrl}` : undefined,
+  })
+  }
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.15fr_1fr]">
       {/* -------- Параметры -------- */}
@@ -471,61 +525,17 @@ export default function PurchaseCalculator() {
               type="button"
               variant="secondary"
               onClick={() => {
-                const ok = openReport({
-                  title: 'Расчёт кредита',
-                  subtitle: `${model?.name ?? ''}${trim ? ` · ${trim.name}` : ''}`,
-                  sections: [
-                    {
-                      title: 'Автомобиль',
-                      rows: [
-                        { label: 'Модель', value: model?.name ?? '—' },
-                        { label: 'Комплектация', value: trim?.name ?? '—' },
-                        { label: 'Цена', value: fmtMoney(plan.plan.vehiclePrice) },
-                        ...(plan.plan.discountApplied > 0
-                          ? [{ label: 'Подтверждённая скидка', value: `−${fmtMoney(plan.plan.discountApplied)}` }]
-                          : []),
-                        { label: 'Цена после скидки', value: fmtMoney(plan.plan.effectivePrice) },
-                      ],
-                      note: trim ? `Источник цены: ${trim.priceSourceUrl}` : undefined,
-                    },
-                    {
-                      title: 'Кредит',
-                      rows: [
-                        {
-                          label: 'Первоначальный взнос',
-                          value: `${fmtMoney(plan.plan.downPayment)} (${plan.plan.downPaymentPct.toFixed(0)}%)`,
-                        },
-                        { label: 'Сумма кредита', value: fmtMoney(plan.plan.creditAmount) },
-                        { label: 'Срок', value: `${plan.plan.termMonths} мес` },
-                        {
-                          label: 'Ставка',
-                          value: `${String(plan.plan.annualRate).replace('.', ',')}% годовых${
-                            program ? ` · программа «${program.name}»` : ''
-                          }`,
-                        },
-                        { label: 'Ежемесячный платёж', value: fmtMoney(plan.plan.monthlyPayment), tone: 'accent' },
-                        { label: 'Общая сумма выплат', value: fmtMoney(plan.plan.totalPaid) },
-                        { label: 'Переплата по процентам', value: fmtMoney(plan.plan.interestOverpay) },
-                        { label: 'Дополнительные расходы', value: fmtMoney(plan.plan.extraCosts) },
-                        { label: 'Итого затрат на приобретение', value: fmtMoney(plan.plan.totalCost), tone: 'accent' },
-                      ],
-                    },
-                  ],
-                  disclaimers: [
-                    'Расчёт является математической симуляцией аннуитетной схемы и не является офертой или одобрением кредита.',
-                    'Цены — МЦП из официальных прайс-листов haval.ru, не публичная оферта.',
-                    'Скидка применяется только при выполнении условий соответствующей программы.',
-                    ...(program ? program.requirements : []),
-                  ],
-                  sourceNote: trim ? `Источник: ${trim.priceSourceUrl}` : undefined,
-                })
+                const options = buildReportOptions()
+                if (!options) return
+                const ok = openReport(options)
                 track('export_print', { kind: 'credit' })
                 if (!ok) setNote('Браузер заблокировал окно печати — разрешите всплывающие окна для этого сайта.')
                 else setNote('Открыто окно печати: выберите «Сохранить как PDF» для выгрузки документа.')
               }}
             >
-              <DownloadIcon className="h-4 w-4" /> Печать / PDF
+              <DownloadIcon className="h-4 w-4" /> Печать
             </Button>
+            <PdfExportButton getOptions={buildReportOptions} filename="raschet-kredita" />
           </div>
         )}
 

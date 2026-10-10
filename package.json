@@ -17,12 +17,21 @@
     "update:prices": "node scripts/update-prices.mjs",
     "import:price-list": "node scripts/import-price-list.mjs",
     "verify:sources": "node scripts/verify-sources.mjs",
-    "check": "npm run typecheck && npm run lint && npm test && npm run smoke && npm run build"
+    "check": "npm run typecheck && npm run lint && npm test && npm run smoke && npm run build",
+    "catalog": "node scripts/catalog.mjs",
+    "catalog:discover": "node scripts/catalog.mjs -- discover",
+    "catalog:import": "node scripts/catalog.mjs -- import",
+    "catalog:validate": "node scripts/catalog.mjs -- validate",
+    "catalog:diff": "node scripts/catalog.mjs -- diff",
+    "catalog:report": "node scripts/catalog.mjs -- report",
+    "catalog:full": "node scripts/catalog.mjs -- full",
+    "seed:price-history": "node scripts/seed-price-history.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",
     "chart.js": "^4.5.1",
     "lucide-react": "^1.54.0",
+    "pdfmake": "^0.3.11",
     "react": "^19.2.0",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.2.0",
@@ -31,6 +40,10 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.1.17",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/jsdom": "^30.0.0",
     "@types/node": "^26.6.3",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
@@ -40,9 +53,11 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
     "globals": "^17.13.0",
+    "jsdom": "^30.1.2",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.71.1",
+    "unpdf": "^1.8.1",
     "vite": "^7.3.2"
   }
 }

@@ -18,6 +18,7 @@ import { CarIcon, CloseIcon, HeartIcon, MenuIcon, ScaleIcon } from './icons'
 const PRIMARY_NAV = [
   { to: '/', label: 'Главная', end: true },
   { to: '/catalog', label: 'Каталог', end: false },
+  { to: '/trims', label: 'Комплектации', end: false },
   { to: '/calculator', label: 'Кредит', end: false },
   { to: '/budget', label: 'Подбор', end: false },
   { to: '/compare', label: 'Сравнение', end: false },
@@ -27,6 +28,7 @@ const SECONDARY_NAV = [
   { to: '/ownership', label: 'Стоимость владения' },
   { to: '/plan', label: 'План покупки' },
   { to: '/favorites', label: 'Избранное' },
+  { to: '/advisor', label: 'Помощник' },
   { to: '/programs', label: 'Кредитные программы' },
   { to: '/stock', label: 'В наличии' },
   { to: '/sources', label: 'Источники данных' },

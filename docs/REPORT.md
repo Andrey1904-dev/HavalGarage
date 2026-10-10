@@ -332,3 +332,183 @@ sitemap не требует перегенерации.
   в браузере по адресу выше; глубокие маршруты восстанавливает `public/404.html`.
 - Правки отчёта после публикации попадают в `main` отдельным docs-PR из ветки
   `arena/459ea70a-havalgarage`.
+
+
+---
+
+## 14. HAVALGARAGE 2.0 — отчёт по итерации (2026-10-10)
+
+Ветка: `arena/de7fd33e-havalgarage`, базовый коммит `1586dbc`.
+Коммиты итерации: `fc01280` (функции и данные), `c885693` (документация и DOM-тесты).
+
+### 14.1 Сводка аудита
+
+Проверены все 20 групп функций. Итог — в [docs/FEATURE_AUDIT.md](./FEATURE_AUDIT.md).
+Кратко: 18 групп — `implemented-and-verified`, 2 — `fixed-and-re-verified`
+(цены и характеристики; экспорт в PDF), полностью отсутствующих нет.
+
+Что показал аудит:
+
+- Репозиторий уже был переведён с LADA на HAVAL; данных, компонентов и брендинга
+  LADA в приложении нет. Архива `GrantaCredit.zip` в дереве нет — удалять было
+  нечего, восстанавливать старый проект не потребовалось.
+- Приложение публикуется из `main` через `deploy.yml`; исходники — в `main`,
+  отдельной директории сборки нет. Пакетный менеджер — npm.
+- Стек сохранён: Vite 7 + React 19 + TypeScript strict + Tailwind 4 +
+  react-router-dom 7. Переписывания с нуля не потребовалось.
+
+### 14.2 Найденные дефекты и что с ними сделано
+
+| Дефект | Исправление | Проверка |
+| --- | --- | --- |
+| Кнопка «Печать / PDF» открывала только диалог печати: PDF-экспорт не работал, хотя кнопка выглядела рабочей | подключён pdfmake с кириллическими шрифтами, ленивая загрузка; API кнопки — `getOptions: () => ReportOptions \| null`, отчёт собирается в момент нажатия | сгенерирован PDF 14 090 байт с русским текстом; pdfmake и шрифты — отдельные chunk'и, в точку входа не попали |
+| После рефакторинга экспорта в `ComparePage.tsx` остался «висячий» JSX-фрагмент | удалён | typecheck + smoke |
+| Разбор подписи комплектации терял «+»: `Техно +` и `Техно` давали одинаковую подпись | `scripts/lib/diff.mjs`: символ `+` сохраняется при токенизации | 20 тестов пайплайна |
+| Неудачный импорт затирал результат предыдущего успешного запуска, лишая `diff` точки сравнения | пустой результат больше не перезаписывает `catalog-import-latest.json` | ручной прогон с недоступной сетью |
+| Пустой diff выдавал «0 изменений» за подтверждённое отсутствие изменений | пустой импорт явно помечается; отчёт пишет «сравнение не выполнено» | `reports/catalog-changes.md` |
+| `verify-parsed-documents.mjs` считал успехом отсутствие только изменённых цен | успех теперь требует пустых `changed`/`added`/`missing`/`ambiguous` и непустого `unchanged` | `node scripts/verify-parsed-documents.mjs` → 8 совпадений, 0 расхождений |
+| Статус разбора 14 прайс-листов в реестре оставался `pending` при заполненном числе извлечённых цен | статусы приведены к фактическому состоянию, добавлены пояснения о воспроизводимости проверки | `src/data/haval/source-documents.json` |
+
+### 14.3 Реализованные функции
+
+| Функция | Где |
+| --- | --- |
+| Раздел комплектаций с фильтрами | `src/pages/TrimsPage.tsx`, маршрут `/trims` |
+| История цен и график динамики | `src/data/haval/price-changes.json` (53 записи), `PriceHistorySection.tsx`, `PriceHistoryChart.tsx` |
+| Мониторинг изменений каталога | `src/components/ChangesPanel.tsx`, `catalog-changes.json`, страница `/sources` |
+| Настоящий экспорт в PDF | `src/utils/pdf-export.ts`, `src/components/PdfExportButton.tsx` |
+| Экспорт CSV/JSON | `src/utils/export-data.ts` |
+| Пайплайн импорта официальных прайс-листов | `scripts/catalog.mjs`, `scripts/lib/{discover,fetcher,pdf-text,parse-price-list,diff}.mjs` |
+| Офлайн-сверка каталога с документами | `scripts/verify-parsed-documents.mjs`, `tests/fixtures/*.txt` |
+| Детерминированный помощник | `src/utils/advisor.ts`, страница `/advisor` |
+
+### 14.4 Модели и подтверждённые цены
+
+| Модель | Комплектаций | С подтверждённой ценой |
+| --- | --- | --- |
+| HAVAL M6 | 2 | 2 |
+| HAVAL JOLION | 8 | 8 |
+| HAVAL DARGO | 11 | 11 |
+| HAVAL DARGO X | 3 | 3 |
+| HAVAL F7 | 10 | 10 |
+| HAVAL F7x | 4 | 4 |
+| GWM POER | 6 | 6 |
+| GWM POER KINGKONG | 1 | 1 (тип `teaser`, требует подтверждения) |
+| HAVAL H3 | 5 | 5 |
+| HAVAL H5 | 2 | 2 |
+| HAVAL H7 | 2 | 2 |
+| HAVAL H9 | 2 | 2 |
+| **Итого** | **56** | **56 (47 — `msrp` из прайс-листов)** |
+
+Подтверждённых цен типа `msrp` — **47**, все привязаны к комплектации,
+модельному году, дате начала действия и документу-первоисточнику.
+Всего ценовых записей (с выгодами, трейд-ином, наличием) — 71.
+
+### 14.5 Источники
+
+- https://haval.ru/purchase/catalogues/ — каталоги и прайс-листы (основной);
+- https://haval.ru/models/ — модельный ряд;
+- https://haval.ru/online-stock/ — наличие (не парсится, см. ограничения);
+- 14 PDF-прайс-листов и 14 PDF-каталогов на `cdn.perxis.ru` — в реестре
+  `src/data/haval/source-documents.json` (всего 28 документов).
+
+Подробно — [docs/DATA_SOURCES.md](./DATA_SOURCES.md).
+
+### 14.6 Дата последнего успешного импорта
+
+**2026-10-10** (сетевой импорт пайплайном, 14 документов, 47 цен).
+Воспроизводимая офлайн-проверка (без доступа к источнику):
+`node scripts/verify-parsed-documents.mjs` — цены M6 и JOLION совпадают с
+сохранённым текстом официальных прайс-листов (8 позиций, 0 расхождений).
+Эта проверка добавлена в CI.
+
+### 14.7 Результаты проверок (прогон 2026-10-10)
+
+| Проверка | Команда | Результат |
+| --- | --- | --- |
+| Типы | `npm run typecheck` | 0 ошибок |
+| Линтер | `npm run lint` | 0 ошибок, 0 предупреждений |
+| Тесты | `npm test` | **200 проверок, 0 падений** |
+| Smoke-рендер | `npm run smoke` | 35 маршрутов без ошибок |
+| Сверка с прайс-листами | `node scripts/verify-parsed-documents.mjs` | 8 совпадений, 0 расхождений |
+| Сборка | `npm run build` | успешно, 8,5 с |
+| Уязвимости | `npm audit` | 0 |
+
+Состав тестов: кредитная математика, калькуляторы, целостность каталога,
+импорт, пайплайн разбора прайс-листов, помощник, **DOM-тесты интерфейса в
+jsdom** (избранное переживает перемонтирование, сравнение синхронизируется с
+URL, мобильное меню, ответы помощника).
+
+Размеры сборки: точка входа `index` 515 кБ, `charts` 173 кБ, `supabase` 223 кБ,
+`react` 51 кБ; pdfmake 997 кБ и шрифты 855 кБ — отдельные ленивые chunk'и.
+Порог CI — 3 МиБ суммарно, не превышен.
+
+### 14.8 GitHub Actions
+
+| Прогон | Workflow | Статус |
+| --- | --- | --- |
+| `38042659336` (коммит `fc01280`) | CI | completed, success |
+| `38043658715` (коммит `c885693`) | CI | completed, success |
+
+### 14.9 Статус публикации
+
+- Источник Pages — ветка `main`, статус `built`.
+- Опубликованный сейчас коммит — `1586dbc` (база этой итерации), deployment
+  `6976871037` от 2026-10-10 06:05 UTC, адрес
+  **https://andrey1904-dev.github.io/HavalGarage/**.
+- Работа итерации находится в ветке `arena/de7fd33e-havalgarage` и попадёт на
+  сайт после слияния в `main` (PR → merge → `deploy.yml`).
+
+### 14.10 Изменённые файлы (63 файла, +8 919 / −102)
+
+Новые: `docs/{ARCHITECTURE,CREDIT_MATH,DATA_IMPORT,DEPLOYMENT,FEATURE_AUDIT,KNOWN_LIMITATIONS,PRICING_RULES,TESTING}.md`,
+`scripts/catalog.mjs`, `scripts/seed-price-history.mjs`,
+`scripts/verify-parsed-documents.mjs`, `scripts/lib/{discover,fetcher,pdf-text,parse-price-list,diff}.mjs`,
+`scripts/lib/{diff,parse-price-list}.d.mts`, `src/pages/{AdvisorPage,TrimsPage}.tsx`,
+`src/components/{ChangesPanel,PdfExportButton,PriceHistoryChart,PriceHistorySection}.tsx`,
+`src/utils/{advisor,export-data,pdf-export}.ts`, `src/types/pdfmake.d.ts`,
+`src/data/haval/{source-documents,catalog-changes,price-changes,generations}.{ts,json}`,
+`tests/{advisor,import-pipeline}.test.ts`, `tests/ui.test.tsx`, `tests/fixtures/*.txt`.
+
+Изменённые: `README.md`, `.github/workflows/ci.yml`, `package.json`,
+`tsconfig.test.json`, `public/sitemap.xml`, `scripts/{test,generate-seo,catalog-data,smoke-render}`,
+`src/App.tsx`, `src/components/Layout.tsx`, `src/components/calculator/PurchaseCalculator.tsx`,
+`src/data/haval/{index,prices,types}.ts`, `src/pages/{ComparePage,FavoritesPage,ModelPage,OwnershipPage,PlanPage,SourcesPage}.tsx`,
+`src/utils/analytics.ts`.
+
+### 14.11 Известные ограничения
+
+Полный список — [docs/KNOWN_LIMITATIONS.md](./KNOWN_LIMITATIONS.md). Ключевое:
+
+- «Автомобили в наличии» не парсятся: `haval.ru/online-stock/` отдаёт данные
+  только через клиентское приложение; обход ограничений источника недопустим.
+- У GWM POER KINGKONG нет официального прайс-листа — только тизер дилера.
+- Помощник детерминирован, а не языковая модель: ключ API невозможно безопасно
+  хранить в статическом приложении.
+- Расчёты — математическая симуляция, а не оферта и не график конкретного банка.
+- Нет e2e-прогона в реальном браузере и проверки на реальных устройствах.
+
+### 14.12 Что не доделано и почему
+
+| Что | Причина |
+| --- | --- |
+| Проверка сайта в браузере после публикации | ветка не слита в `main`; факт публикации подтверждён API GitHub Pages |
+| Живая сверка всех 14 прайс-листов | исходящий доступ к `haval.ru`/`cdn.perxis.ru` из изолированной среды обрывается (`ECONNRESET`); офлайн-сверка выполняется для M6 и JOLION, сетевой импорт — на машине разработчика или в Actions |
+| e2e-тесты в браузере | в среде нет Chromium; замена — smoke-рендер всех маршрутов и DOM-тесты в jsdom |
+| Подключение языковой модели к помощнику | требует серверного хранилища ключа; план — в `docs/ARCHITECTURE.md` |
+
+### 14.13 Как запустить локально
+
+```bash
+git clone https://github.com/Andrey1904-dev/HavalGarage.git
+cd HavalGarage
+git checkout arena/de7fd33e-havalgarage
+npm ci
+npm run dev         # http://localhost:5173
+npm run check       # typecheck + lint + тесты + smoke + сборка
+npm run build && npm run preview
+```
+
+Дополнительно: `npm run seo` (карта сайта),
+`node scripts/verify-parsed-documents.mjs` (сверка цен с прайс-листами без сети),
+`npm run catalog:full` (полный цикл импорта, нужен доступ к haval.ru).

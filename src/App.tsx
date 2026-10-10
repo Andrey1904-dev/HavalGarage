@@ -19,6 +19,8 @@ import HomePage from './pages/HomePage'
  * загружаются лениво — код разделён по страницам.
  */
 const CatalogPage = lazy(() => import('./pages/CatalogPage'))
+const TrimsPage = lazy(() => import('./pages/TrimsPage'))
+const AdvisorPage = lazy(() => import('./pages/AdvisorPage'))
 const ModelPage = lazy(() => import('./pages/ModelPage'))
 const ComparePage = lazy(() => import('./pages/ComparePage'))
 const CalculatorPage = lazy(() => import('./pages/CalculatorPage'))
@@ -52,6 +54,8 @@ export default function App() {
                   <Route element={<Layout />}>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/catalog" element={<CatalogPage />} />
+                    <Route path="/trims" element={<TrimsPage />} />
+                    <Route path="/advisor" element={<AdvisorPage />} />
                     <Route path="/models/:slug" element={<ModelPage />} />
                     <Route path="/compare" element={<ComparePage />} />
                     <Route path="/calculator" element={<CalculatorPage />} />

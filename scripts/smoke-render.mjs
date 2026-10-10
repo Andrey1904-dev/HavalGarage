@@ -16,6 +16,8 @@ import { SavedProvider } from '../src/context/SavedContext.tsx'
 import { CompareProvider } from '../src/context/CompareContext.tsx'
 import HomePage from '../src/pages/HomePage.tsx'
 import CatalogPage from '../src/pages/CatalogPage.tsx'
+import TrimsPage from '../src/pages/TrimsPage.tsx'
+import AdvisorPage from '../src/pages/AdvisorPage.tsx'
 import ModelPage from '../src/pages/ModelPage.tsx'
 import ComparePage from '../src/pages/ComparePage.tsx'
 import CalculatorPage from '../src/pages/CalculatorPage.tsx'
@@ -44,6 +46,9 @@ const ROUTES = [
   ['/', 'главная'],
   ['/catalog', 'каталог'],
   ['/catalog?family=PRO&drive=awd', 'каталог с фильтрами'],
+  ['/trims', 'каталог комплектаций'],
+  ['/trims?drive=awd&powerMin=190&gearbox=dct&sort=payment-asc', 'комплектации: совместные фильтры'],
+  ['/advisor?model=jolion&payment=35000', 'помощник по выбору'],
   ['/models/m6', 'модель M6'],
   ['/models/jolion', 'модель JOLION'],
   ['/models/dargo', 'модель DARGO'],
@@ -102,6 +107,8 @@ for (const [path, label] of ROUTES) {
                     { element: h(Layout) },
                     h(Route, { path: '/', element: h(HomePage) }),
                     h(Route, { path: '/catalog', element: h(CatalogPage) }),
+                    h(Route, { path: '/trims', element: h(TrimsPage) }),
+                    h(Route, { path: '/advisor', element: h(AdvisorPage) }),
                     h(Route, { path: '/models/:slug', element: h(ModelPage) }),
                     h(Route, { path: '/compare', element: h(ComparePage) }),
                     h(Route, { path: '/calculator', element: h(CalculatorPage) }),

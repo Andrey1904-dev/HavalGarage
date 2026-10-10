@@ -28,7 +28,8 @@ import { useSaved } from '../context/SavedContext'
 import { computeSavingsPlan } from '../utils/savings'
 import { computeTradeIn, type TradeInMode } from '../utils/tradein'
 import { fmtDate, fmtMoney, fmtNumber, parseLocaleNumber } from '../utils/format'
-import { openReport } from '../utils/export'
+import { openReport, type ReportOptions } from '../utils/export'
+import PdfExportButton from '../components/PdfExportButton'
 import { STORAGE_KEYS, loadJson, saveJson } from '../utils/storage'
 import { useSeo } from '../utils/seo'
 import { track } from '../utils/analytics'
@@ -194,10 +195,11 @@ export default function PlanPage() {
     setNote('План сохранён в разделе «Избранное» (локально в браузере, без регистрации).')
   }
 
-  const handleExport = () => {
-    if (!savings?.ok) return
+  /** Отчёт строится один раз и используется и печатью, и экспортом в PDF */
+  const buildReportOptions = (): ReportOptions | null => {
+    if (!savings?.ok) return null
     const p = savings.plan
-    const ok = openReport({
+    return {
       title: 'План покупки',
       subtitle: details ? `${details.model.name} ${details.trim.name}` : undefined,
       sections: [
@@ -245,7 +247,13 @@ export default function PlanPage() {
         'Расчёт не является офертой или одобрением кредита.',
       ],
       sourceNote: 'Цены — МЦП из официальных прайс-листов haval.ru.',
-    })
+    }
+  }
+
+  const handleExport = () => {
+    const options = buildReportOptions()
+    if (!options) return
+    const ok = openReport(options)
     track('export_print', { kind: 'plan' })
     if (!ok) setNote('Браузер заблокировал окно печати — разрешите всплывающие окна.')
   }
@@ -492,8 +500,9 @@ export default function PlanPage() {
 
                 <div className="flex flex-wrap gap-2">
                   <Button type="button" onClick={handleExport}>
-                    <DownloadIcon className="h-4 w-4" /> Печать / PDF
+                    <DownloadIcon className="h-4 w-4" /> Печать
                   </Button>
+                  <PdfExportButton getOptions={buildReportOptions} filename="plan-pokupki" />
                   <Button type="button" variant="secondary" onClick={handleSavePlan}>
                     Сохранить план
                   </Button>
