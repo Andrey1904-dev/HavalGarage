@@ -1140,6 +1140,7 @@ export const TRIMS: Trim[] = [
     transmission: 'Нет данных',
     drivetrain: 'полный',
     basePrice: 3_099_000,
+    priceType: 'teaser',
     equipment: [],
     specifications: { drivetrain: '4WD' },
     priceSourceUrl: SRC.kingkong,

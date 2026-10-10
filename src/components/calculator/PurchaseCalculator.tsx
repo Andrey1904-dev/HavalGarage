@@ -1,12 +1,15 @@
-import { useMemo } from 'react'
-import { Button, Card, Field, InfoTip, Select, Tag } from '../ui'
+import { useMemo, useState } from 'react'
+import { Button, Callout, Card, Field, InfoTip, Select, Tag } from '../ui'
 import PriceMeta from '../PriceMeta'
 import ScheduleChart from './ScheduleChart'
 import { useCalculator } from '../../context/CalculatorContext'
-import { MODELS, programsForModel, programRateFor } from '../../data/haval'
+import { useSaved } from '../../context/SavedContext'
+import { CREDIT_PROGRAMS, MODELS, programsForModel, programRateFor } from '../../data/haval'
 import { TERM_OPTIONS, MAX_TERM, MIN_TERM } from '../../utils/credit'
 import { fmtMoney, parseLocaleNumber, plural } from '../../utils/format'
-import { AlertIcon, CheckIcon, PercentIcon, RefreshIcon } from '../icons'
+import { AlertIcon, CheckIcon, DownloadIcon, HeartIcon, PercentIcon, RefreshIcon } from '../icons'
+import { openReport } from '../../utils/export'
+import { track } from '../../utils/analytics'
 
 /**
  * Главный расчётный сценарий: модель → комплектация → цена → скидка →
@@ -15,10 +18,26 @@ import { AlertIcon, CheckIcon, PercentIcon, RefreshIcon } from '../icons'
  * отдельной веткой.
  */
 export default function PurchaseCalculator() {
-  const { state, update, selectModel, trims, trim, offers, plan } = useCalculator()
+  const {
+    state,
+    update,
+    selectModel,
+    trims,
+    trim,
+    offers,
+    plan,
+    program,
+    programRate,
+    rateScenario,
+    programViolations,
+    effectiveRate,
+  } = useCalculator()
+  const { saveCalculation } = useSaved()
+  const [note, setNote] = useState('')
 
   const model = MODELS.find((m) => m.id === state.modelId)
   const currentTrims = trims.filter((t) => t.status === 'current')
+  const modelPrograms = programsForModel(state.modelId)
 
   const suggestedRate = useMemo(() => {
     const pct = plan.ok ? plan.plan.downPaymentPct : parseLocaleNumber(state.downPaymentPercent) || 0
@@ -129,6 +148,59 @@ export default function PurchaseCalculator() {
               </p>
             )}
           </div>
+
+          {/* Официальная кредитная программа */}
+          <div>
+            <div className="mb-1.5 flex items-center gap-2">
+              <span className="text-[12.5px] font-semibold text-[#A9AFB7]">Сценарий расчёта ставки</span>
+              <InfoTip title="Сценарии">
+                Три разделённых сценария: свободный расчёт по вашей ставке; расчёт по опубликованным условиям
+                официальной программы (ставка подставляется из таблицы «взнос × срок»); сценарий с неизвестными
+                условиями банка — тогда расчёт помечается как предварительный.
+              </InfoTip>
+            </div>
+            <Select
+              value={state.programId}
+              onChange={(e) => {
+                update({ programId: e.target.value })
+                track('credit_params_change', { program: e.target.value })
+              }}
+            >
+              <option value="none">Свободный расчёт по введённой ставке</option>
+              {CREDIT_PROGRAMS.filter((p) => modelPrograms.some((mp) => mp.id === p.id)).map((p) => (
+                <option key={p.id} value={p.id}>
+                  Официальная программа: {p.name}
+                </option>
+              ))}
+            </Select>
+            {program && (
+              <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A9AFB7]">
+                {program.name}: взнос {program.downPaymentMinPct}–{program.downPaymentMaxPct}%, срок{' '}
+                {program.termMonthsMin}–{program.termMonthsMax} мес
+                {program.requiredProducts.length > 0 ? `, условия: ${program.requiredProducts.join(', ')}` : ''}.{' '}
+                <span
+                  className={
+                    rateScenario === 'program'
+                      ? 'text-[#16B374]'
+                      : 'text-[#F5A623]'
+                  }
+                >
+                  {rateScenario === 'program'
+                    ? `Ставка программы ${String(programRate).replace('.', ',')}% применена к расчёту.`
+                    : 'Ставка программы для этой комбинации не опубликована — расчёт предварительный, по вашей ставке.'}
+                </span>
+              </p>
+            )}
+            {programViolations.length > 0 && (
+              <Callout tone="warn" className="mt-2" title="Ограничения программы">
+                <ul className="ml-4 list-disc">
+                  {programViolations.map((v) => (
+                    <li key={v}>{v}</li>
+                  ))}
+                </ul>
+              </Callout>
+            )}
+          </div>
         </Card>
 
         <Card className="flex flex-col gap-3.5">
@@ -235,7 +307,14 @@ export default function PurchaseCalculator() {
                 inputMode="decimal"
                 placeholder="16,4"
                 value={state.annualRate}
-                onChange={(e) => update({ annualRate: e.target.value })}
+                onChange={(e) => update({ annualRate: e.target.value, programId: 'none' })}
+                badge={
+                  rateScenario === 'program'
+                    ? `в расчёте ${String(effectiveRate).replace('.', ',')}%`
+                    : rateScenario === 'unknown'
+                      ? 'предварительный'
+                      : undefined
+                }
               />
               {suggestedRate && (
                 <Button
@@ -268,7 +347,7 @@ export default function PurchaseCalculator() {
             hint="Например, оценённая вами стоимость КАСКО или оборудования — добавляется к общим затратам, но не в тело кредита"
           />
 
-          <Button type="button" variant="ghost" className="self-start" onClick={() => update({ offerId: 'none', customDiscountRub: '0', extraCostsRub: '0', downPaymentPercent: '20', downPaymentMode: 'percent', termMonths: 60, annualRate: '16.4' })}>
+          <Button type="button" variant="ghost" className="self-start" onClick={() => update({ offerId: 'none', programId: 'none', customDiscountRub: '0', extraCostsRub: '0', downPaymentPercent: '20', downPaymentMode: 'percent', termMonths: 60, annualRate: '16.4' })}>
             <RefreshIcon className="h-3.5 w-3.5" /> Сбросить параметры
           </Button>
         </Card>
@@ -306,7 +385,9 @@ export default function PurchaseCalculator() {
               ) : (
                 <p className="mt-2 text-[11.5px] text-[#A9AFB7]">
                   {model?.name} · {trim?.name} · {state.termMonths} мес · ставка{' '}
-                  {String(parseLocaleNumber(state.annualRate)).replace('.', ',')}%
+                  {String(plan.plan.annualRate).replace('.', ',')}%
+                  {rateScenario === 'program' && program ? ` (программа «${program.name}»)` : ''}
+                  {rateScenario === 'unknown' ? ' — расчёт предварительный' : ''}
                 </p>
               )}
             </Card>
@@ -320,7 +401,12 @@ export default function PurchaseCalculator() {
               <ResultRow label={`Первоначальный взнос (${plan.plan.downPaymentPct.toFixed(0)}%)`} value={fmtMoney(plan.plan.downPayment)} />
               <ResultRow label="Сумма кредита" value={fmtMoney(plan.plan.creditAmount)} />
               <ResultRow label="Срок кредитования" value={`${plan.plan.termMonths} мес`} />
-              <ResultRow label="Процентная ставка" value={`${String(plan.plan.annualRate).replace('.', ',')}% годовых`} />
+              <ResultRow
+                label="Процентная ставка"
+                value={`${String(plan.plan.annualRate).replace('.', ',')}% годовых${
+                  rateScenario === 'program' && program ? ` · ${program.name}` : ''
+                }`}
+              />
               <ResultRow label="Общая сумма выплат" value={fmtMoney(plan.plan.downPayment + plan.plan.totalPaid)} />
               <ResultRow label="Переплата по кредиту" value={`+${fmtMoney(plan.plan.interestOverpay)}`} accent="#E4002B" />
               {plan.plan.extraCosts > 0 && (
@@ -345,6 +431,105 @@ export default function PurchaseCalculator() {
             )}
           </>
         )}
+
+        {plan.ok && (
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                saveCalculation({
+                  title: `${model?.name ?? ''} ${trim?.name ?? ''}`.trim(),
+                  modelId: state.modelId,
+                  modelName: model?.name ?? state.modelId,
+                  trimId: trim?.id ?? null,
+                  trimName: trim?.name ?? null,
+                  priceType: trim?.priceType ?? 'msrp',
+                  vehiclePrice: plan.plan.vehiclePrice,
+                  discountApplied: plan.plan.discountApplied,
+                  effectivePrice: plan.plan.effectivePrice,
+                  downPayment: plan.plan.downPayment,
+                  downPaymentPct: plan.plan.downPaymentPct,
+                  creditAmount: plan.plan.creditAmount,
+                  termMonths: plan.plan.termMonths,
+                  annualRate: plan.plan.annualRate,
+                  monthlyPayment: plan.plan.monthlyPayment,
+                  totalPaid: plan.plan.totalPaid,
+                  interestOverpay: plan.plan.interestOverpay,
+                  extraCosts: plan.plan.extraCosts,
+                  totalCost: plan.plan.totalCost,
+                  programId: program?.id ?? null,
+                  programName: program?.name ?? null,
+                  tcoSummary: null,
+                })
+                setNote('Расчёт сохранён в разделе «Избранное» (локально в браузере, без регистрации).')
+              }}
+            >
+              <HeartIcon className="h-4 w-4" /> Сохранить расчёт
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                const ok = openReport({
+                  title: 'Расчёт кредита',
+                  subtitle: `${model?.name ?? ''}${trim ? ` · ${trim.name}` : ''}`,
+                  sections: [
+                    {
+                      title: 'Автомобиль',
+                      rows: [
+                        { label: 'Модель', value: model?.name ?? '—' },
+                        { label: 'Комплектация', value: trim?.name ?? '—' },
+                        { label: 'Цена', value: fmtMoney(plan.plan.vehiclePrice) },
+                        ...(plan.plan.discountApplied > 0
+                          ? [{ label: 'Подтверждённая скидка', value: `−${fmtMoney(plan.plan.discountApplied)}` }]
+                          : []),
+                        { label: 'Цена после скидки', value: fmtMoney(plan.plan.effectivePrice) },
+                      ],
+                      note: trim ? `Источник цены: ${trim.priceSourceUrl}` : undefined,
+                    },
+                    {
+                      title: 'Кредит',
+                      rows: [
+                        {
+                          label: 'Первоначальный взнос',
+                          value: `${fmtMoney(plan.plan.downPayment)} (${plan.plan.downPaymentPct.toFixed(0)}%)`,
+                        },
+                        { label: 'Сумма кредита', value: fmtMoney(plan.plan.creditAmount) },
+                        { label: 'Срок', value: `${plan.plan.termMonths} мес` },
+                        {
+                          label: 'Ставка',
+                          value: `${String(plan.plan.annualRate).replace('.', ',')}% годовых${
+                            program ? ` · программа «${program.name}»` : ''
+                          }`,
+                        },
+                        { label: 'Ежемесячный платёж', value: fmtMoney(plan.plan.monthlyPayment), tone: 'accent' },
+                        { label: 'Общая сумма выплат', value: fmtMoney(plan.plan.totalPaid) },
+                        { label: 'Переплата по процентам', value: fmtMoney(plan.plan.interestOverpay) },
+                        { label: 'Дополнительные расходы', value: fmtMoney(plan.plan.extraCosts) },
+                        { label: 'Итого затрат на приобретение', value: fmtMoney(plan.plan.totalCost), tone: 'accent' },
+                      ],
+                    },
+                  ],
+                  disclaimers: [
+                    'Расчёт является математической симуляцией аннуитетной схемы и не является офертой или одобрением кредита.',
+                    'Цены — МЦП из официальных прайс-листов haval.ru, не публичная оферта.',
+                    'Скидка применяется только при выполнении условий соответствующей программы.',
+                    ...(program ? program.requirements : []),
+                  ],
+                  sourceNote: trim ? `Источник: ${trim.priceSourceUrl}` : undefined,
+                })
+                track('export_print', { kind: 'credit' })
+                if (!ok) setNote('Браузер заблокировал окно печати — разрешите всплывающие окна для этого сайта.')
+                else setNote('Открыто окно печати: выберите «Сохранить как PDF» для выгрузки документа.')
+              }}
+            >
+              <DownloadIcon className="h-4 w-4" /> Печать / PDF
+            </Button>
+          </div>
+        )}
+
+        {note && <Callout tone="success">{note}</Callout>}
 
         <Card className="bg-[#0E1013]">
           <p className="text-[10.5px] leading-relaxed text-[#A9AFB7]">

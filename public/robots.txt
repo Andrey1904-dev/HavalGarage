@@ -1,0 +1,10 @@
+# HavalGarage — независимый информационный сервис (не официальный сайт HAVAL)
+User-agent: *
+Allow: /
+Disallow: /compare
+Disallow: /favorites
+Disallow: /stock
+
+# Комбинации фильтров каталога не индексируются отдельно:
+# canonical таких страниц ведёт на /catalog
+Sitemap: https://andrey1904-dev.github.io/HavalGarage/sitemap.xml

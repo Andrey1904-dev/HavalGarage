@@ -287,3 +287,204 @@ export function Tag({ children, tone = 'default' }: { children: ReactNode; tone?
     </span>
   )
 }
+
+/* ------------------------------------------------------------------ */
+/*  Дополнительные примитивы: выноски, плитки, таблицы, чекбоксы        */
+/* ------------------------------------------------------------------ */
+
+/** Информационная выноска (info / warn / danger / success) */
+export function Callout({
+  tone = 'info',
+  title,
+  children,
+  className = '',
+}: {
+  tone?: 'info' | 'warn' | 'danger' | 'success'
+  title?: ReactNode
+  children: ReactNode
+  className?: string
+}) {
+  const tones = {
+    info: 'border-[#363B43] bg-[#0E1013] text-[#A9AFB7]',
+    warn: 'border-[#F5A623]/45 bg-[#F5A623]/10 text-[#F5A623]',
+    danger: 'border-[#EF4444]/45 bg-[#EF4444]/10 text-[#EF4444]',
+    success: 'border-[#16B374]/45 bg-[#16B374]/10 text-[#16B374]',
+  } as const
+  return (
+    <div className={`rounded-[10px] border px-3.5 py-3 text-[12px] leading-relaxed ${tones[tone]} ${className}`}>
+      {title && <p className="mb-1 text-[12.5px] font-bold">{title}</p>}
+      <div className="[&_a]:underline [&_a]:underline-offset-2">{children}</div>
+    </div>
+  )
+}
+
+/** Плитка показателя: подпись, крупное значение, пояснение */
+export function StatTile({
+  label,
+  value,
+  hint,
+  tone = 'default',
+  className = '',
+}: {
+  label: string
+  value: ReactNode
+  hint?: ReactNode
+  tone?: 'default' | 'accent' | 'success' | 'warn'
+  className?: string
+}) {
+  const valueTone = {
+    default: 'text-[#F3F4F4]',
+    accent: 'text-[#E4002B]',
+    success: 'text-[#16B374]',
+    warn: 'text-[#F5A623]',
+  }[tone]
+  return (
+    <div className={`rounded-[10px] border border-[#363B43]/85 bg-[#0E1013]/70 px-3.5 py-3 ${className}`}>
+      <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A9AFB7]">{label}</p>
+      <p className={`font-display-num mt-1 text-[20px] font-bold leading-none ${valueTone}`}>{value}</p>
+      {hint && <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A9AFB7]">{hint}</p>}
+    </div>
+  )
+}
+
+export function Checkbox({
+  label,
+  checked,
+  onChange,
+  disabled,
+  hint,
+}: {
+  label: ReactNode
+  checked: boolean
+  onChange: (next: boolean) => void
+  disabled?: boolean
+  hint?: string
+}) {
+  return (
+    <label
+      className={`flex min-h-[40px] cursor-pointer items-start gap-2.5 rounded-[8px] border px-3 py-2 text-[12.5px] transition-colors ${
+        checked
+          ? 'border-[#E4002B]/60 bg-[#E4002B]/10 text-[#F3F4F4]'
+          : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:text-[#F3F4F4]'
+      } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+    >
+      <input
+        type="checkbox"
+        className="mt-0.5 h-4 w-4 shrink-0 accent-[#E4002B]"
+        checked={checked}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <span>
+        {label}
+        {hint && <span className="mt-0.5 block text-[10.5px] text-[#A9AFB7]">{hint}</span>}
+      </span>
+    </label>
+  )
+}
+
+/**
+ * Адаптивная таблица: на узких экранах скроллится внутри контейнера,
+ * горизонтальный скролл страницы не появляется.
+ */
+export function DataTable({
+  head,
+  children,
+  firstColumnSticky = true,
+  className = '',
+}: {
+  head: ReactNode[]
+  children: ReactNode
+  firstColumnSticky?: boolean
+  className?: string
+}) {
+  return (
+    <div className={`overflow-x-auto rounded-[10px] border border-[#363B43]/85 ${className}`}>
+      <table className="w-full min-w-[520px] border-collapse text-left text-[12px]">
+        <thead className="bg-[#23272D]">
+          <tr>
+            {head.map((cell, i) => (
+              <th
+                key={i}
+                scope="col"
+                className={`whitespace-nowrap px-3 py-2.5 text-[11px] font-bold uppercase tracking-wider text-[#A9AFB7] ${
+                  firstColumnSticky && i === 0 ? 'sticky left-0 z-10 bg-[#23272D]' : ''
+                }`}
+              >
+                {cell}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-[#363B43]/70 bg-[#1A1D22]">{children}</tbody>
+      </table>
+    </div>
+  )
+}
+
+export function TableCell({
+  children,
+  sticky = false,
+  strong = false,
+  className = '',
+}: {
+  children: ReactNode
+  sticky?: boolean
+  strong?: boolean
+  className?: string
+}) {
+  return (
+    <td
+      className={`px-3 py-2.5 align-top text-[#A9AFB7] ${strong ? 'font-bold text-[#F3F4F4]' : ''} ${
+        sticky ? 'sticky left-0 z-10 bg-[#1A1D22] font-semibold text-[#F3F4F4]' : ''
+      } ${className}`}
+    >
+      {children}
+    </td>
+  )
+}
+
+/** Раскрывающийся блок (доступен с клавиатуры, без скрытого контента от скринридера) */
+export function Disclosure({
+  title,
+  defaultOpen = false,
+  children,
+  badge,
+}: {
+  title: ReactNode
+  defaultOpen?: boolean
+  children: ReactNode
+  badge?: ReactNode
+}) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <div className="overflow-hidden rounded-[10px] border border-[#363B43]/85 bg-[#1A1D22]">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="flex min-h-[46px] w-full items-center justify-between gap-2 px-4 py-3 text-left text-[13px] font-bold text-[#F3F4F4] transition-colors hover:bg-[#23272D]"
+      >
+        <span className="flex items-center gap-2">
+          {title}
+          {badge}
+        </span>
+        <span className={`text-[#A9AFB7] transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true">
+          ▾
+        </span>
+      </button>
+      {open && <div className="border-t border-[#363B43]/70 px-4 py-3.5">{children}</div>}
+    </div>
+  )
+}
+
+/** Индикатор состояния данных: подтверждено / требует проверки / нет данных */
+export function DataStatus({ status }: { status: 'confirmed' | 'needs-check' | 'missing' | 'archived' }) {
+  const map = {
+    confirmed: { tone: 'success' as const, label: 'подтверждено' },
+    'needs-check': { tone: 'warn' as const, label: 'требует проверки' },
+    missing: { tone: 'default' as const, label: 'нет данных' },
+    archived: { tone: 'warn' as const, label: 'архив' },
+  }
+  return <Tag tone={map[status].tone}>{map[status].label}</Tag>
+}

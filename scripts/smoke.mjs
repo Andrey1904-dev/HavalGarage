@@ -9,7 +9,7 @@ import path from 'node:path'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(here, '..')
-const outfile = path.join(root, 'node_modules', '.tmp', 'smoke-render.cjs')
+const outfile = path.join(root, '.tmp', 'smoke-render.cjs')
 
 await build({
   entryPoints: [path.join(here, 'smoke-render.mjs')],
@@ -23,6 +23,7 @@ await build({
   loader: { '.tsx': 'tsx', '.ts': 'ts' },
   define: {
     'process.env.NODE_ENV': '"production"',
+    'import.meta.env': '{}',
   },
   external: ['node:fs', 'node:path', 'node:url', 'node:child_process'],
 })

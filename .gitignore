@@ -5,3 +5,11 @@ coverage
 *.local
 .DS_Store
 image-search
+reports
+*.tsbuildinfo
+.eslintcache
+.tmp
+
+# Приватные локальные переопределения (публичный .env с publishable-ключом остаётся в репозитории)
+.env.local
+.env.*.local

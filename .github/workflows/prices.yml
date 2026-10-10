@@ -1,0 +1,100 @@
+name: Проверка официальных источников
+
+# Периодическая (не реальное время!) проверка доступности официальных
+# прайс-листов haval.ru и сверка тизеров цен с каталогом приложения.
+#
+# Что делает:
+#   1. обычные GET-запросы к странице каталогов и прайс-листам (без обхода
+#      CAPTCHA, авторизации и технических ограничений сайта);
+#   2. пишет отчёт reports/source-check.json (артефакт, не коммитится);
+#   3. с флагом --record добавляет запись в историю проверок
+#      src/data/haval/price-history.json;
+#   4. если история изменилась — создаёт ветку и pull request, чтобы изменение
+#      проверил человек. Подтверждённые цены каталога скрипт не изменяет.
+
+on:
+  schedule:
+    # каждый понедельник в 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      strict:
+        description: 'Завершать с ошибкой при недоступности источников или расхождении цен'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: prices
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Проверка источников
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # токен с правом записи нужен для создания ветки и PR
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Проверка доступности прайс-листов и сверка цен
+        id: verify
+        run: |
+          ARGS="--record"
+          if [ "${{ inputs.strict }}" = "true" ]; then ARGS="$ARGS --strict"; fi
+          npm run verify:sources -- $ARGS
+
+      - name: Отчёт о проверке
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-check
+          path: reports/source-check.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Есть ли изменения истории
+        id: changes
+        run: |
+          if git diff --quiet -- src/data/haval/price-history.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Pull request с результатом проверки
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="chore/price-check-$(date -u +%Y-%m-%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add src/data/haval/price-history.json
+          git commit -m "chore(catalog): результат периодической проверки официальных источников"
+          git push --force-with-lease origin "$BRANCH"
+          gh pr create \
+            --base "${GITHUB_REF_NAME:-main}" \
+            --head "$BRANCH" \
+            --title "Проверка официальных источников $(date -u +%Y-%m-%d)" \
+            --body "Автоматическая периодическая проверка доступности прайс-листов haval.ru и сверки тизеров цен.
+
+          Подтверждённые цены каталога **не изменялись** — в PR добавлена только запись истории проверок.
+          Если обнаружено расхождение цен, обновите данные вручную по официальному прайс-листу:
+          \`npm run import:price-list -- price-lists/<файл>.json\` (см. price-lists/README.md).
+
+          Отчёт о проверке: артефакт \`source-check\` (reports/source-check.json)."

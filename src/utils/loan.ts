@@ -139,7 +139,7 @@ export function simulatePrepayment(input: PrepaymentInput): PrepaymentPlan | nul
   const r = monthlyRate(annualPercent)
 
   let balance = Math.max(0, input.balance - oneTime)
-  let termLeft = Math.max(1, Math.round(input.termLeft))
+  const termLeft = Math.max(1, Math.round(input.termLeft))
   let payment = input.payment
 
   // банк пересчитывает платёж под прежний срок

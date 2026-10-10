@@ -1,19 +1,18 @@
 /**
- * Единая точка доступа к каталогу HAVAL: модели, комплектации,
- * предложения, кредитные программы и метаданные актуальности.
+ * Единая точка доступа к каталогу HAVAL: модели, комплектации, официальные
+ * характеристики, оснащение, цены, предложения, кредитные программы,
+ * наличие и метаданные актуальности.
  */
 export * from './types'
+export * from './meta'
 export * from './models'
 export * from './trims'
+export * from './specs'
+export * from './equipment'
 export * from './offers'
 export * from './credit-programs'
-
-/** Дата фиксации каталога по опубликованным страницам дилера */
-export const CATALOG_FIXED_AT = '2026-10-09'
-
-/** Страница каталогов и официальных прайс-листов производителя (основной источник цен) */
-export const HAVAL_PRICE_LISTS_URL = 'https://haval.ru/purchase/catalogues/'
-
-export const DEALER_URL = 'https://agat-ekb-haval.ru/'
-/** Зеркало каталогов на сайте дилера АГАТ (вторичный источник) */
-export const DEALER_PRICE_LISTS_URL = 'https://agat-ekb-haval.ru/purchase/catalogues/'
+export * from './stock'
+export * from './prices'
+export * from './price-history'
+export * from './catalog'
+export * from './generated'

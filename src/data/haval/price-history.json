@@ -1,0 +1,25 @@
+{
+  "entries": [
+    {
+      "checkedAt": "2026-10-09",
+      "source": "https://haval.ru/purchase/catalogues/",
+      "outcome": "manual-verification",
+      "summary": "Проверены 11 официальных прайс-листов производителя (M6, JOLION, DARGO 2025 и 2026 м.г., DARGO X, F7, F7x, POER, H3, H5, H7, H9): цены, комплектации, технические характеристики, оснащение, цвета и колёса. Расхождений с каталогом приложения не выявлено, кроме тизера дилера по DARGO X (3 199 000 ₽ против официальных 3 499 000 ₽) — используется официальная цена. Официальный прайс-лист GWM POER KINGKONG не опубликован.",
+      "models": [
+        "m6",
+        "jolion",
+        "dargo",
+        "dargo-x",
+        "f7",
+        "f7x",
+        "poer",
+        "h3",
+        "h5",
+        "h7",
+        "h9",
+        "poer-kingkong"
+      ],
+      "confirmedPrices": 45
+    }
+  ]
+}

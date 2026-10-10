@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>HAVAL Гараж — перенаправление</title>
+    <meta name="robots" content="noindex" />
+    <!--
+      GitHub Pages отдаёт этот файл для всех неизвестных путей. Скрипт сохраняет
+      запрошенный маршрут и передаёт его в SPA (single-page-app redirect,
+      segmentCount = 1 соответствует base-пути /HavalGarage/).
+    -->
+    <script type="text/javascript">
+      var segmentCount = 1
+      var l = window.location
+      l.replace(
+        l.protocol +
+          '//' +
+          l.hostname +
+          (l.port ? ':' + l.port : '') +
+          l.pathname.split('/').slice(0, 1 + segmentCount).join('/') +
+          '/?/' +
+          l.pathname
+            .slice(1)
+            .split('/')
+            .slice(segmentCount)
+            .join('/')
+            .replace(/&/g, '~and~') +
+          (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+          l.hash,
+      )
+    </script>
+  </head>
+  <body>
+    <p style="padding: 24px; font-family: sans-serif">
+      Перенаправление в HavalGarage… Если страница не открылась, перейдите на
+      <a href="/HavalGarage/">главную</a>.
+    </p>
+  </body>
+</html>
