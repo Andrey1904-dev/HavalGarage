@@ -26,7 +26,9 @@ jobs:
         # (доступ к данным ограничен RLS, см. supabase/schema.sql).
         # Секретный (service_role) ключ в отслеживаемых файлах недопустим.
         run: |
-          if git grep -nIE 'sb_secret_|service_role' -- . ':(exclude).github/workflows/ci.yml'; then
+          # Ищем именно тело ключа, а не упоминания слова в документации:
+          # sb_secret_ + ≥16 символов тела или legacy-JWT сервисного ключа.
+          if git grep -nIE 'sb_secret_[A-Za-z0-9_-]{16,}|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'; then
             echo "::error::Найден секретный ключ Supabase в отслеживаемых файлах. Используйте publishable-ключ."
             exit 1
           fi
