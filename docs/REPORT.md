@@ -318,8 +318,17 @@ sitemap не требует перегенерации.
 `configure-pages` с `enablement: true`, `upload-pages-artifact`, `deploy-pages`).
 Результат прогона и фактический статус публикации:
 
-- PR, содержащий работу: #2 (ветка `arena/459ea70a-havalgarage`).
-- После слияния прогон `deploy.yml` включает Pages при первом запуске и публикует
-  сборку; адрес — https://andrey1904-dev.github.io/HavalGarage/.
-- Проверка публикации: страница `Pages` репозитория и ответ сайта по адресу выше
-  (проверяется после прогона; результат фиксируется здесь же).
+- PR, содержащий работу: **#2**, слит в `main` merge-коммитом `c48e529` (2026-10-10).
+- Прогон `deploy.yml` на `main` (run `38029284863`): сборка — успешно,
+  `actions/configure-pages` с `enablement: true` включил Pages при первом прогоне,
+  `upload-pages-artifact` и `deploy-pages` — успешно.
+- Deployment `6976871037`: `state: success`, окружение `github-pages`,
+  `environment_url: https://andrey1904-dev.github.io/HavalGarage/` (2026-10-10 05:58 UTC).
+- Страница репозитория: Pages `status: built`, HTTPS принудительно включён.
+- Адрес опубликованного сайта: **https://andrey1904-dev.github.io/HavalGarage/**
+- Внешняя проверка содержимого из песочницы вернула HTTP 500 на проксирующем
+  запросе (ограничение среды проверки, не сайта): факт публикации подтверждён
+  API GitHub Pages (статус deployment и страницы). Финальная визуальная проверка —
+  в браузере по адресу выше; глубокие маршруты восстанавливает `public/404.html`.
+- Правки отчёта после публикации попадают в `main` отдельным docs-PR из ветки
+  `arena/459ea70a-havalgarage`.
