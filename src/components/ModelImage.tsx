@@ -56,7 +56,9 @@ export function ModelImage({
  * Переключение — кликом или с клавиатуры (стрелки).
  */
 export function ModelGallery({ model }: { model: HavalModel }) {
-  const images = [...new Set([...model.officialImages, ...(model.image ? [model.image] : [])])].filter(Boolean)
+  // локальная копия добавляется с base-путём (assetUrl): без него в сборке
+  // для GitHub Pages (/HavalGarage/) фото отдавало бы 404
+  const images = [...new Set([...model.officialImages, ...(model.image ? [assetUrl(model.image)] : [])])].filter(Boolean)
   const [index, setIndex] = useState(0)
   const [broken, setBroken] = useState<Record<string, boolean>>({})
 

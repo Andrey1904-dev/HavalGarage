@@ -4,7 +4,11 @@ import {
   CATALOG_FIXED_AT,
   DEALER_URL,
   HAVAL_PRICE_LISTS_URL,
+  PRICE_STALE_AFTER_DAYS,
+  catalogAgeDays,
+  isCatalogStale,
   lastSuccessfulCheck,
+  todayIso,
 } from '../data/haval'
 import { fmtDate } from '../utils/format'
 import { useCompare } from '../context/CompareContext'
@@ -59,6 +63,12 @@ export default function Layout() {
 
   const lastCheck = lastSuccessfulCheck() ?? CATALOG_FIXED_AT
   const savedCount = favorites.length + calculations.length
+
+  // Честный возраст снимка относительно реальной текущей даты (не «замороженный»):
+  // статусы цен детерминированы датой снимка, а здесь показываем, что данные могли устареть
+  const realToday = todayIso()
+  const catalogStale = isCatalogStale(realToday)
+  const catalogAge = catalogAgeDays(CATALOG_FIXED_AT, realToday)
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `min-h-[40px] rounded-[8px] px-3 py-2 text-[12.5px] font-bold uppercase tracking-wide transition-colors ${
@@ -243,6 +253,13 @@ export default function Layout() {
             Автоматическое обновление в реальном времени не выполняется: каталог обновляется скриптами и ручной
             проверкой прайс-листов.
           </p>
+
+          {catalogStale && (
+            <p role="status" className="rounded-[10px] border border-[#F5A623]/40 bg-[#F5A623]/10 px-3 py-2 text-[#F5A623]">
+              Снимку каталога {catalogAge ?? '—'} дн. — больше срока повторной проверки ({PRICE_STALE_AFTER_DAYS} дн.). Цены и условия могли
+              измениться: перед решением сверьтесь с официальным прайс-листом haval.ru или у дилера.
+            </p>
+          )}
         </div>
       </footer>
     </div>

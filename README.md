@@ -90,7 +90,7 @@ npm run check          # typecheck + lint + тесты + smoke-рендер + с
 ```bash
 npm run typecheck      # tsc -b --noEmit (strict)
 npm run lint           # eslint (flat config, 0 ошибок и 0 предупреждений)
-npm test               # 147 модульных тестов (node:test + esbuild)
+npm test               # 150 модульных тестов (node:test + esbuild)
 npm run smoke          # рендер 32 маршрутов через react-dom/server
 npm run seo            # генерация public/sitemap.xml по каталогу
 ```
@@ -113,14 +113,17 @@ npm run import:price-list -- price-lists/file.json   # импорт из офи�
 | `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` | База данных для отправки заявки из калькулятора (без них приложение работает локально) |
 | `VITE_SITE_URL` | Публичный адрес сайта для canonical, Open Graph и sitemap (по умолчанию `https://andrey1904-dev.github.io`) |
 
-Секретов в репозитории нет: publishable-ключ Supabase предназначен для браузера,
-доступ ограничивается политиками Row Level Security (`supabase/schema.sql`).
+Секретов в репозитории нет: `.env` содержит только публичные publishable-значения
+Supabase (доступ к данным ограничивается политиками Row Level Security,
+`supabase/schema.sql`), а шаг CI «Guard» падает, если в отслеживаемых файлах появится
+секретный ключ (`sb_secret_`, `service_role`). Приватные локальные переопределения
+храните в `.env.local` / `.env.*.local` — они в `.gitignore`.
 
 ---
 
 ## Тесты и качество
 
-- **147 модульных тестов** (`tests/unit.test.ts`, `tests/catalog.test.ts`,
+- **150 модульных тестов** (`tests/unit.test.ts`, `tests/catalog.test.ts`,
   `tests/calculators.test.ts`, `tests/imports.test.ts`): аннуитет и обратные задачи,
   нулевая ставка, взнос 0% и 100%, невозможные значения, округление денег, изменение цены,
   применение скидок и ограничения предложений, подбор по бюджету, обратный расчёт взноса,
@@ -136,9 +139,11 @@ npm run import:price-list -- price-lists/file.json   # импорт из офи�
 ## Развёртывание
 
 Готовый workflow `.github/workflows/deploy.yml` публикует сборку на GitHub Pages
-при пуше в `main`. Требуется один ручной шаг в настройках репозитория:
-**Settings → Pages → Source: GitHub Actions** (секреты не нужны). Адрес после публикации:
-`https://<owner>.github.io/HavalGarage/`.
+при пуше в `main`. Ручных настроек не требуется: шаг `actions/configure-pages`
+вызван с `enablement: true` и включает Pages при первом прогоне (токен workflow
+имеет `pages: write`). Секреты не нужны. Адрес после публикации:
+`https://<owner>.github.io/HavalGarage/`. После передеплоя у открытых вкладок
+могут устареть хеши chunk-файлов — `ErrorBoundary` покажет кнопку перезагрузки.
 
 Маршрутизация — `BrowserRouter` с `basename` из `BASE_URL`, поэтому для GitHub Pages
 добавлен `public/404.html` (стандартный SPA-редирект, сохраняющий путь).

@@ -22,12 +22,16 @@ const OUT = path.join(ROOT, 'public', 'sitemap.xml')
 
 const ORIGIN = (process.env.VITE_SITE_URL ?? 'https://andrey1904-dev.github.io').replace(/\/$/, '')
 const BASE = (process.env.VITE_BASE ?? '/HavalGarage').replace(/\/$/, '')
-const today = new Date().toISOString().slice(0, 10)
 
 const url = (p) => `${ORIGIN}${BASE}${p}`
 
 async function main() {
   const catalog = await loadCatalog()
+
+  // lastmod детерминирован датой снимка каталога, а не датой запуска: иначе
+  // карта сайта менялась бы каждый день и CI-проверка «sitemap актуален» падала бы
+  // на следующий день после генерации без каких-либо изменений данных.
+  const lastmod = catalog.lastSuccessfulCheck ?? catalog.catalogFixedAt
 
   const staticRoutes = [
     { path: '/', priority: '1.0', changefreq: 'weekly' },
@@ -59,7 +63,7 @@ ${all
   .map(
     (r) => `  <url>
     <loc>${url(r.path)}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>${r.changefreq}</changefreq>
     <priority>${r.priority}</priority>
   </url>`,

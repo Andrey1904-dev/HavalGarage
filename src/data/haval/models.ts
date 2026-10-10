@@ -52,7 +52,7 @@ export const MODELS: HavalModel[] = [
     name: 'HAVAL JOLION',
     description:
       '«Надёжная поддержка на любом пути» — обновлённый компактный кроссовер с турбомотором 1.5T (143 л.с. для 2WD и 150 л.с. для 4WD), новым интерьером и голосовым помощником. Комплектации Комфорт, Оптимум, Премиум и Техно + с передним или полным приводом.',
-    image: '/images/models/jolion.jpg',
+    image: '/images/models/jolion.webp',
     officialImages: ['https://img.perxis.ru/unsafe/prxs/originals/d6tuvq0beucc73cedb9g/original'],
     family: 'CITY',
     bodyType: 'Кроссовер',
@@ -75,7 +75,7 @@ export const MODELS: HavalModel[] = [
     name: 'HAVAL DARGO',
     description:
       '«Повод проявить характер»: свой на городских улицах, уверен на бездорожье. Мотор 2.0T (192 л.с. для 2025 м.г. и 200 л.с. для 2026 м.г.), роботизированная коробка, передний или подключаемый полный привод, клиренс 200 мм.',
-    image: '/images/models/dargo.jpg',
+    image: '/images/models/dargo.webp',
     officialImages: ['https://img.perxis.ru/unsafe/prxs/originals/d7cdr78beucc73cegncg/original'],
     family: 'CITY',
     bodyType: 'Кроссовер',
@@ -98,7 +98,7 @@ export const MODELS: HavalModel[] = [
     name: 'HAVAL DARGO X',
     description:
       'Специальная внедорожная версия на базе HAVAL DARGO: защитный обвес, чёрная решётка радиатора, расширители колёсных арок, рейлинги и зеркала в сером цвете. Полный привод в обеих комплектациях, двигатель 2.0T 192 л.с.',
-    image: '/images/models/dargo-x.png',
+    image: '/images/models/dargo-x.webp',
     officialImages: ['https://img.perxis.ru/unsafe/prxs/originals/cuj0p18beucc7390q7lg/original'],
     family: 'CITY',
     bodyType: 'Кроссовер',
@@ -143,7 +143,7 @@ export const MODELS: HavalModel[] = [
     name: 'HAVAL F7X',
     description:
       'Купе-кроссовер на базе нового F7: скошенная линия крыши, пакет «Антихром», красные тормозные суппорты и два сдвоенных патрубка выхлопной системы. Мотор 2.0T (231 л.с. для 2026 м.г.) и полный привод в обеих комплектациях.',
-    image: '/images/models/f7x.jpg',
+    image: '/images/models/f7x.webp',
     officialImages: ['https://img.perxis.ru/unsafe/prxs/originals/d7edkhgbeucc73cegv00/original'],
     family: 'CITY',
     bodyType: 'Купе-кроссовер',
@@ -204,7 +204,7 @@ export const MODELS: HavalModel[] = [
     name: 'HAVAL H3',
     description:
       'Доступный кроссовер линейки HAVAL PRO: брутальный дизайн с внедорожным пакетом, турбомотор 1.5T (143 л.с. для 2WD и 177 л.с. для 4WD), панорамная крыша и цифровая панель приборов уже в базовой комплектации.',
-    image: '/images/models/h3.jpg',
+    image: '/images/models/h3.webp',
     officialImages: ['https://img.perxis.ru/unsafe/prxs/originals/d6tuupobeucc73cedb8g/original'],
     family: 'PRO',
     bodyType: 'Кроссовер',
@@ -226,7 +226,7 @@ export const MODELS: HavalModel[] = [
     name: 'HAVAL H5',
     description:
       'Большой рамный внедорожник линейки HAVAL PRO: бензиновый турбомотор 2.0 (200 л.с., 380 Нм), 8-ступенчатый автомат, подключаемый полный привод Part-time, понижающая передача и блокировка заднего дифференциала.',
-    image: '/images/models/h5.jpg',
+    image: '/images/models/h5.webp',
     officialImages: ['https://img.perxis.ru/unsafe/prxs/originals/cuj0ns0beucc7390q7dg/original'],
     family: 'PRO',
     bodyType: 'Внедорожник',
@@ -249,7 +249,7 @@ export const MODELS: HavalModel[] = [
     name: 'HAVAL H7',
     description:
       'Среднеразмерный кроссовер линейки HAVAL PRO: турбомотор 2.0 (231 л.с., 380 Нм), роботизированная коробка, подключаемый полный привод и полный пакет ассистентов водителя уже в базовой комплектации.',
-    image: '/images/models/h7.jpg',
+    image: '/images/models/h7.webp',
     officialImages: ['https://img.perxis.ru/unsafe/prxs/originals/d6tuu88beucc73cedb80/original'],
     family: 'PRO',
     bodyType: 'Кроссовер',

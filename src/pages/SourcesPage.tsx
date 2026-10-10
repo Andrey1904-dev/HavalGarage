@@ -21,9 +21,13 @@ import {
   MODELS,
   OFFICIAL_PRICE_COUNT,
   PRICE_HISTORY,
+  PRICE_STALE_AFTER_DAYS,
   PRICES,
   UNVERIFIED_PRICES,
+  catalogAgeDays,
+  isCatalogStale,
   lastSuccessfulCheck,
+  todayIso,
   trimsForModel,
 } from '../data/haval'
 import { fmtDate, fmtMoney } from '../utils/format'
@@ -52,6 +56,9 @@ export default function SourcesPage() {
   }))
   const totalTrims = priceCounts.reduce((s, p) => s + p.trims, 0)
   const unverified = UNVERIFIED_PRICES
+  const realToday = todayIso()
+  const catalogStale = isCatalogStale(realToday)
+  const catalogAge = catalogAgeDays(CATALOG_FIXED_AT, realToday)
 
   return (
     <div className="animate-page-enter flex flex-col gap-4">
@@ -77,6 +84,14 @@ export default function SourcesPage() {
           hint="нет даты действия или источник — тизер"
         />
       </div>
+
+      {catalogStale && (
+        <Callout tone="warn" title={`Снимку каталога ${catalogAge ?? '—'} дн. — требуется повторная проверка`}>
+          Прошло больше {PRICE_STALE_AFTER_DAYS} дн. с фиксации данных ({fmtDate(CATALOG_FIXED_AT)}). Цены, комплектации и
+          программы могли измениться: сверяйтесь с официальным прайс-листом перед решением. Реального времени здесь нет и
+          быть не может — каталог обновляется скриптами и ручной проверкой.
+        </Callout>
+      )}
 
       {/* ---------------- Первоисточники ---------------- */}
       <SectionTitle tip="Каждая цена в приложении связана со ссылкой на PDF первоисточника и датой проверки. Откройте документ, чтобы сверить значение.">

@@ -42,6 +42,30 @@ export function priceFreshness(
   return { status: 'verified', ageDays: age }
 }
 
+/**
+ * Возраст снимка каталога в днях относительно ПЕРЕДАНОЙ даты «сегодня».
+ *
+ * priceFreshness внутри статусов цен считает возраст относительно даты снимка
+ * (детерминированно, для тестов), поэтому сам по себе он не может «застареть»:
+ * снимок всегда свеж относительно себя. Эта функция принимает реальную текущую
+ * дату на границе UI и честно показывает, сколько дней прошло с фиксации.
+ */
+export function catalogAgeDays(fromIso: string = CATALOG_FIXED_AT, todayIso: string = CATALOG_FIXED_AT): number | null {
+  const age = daysBetween(fromIso, todayIso)
+  return Number.isFinite(age) ? age : null
+}
+
+/** Снимок каталога старше срока повторной проверки — нужна пометка в UI */
+export function isCatalogStale(todayIso: string, fromIso: string = CATALOG_FIXED_AT): boolean {
+  const age = catalogAgeDays(fromIso, todayIso)
+  return age !== null && age > PRICE_STALE_AFTER_DAYS
+}
+
+/** Реальная текущая дата (ISO, день) — только для границы UI, не для данных */
+export function todayIso(): string {
+  return new Date().toISOString().slice(0, 10)
+}
+
 function statusForTrim(
   trimStatus: 'current' | 'archive',
   validFrom: string | null,

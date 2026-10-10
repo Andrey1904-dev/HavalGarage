@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
+import path from 'node:path'
 import { describe, it } from 'node:test'
 
 import {
@@ -19,6 +21,8 @@ import {
   getTrimTech,
   msrpForTrim,
   offersForTrim,
+  catalogAgeDays,
+  isCatalogStale,
   priceFreshness,
   pricesForTrim,
   trimDetails,
@@ -236,6 +240,16 @@ describe('нормализованные цены (prices.ts)', () => {
     assert.equal(priceFreshness(null).status, 'needs-check')
   })
 
+  it('возраст снимка каталога считается от переданной даты и ловит устаревание', () => {
+    assert.equal(catalogAgeDays(CATALOG_FIXED_AT, CATALOG_FIXED_AT), 0)
+    assert.equal(catalogAgeDays(CATALOG_FIXED_AT, '2026-11-23'), PRICE_STALE_AFTER_DAYS)
+    assert.equal(catalogAgeDays(CATALOG_FIXED_AT, '2026-11-24'), PRICE_STALE_AFTER_DAYS + 1)
+    assert.equal(catalogAgeDays('не-дата', CATALOG_FIXED_AT), null)
+    assert.equal(isCatalogStale(CATALOG_FIXED_AT), false, 'снимок свеж относительно собственной даты')
+    assert.equal(isCatalogStale('2026-11-23'), false, 'ровно срок повторной проверки — ещё не устарел')
+    assert.equal(isCatalogStale('2026-11-24'), true, 'срок превышен — нужна пометка в UI')
+  })
+
   it('пересборка записей цен детерминирована', () => {
     const again = buildPriceRecords(CATALOG_FIXED_AT)
     assert.equal(again.length, PRICES.length)
@@ -335,5 +349,37 @@ describe('история проверок и агрегированные выб
     const kingkong = MODELS.find((m) => m.id === 'poer-kingkong')!
     assert.equal(kingkong.priceListUrl, null)
     assert.equal(kingkong.catalogueUrl, null)
+  })
+})
+
+describe('изображения и источники моделей', () => {
+  const ALLOWED_HOSTS = ['haval.ru', 'cdn.perxis.ru', 'img.perxis.ru', 'agat-ekb-haval.ru', 'xn--80acgfbsl1azdqr.xn--80aai5d.xn--p1ai']
+  const hostOf = (u: string): string => {
+    try {
+      return new URL(u).hostname.replace(/^www\./, '')
+    } catch {
+      return '<invalid>'
+    }
+  }
+  const allowed = (h: string) => ALLOWED_HOSTS.some((a) => h === a || h.endsWith(`.${a}`))
+
+  it('локальная копия фотографии существует для каждой модели (и это WebP)', () => {
+    for (const model of MODELS) {
+      assert.ok(model.image, `${model.id}: нет локальной копии фото`)
+      assert.match(model.image, /^\/images\/models\/[\w-]+\.webp$/, `${model.id}: локальное фото должно быть WebP в public/images`)
+      const file = path.join(process.cwd(), 'public', model.image.replace(/^\//, ''))
+      assert.ok(existsSync(file), `${model.id}: файл не найден ${model.image}`)
+    }
+  })
+
+  it('официальные фото и источники — только из белого списка хостов', () => {
+    for (const model of MODELS) {
+      for (const img of model.officialImages) {
+        assert.ok(allowed(hostOf(img)), `${model.id}: фото вне белого списка — ${img}`)
+      }
+      for (const u of [model.sourceUrl, model.officialUrl, model.catalogueUrl, model.priceListUrl]) {
+        if (u) assert.ok(allowed(hostOf(u)), `${model.id}: источник вне белого списка — ${u}`)
+      }
+    }
   })
 })

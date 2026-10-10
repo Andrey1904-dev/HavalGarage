@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
+import ErrorBoundary from './components/ErrorBoundary'
 import { Spinner } from './components/ui'
 import { CalculatorProvider } from './context/CalculatorContext'
 import { SavedProvider } from './context/SavedContext'
@@ -45,27 +46,29 @@ export default function App() {
       <SavedProvider>
         <CompareProvider>
           <CalculatorProvider>
-            <Suspense fallback={<RouteFallback />}>
-              <Routes>
-                <Route element={<Layout />}>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/catalog" element={<CatalogPage />} />
-                  <Route path="/models/:slug" element={<ModelPage />} />
-                  <Route path="/compare" element={<ComparePage />} />
-                  <Route path="/calculator" element={<CalculatorPage />} />
-                  <Route path="/budget" element={<BudgetPage />} />
-                  <Route path="/ownership" element={<OwnershipPage />} />
-                  <Route path="/plan" element={<PlanPage />} />
-                  <Route path="/favorites" element={<FavoritesPage />} />
-                  <Route path="/programs" element={<ProgramsPage />} />
-                  <Route path="/stock" element={<StockPage />} />
-                  <Route path="/sources" element={<SourcesPage />} />
-                  <Route path="*" element={<NotFoundPage />} />
-                </Route>
-                {/* Старый маршрут каталога как главной — без потери ссылок */}
-                <Route path="/index.html" element={<Navigate to="/" replace />} />
-              </Routes>
-            </Suspense>
+            <ErrorBoundary>
+              <Suspense fallback={<RouteFallback />}>
+                <Routes>
+                  <Route element={<Layout />}>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/catalog" element={<CatalogPage />} />
+                    <Route path="/models/:slug" element={<ModelPage />} />
+                    <Route path="/compare" element={<ComparePage />} />
+                    <Route path="/calculator" element={<CalculatorPage />} />
+                    <Route path="/budget" element={<BudgetPage />} />
+                    <Route path="/ownership" element={<OwnershipPage />} />
+                    <Route path="/plan" element={<PlanPage />} />
+                    <Route path="/favorites" element={<FavoritesPage />} />
+                    <Route path="/programs" element={<ProgramsPage />} />
+                    <Route path="/stock" element={<StockPage />} />
+                    <Route path="/sources" element={<SourcesPage />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                  </Route>
+                  {/* Старый маршрут каталога как главной — без потери ссылок */}
+                  <Route path="/index.html" element={<Navigate to="/" replace />} />
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
           </CalculatorProvider>
         </CompareProvider>
       </SavedProvider>

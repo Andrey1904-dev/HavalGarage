@@ -21,6 +21,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Guard: секретные ключи не попадают в репозиторий
+        # В .env допустимы только публичные publishable-значения Supabase
+        # (доступ к данным ограничен RLS, см. supabase/schema.sql).
+        # Секретный (service_role) ключ в отслеживаемых файлах недопустим.
+        run: |
+          if git grep -nIE 'sb_secret_|service_role' -- . ':(exclude).github/workflows/ci.yml'; then
+            echo "::error::Найден секретный ключ Supabase в отслеживаемых файлах. Используйте publishable-ключ."
+            exit 1
+          fi
+          echo "Секретных ключей в отслеживаемых файлах нет (publishable-ключ Supabase — публичный по замыслу)."
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
