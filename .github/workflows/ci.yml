@@ -21,7 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Guard: секретные ключи не попадают в репозиторий
+      - name: 'Guard: секретные ключи не попадают в репозиторий'
         # В .env допустимы только публичные publishable-значения Supabase
         # (доступ к данным ограничен RLS, см. supabase/schema.sql).
         # Секретный (service_role) ключ в отслеживаемых файлах недопустим.
