@@ -1,12 +1,16 @@
 import type { ReportOptions } from './export'
+import { appBase } from './seo'
 
 /**
  * Экспорт расчёта в настоящий PDF-файл.
  *
  * Библиотека pdfmake подключается лениво: в основной бандл она не попадает,
  * а загружается отдельным chunk-ом только когда пользователь нажал «PDF».
- * Шрифт Roboto (в сборке pdfmake) содержит кириллицу, поэтому документ
- * содержит читаемый русский текст, а не «кракозябры».
+ * Шрифт Roboto содержит кириллицу, поэтому документ содержит читаемый
+ * русский текст, а не «кракозябры». Шрифты лежат статическими файлами в
+ * public/fonts/pdfmake и скачиваются самой pdfmake при генерации: это
+ * избавляет сборку от base64-блока vfs_fonts (~850 KiB JS) и позволяет
+ * браузеру кэшировать TTF отдельно.
  *
  * Документ формируется полностью в браузере: данные расчёта никуда
  * не отправляются. В PDF не попадает ничего, чего нет в расчёте:
@@ -26,30 +30,28 @@ import type { PdfMakeType } from 'pdfmake/build/pdfmake.min.js'
 
 let pdfMakePromise: Promise<PdfMakeType> | null = null
 
-/** Ленивая загрузка pdfmake и шрифтов с кириллицей */
+/** Абсолютный URL статического файла шрифта (учитывает base-путь GitHub Pages) */
+function fontUrl(file: string): string {
+  // appBase() уже нормализует base-путь (для GitHub Pages это '/HavalGarage')
+  return new URL(`${appBase()}/fonts/pdfmake/${file}`, window.location.origin).href
+}
+
+/**
+ * Ленивая загрузка pdfmake. Шрифты регистрируются URL-ами: 0.3.x сама
+ * скачает их через fetch и положит в собственную виртуальную ФС
+ * (присваивание pdfMake.vfs в этой версии игнорируется — регистрация
+ * идёт через addVirtualFileSystem, а для файлов достаточно широток).
+ */
 async function loadPdfMake() {
   if (pdfMakePromise === null) {
     pdfMakePromise = (async () => {
-      const [{ default: pdfMake }, vfsModule] = await Promise.all([
-        import('pdfmake/build/pdfmake.min.js'),
-        import('pdfmake/build/vfs_fonts.js'),
-      ])
-      // pdfmake 0.3.x регистрирует виртуальную ФС через addVirtualFileSystem
-      // (присваивание pdfMake.vfs в этой версии игнорируется);
-      // модуль может отдавать шрифты как в vfsFonts, так и в vfsFonts.pdfMake.vfs
-      const vfsFonts = (vfsModule as unknown as { default?: unknown }).default ?? vfsModule
-      const vfs =
-        (vfsFonts as { pdfMake?: { vfs?: Record<string, string> } }).pdfMake?.vfs ??
-        (vfsFonts as unknown as Record<string, string>)
-      const withVfs = pdfMake as unknown as { addVirtualFileSystem?: (v: Record<string, string>) => void; vfs?: Record<string, string> }
-      if (typeof withVfs.addVirtualFileSystem === 'function') withVfs.addVirtualFileSystem(vfs)
-      else withVfs.vfs = vfs
+      const { default: pdfMake } = await import('pdfmake/build/pdfmake.min.js')
       pdfMake.fonts = {
         [FONT]: {
-          normal: 'Roboto-Regular.ttf',
-          bold: 'Roboto-Medium.ttf',
-          italics: 'Roboto-Italic.ttf',
-          bolditalics: 'Roboto-MediumItalic.ttf',
+          normal: fontUrl('Roboto-Regular.ttf'),
+          bold: fontUrl('Roboto-Medium.ttf'),
+          italics: fontUrl('Roboto-Italic.ttf'),
+          bolditalics: fontUrl('Roboto-MediumItalic.ttf'),
         },
       }
       return pdfMake
