@@ -87,14 +87,14 @@ export default function AdvisorPage() {
 
   return (
     <div className="animate-page-enter flex flex-col gap-4">
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">
+      <header className="flex flex-col gap-1.5 border-b border-[#242930] pb-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">
           Детерминированный помощник · без языковой модели
         </p>
-        <h1 className="font-display-num text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4] sm:text-[32px]">
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Помощник по выбору
         </h1>
-        <p className="max-w-3xl text-[12.5px] leading-relaxed text-[#A9AFB7]">
+        <p className="max-w-3xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
           Отвечает только подтверждёнными данными каталога: цены и комплектации — из официальных прайс-листов
           haval.ru, все денежные расчёты выполняет тот же код, что и калькуляторы. Никаких догадок: если данных
           нет, помощник так и скажет. Это не языковая модель и не имитация «умного» ответа.
@@ -128,9 +128,9 @@ export default function AdvisorPage() {
           />
         </div>
         {model && minPrice !== null && (
-          <p className="text-[11.5px] text-[#A9AFB7]">
+          <p className="text-[11.5px] text-[#A2A7AF]">
             {model.name}: минимальная подтверждённая цена {fmtMoney(minPrice)} → взнос {downPct}% ={' '}
-            <strong className="text-[#F3F4F4]">{fmtMoney(request.downPaymentRub)}</strong>
+            <strong className="text-[#F4F5F6]">{fmtMoney(request.downPaymentRub)}</strong>
           </p>
         )}
       </Card>
@@ -138,13 +138,13 @@ export default function AdvisorPage() {
       {/* ---------------- Вопрос ---------------- */}
       <Card className="flex flex-col gap-3 p-3.5">
         <label className="block">
-          <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A9AFB7]">Ваш вопрос</span>
+          <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A2A7AF]">Ваш вопрос</span>
           <textarea
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             rows={2}
             placeholder="Например: подберите автомобиль до 35 000 ₽ в месяц"
-            className="w-full rounded-[10px] border border-[#363B43] bg-[#23272D] px-3.5 py-2.5 text-[14px] text-[#F3F4F4] outline-none transition-colors placeholder:text-[#6B7280] focus:border-[#E4002B]"
+            className="w-full rounded-2xl border border-[#2B3037] bg-[#20242A] px-3.5 py-2.5 text-[14px] text-[#F4F5F6] outline-none transition-colors placeholder:text-[#6B7280] focus:border-[#FF334B]"
           />
         </label>
         <div className="flex flex-wrap items-center gap-2">
@@ -160,7 +160,7 @@ export default function AdvisorPage() {
                   setQuestion(e)
                   submit(e)
                 }}
-                className="min-h-[32px] rounded-[8px] border border-[#363B43] bg-[#23272D] px-2.5 text-[11px] text-[#A9AFB7] transition-colors hover:text-[#F3F4F4]"
+                className="min-h-[32px] rounded-lg border border-[#2B3037] bg-[#20242A] px-2.5 text-[11px] text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]"
               >
                 {e}
               </button>
@@ -178,20 +178,20 @@ export default function AdvisorPage() {
 
           <Card className="flex flex-col gap-2.5 p-3.5">
             {answer.paragraphs.map((p, i) => (
-              <p key={i} className="text-[12.5px] leading-relaxed text-[#A9AFB7]">
+              <p key={i} className="text-[12.5px] leading-relaxed text-[#A2A7AF]">
                 {p}
               </p>
             ))}
 
             {answer.rows.length > 0 && (
-              <div className="mt-1 overflow-x-auto rounded-[10px] border border-[#363B43]/70">
+              <div className="mt-1 overflow-x-auto rounded-2xl border border-[#2B3037]/70">
                 <table className="w-full min-w-[520px] border-collapse text-left text-[11.5px]">
                   <tbody>
                     {answer.rows.map((row, i) => (
-                      <tr key={`${row.label}-${i}`} className="border-b border-[#363B43]/40 last:border-0">
+                      <tr key={`${row.label}-${i}`} className="border-b border-[#2B3037]/40 last:border-0">
                         <TableCell>{row.label}</TableCell>
                         <TableCell strong>
-                          <span className={row.accent ? 'text-[#E4002B]' : undefined}>{row.value}</span>
+                          <span className={row.accent ? 'text-[#FF334B]' : undefined}>{row.value}</span>
                         </TableCell>
                       </tr>
                     ))}
@@ -228,8 +228,8 @@ export default function AdvisorPage() {
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
             {modelFacts(model).map((f) => (
               <Card key={f.label} className="p-3">
-                <p className="text-[10px] uppercase tracking-wider text-[#A9AFB7]">{f.label}</p>
-                <p className="font-display-num mt-0.5 text-[16px] font-bold text-[#F3F4F4]">{f.value}</p>
+                <p className="text-[10px] uppercase tracking-wider text-[#A2A7AF]">{f.label}</p>
+                <p className="font-display-num mt-0.5 text-[16px] font-bold text-[#F4F5F6]">{f.value}</p>
               </Card>
             ))}
           </div>
@@ -240,7 +240,7 @@ export default function AdvisorPage() {
         Подключение внешней языковой модели потребовало бы ключа API, а хранить его в статическом приложении на
         GitHub Pages нельзя — ключ попадёт в открытый бандл. Вместо этого помощник детерминирован: правила плюс
         подтверждённые данные каталога. Вариант подключения модели через собственный backend описан в{' '}
-        <span className="font-bold text-[#F3F4F4]">docs/ARCHITECTURE.md</span>.
+        <span className="font-bold text-[#F4F5F6]">docs/ARCHITECTURE.md</span>.
         <div className="mt-2 flex flex-wrap gap-1.5">
           <Tag>без API-ключей</Tag>
           <Tag>без генерации цен</Tag>

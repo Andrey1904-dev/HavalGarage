@@ -142,10 +142,10 @@ export default function ModelPage() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <h1 className="font-display-num text-[26px] font-bold uppercase leading-tight tracking-wide text-[#F3F4F4] sm:text-[34px]">
-            {model.name}
+          <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-[#F4F5F6] sm:text-[38px]">
+            HAVAL <span className="text-[#FF334B]">{model.name}</span>
           </h1>
-          <p className="text-[13px] leading-relaxed text-[#A9AFB7]">{model.description}</p>
+          <p className="text-[13px] leading-relaxed text-[#A2A7AF]">{model.description}</p>
 
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
             <StatTile label="Цена от" value={priceFrom ? fmtMoney(priceFrom) : 'нет данных'} tone="accent" />
@@ -161,8 +161,8 @@ export default function ModelPage() {
           {model.highlights && model.highlights.length > 0 && (
             <ul className="flex flex-col gap-1.5">
               {model.highlights.map((h) => (
-                <li key={h} className="flex items-start gap-2 text-[12px] leading-relaxed text-[#A9AFB7]">
-                  <CheckIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#16B374]" />
+                <li key={h} className="flex items-start gap-2 text-[12px] leading-relaxed text-[#A2A7AF]">
+                  <CheckIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#10B981]" />
                   {h}
                 </li>
               ))}
@@ -192,8 +192,8 @@ export default function ModelPage() {
             </Link>
           </div>
 
-          <div className="rounded-[10px] border border-[#363B43] bg-[#0E1013]/70 p-3">
-            <p className="text-[11px] leading-relaxed text-[#A9AFB7]">
+          <div className="rounded-2xl border border-[#2B3037] bg-[#0B0C0E]/70 p-3">
+            <p className="text-[11px] leading-relaxed text-[#A2A7AF]">
               Официальные источники:{' '}
               {model.officialUrl && (
                 <SourceLink href={model.officialUrl} label="страница модели на haval.ru" model={model.id} />
@@ -206,7 +206,7 @@ export default function ModelPage() {
               )}
               {model.sourceUrl && <SourceLink href={model.sourceUrl} label="страница дилера АГАТ" model={model.id} />}
               {!model.priceListUrl && !model.catalogueUrl && (
-                <span className="text-[#F5A623]">
+                <span className="text-[#F59E0B]">
                   официальные документы модели на haval.ru не опубликованы — данные требуют подтверждения
                 </span>
               )}
@@ -225,7 +225,7 @@ export default function ModelPage() {
             {offers.map((o) => (
               <Card key={o.id} className="flex flex-col gap-2">
                 <div className="flex items-start justify-between gap-2">
-                  <p className="text-[13px] font-bold text-[#F3F4F4]">{o.name}</p>
+                  <p className="text-[13px] font-bold text-[#F4F5F6]">{o.name}</p>
                   <Tag tone="accent">
                     {o.discountPercent
                       ? `до ${o.discountPercent}%`
@@ -234,17 +234,17 @@ export default function ModelPage() {
                         : 'выгода'}
                   </Tag>
                 </div>
-                <p className="text-[12px] leading-relaxed text-[#A9AFB7]">{o.conditions}</p>
-                <div className="rounded-[8px] border border-[#363B43] bg-[#0E1013]/70 px-3 py-2">
-                  <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A9AFB7]">Условия получения</p>
-                  <p className="mt-1 text-[11.5px] leading-relaxed text-[#A9AFB7]">{o.eligibilityConditions}</p>
+                <p className="text-[12px] leading-relaxed text-[#A2A7AF]">{o.conditions}</p>
+                <div className="rounded-lg border border-[#2B3037] bg-[#0B0C0E]/70 px-3 py-2">
+                  <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">Условия получения</p>
+                  <p className="mt-1 text-[11.5px] leading-relaxed text-[#A2A7AF]">{o.eligibilityConditions}</p>
                 </div>
-                <p className="text-[10.5px] text-[#A9AFB7]">
+                <p className="text-[10.5px] text-[#A2A7AF]">
                   Источник:{' '}
                   <SourceLink href={o.sourceUrl} label={sourceLabel(o.sourceUrl)} model={model.id} />
                   {o.validFrom ? ` · действует с ${fmtDate(o.validFrom)}` : ' · дата начала действия не опубликована'}
                   {o.validUntil ? ` · до ${fmtDate(o.validUntil)}` : ' · дата окончания не опубликована'}
-                  {o.status !== 'active' && <span className="text-[#F5A623]"> · актуальность подтвердите у дилера</span>}
+                  {o.status !== 'active' && <span className="text-[#F59E0B]"> · актуальность подтвердите у дилера</span>}
                 </p>
               </Card>
             ))}
@@ -260,7 +260,7 @@ export default function ModelPage() {
             <button
               type="button"
               onClick={() => update({ showArchiveTrims: !state.showArchiveTrims })}
-              className="min-h-[36px] rounded-[8px] border border-[#363B43] bg-[#1A1D22] px-3 py-1.5 text-[11.5px] font-semibold text-[#A9AFB7] transition-colors hover:text-[#F3F4F4]"
+              className="min-h-[36px] rounded-lg border border-[#2B3037] bg-[#181B1F] px-3 py-1.5 text-[11.5px] font-semibold text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]"
             >
               {state.showArchiveTrims ? 'Скрыть архивные цены' : `Показать архивные цены (${trimsArchive.length})`}
             </button>
@@ -291,8 +291,8 @@ export default function ModelPage() {
               <Card key={t.id} className={`flex flex-col gap-2.5 ${t.status === 'archive' ? 'opacity-80' : ''}`}>
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-[14px] font-bold text-[#F3F4F4]">{t.name}</p>
-                    <p className="mt-0.5 text-[11px] text-[#A9AFB7]">
+                    <p className="text-[14px] font-bold text-[#F4F5F6]">{t.name}</p>
+                    <p className="mt-0.5 text-[11px] text-[#A2A7AF]">
                       {[
                         t.engine !== 'Нет данных' ? t.engine : null,
                         t.horsepower ? `${t.horsepower} л.с.` : null,
@@ -314,16 +314,16 @@ export default function ModelPage() {
 
                 <div className="flex flex-wrap items-end justify-between gap-2">
                   {t.basePrice !== null ? (
-                    <p className="font-display-num text-[22px] font-bold text-[#F3F4F4]">{fmtMoney(t.basePrice)}</p>
+                    <p className="font-mono text-[22px] font-extrabold tabular-nums text-[#F4F5F6]">{fmtMoney(t.basePrice)}</p>
                   ) : (
-                    <p className="text-[13px] font-semibold text-[#A9AFB7]">Нет данных о цене</p>
+                    <p className="text-[13px] font-semibold text-[#A2A7AF]">Нет данных о цене</p>
                   )}
                   {d && d.prices.length > 1 && (
                     <div className="flex flex-col items-end gap-0.5">
                       {d.prices
                         .filter((p) => p.priceType !== 'msrp' && p.status !== 'archived')
                         .map((p) => (
-                          <p key={p.id} className="text-[11px] font-semibold text-[#16B374]">
+                          <p key={p.id} className="text-[11px] font-semibold text-[#10B981]">
                             {priceTypeLabel(p.priceType)}: {fmtMoney(p.amount)}
                           </p>
                         ))}
@@ -332,8 +332,8 @@ export default function ModelPage() {
                 </div>
 
                 {d?.consumption?.combined != null && (
-                  <p className="flex items-center gap-1.5 text-[11px] text-[#A9AFB7]">
-                    <FuelIcon className="h-3.5 w-3.5 text-[#E4002B]" />
+                  <p className="flex items-center gap-1.5 text-[11px] text-[#A2A7AF]">
+                    <FuelIcon className="h-3.5 w-3.5 text-[#FF334B]" />
                     Расход (смешанный): {fmtNumber(d.consumption.combined)} л/100 км
                     {d.consumption.city != null && ` · город ${fmtNumber(d.consumption.city)} л`}
                     {d.consumption.highway != null && ` · трасса ${fmtNumber(d.consumption.highway)} л`}
@@ -343,13 +343,13 @@ export default function ModelPage() {
                 {t.equipment.length > 0 && (
                   <ul className="flex flex-col gap-1">
                     {t.equipment.slice(0, 6).map((e) => (
-                      <li key={e} className="flex items-start gap-1.5 text-[11.5px] text-[#A9AFB7]">
-                        <CheckIcon className="mt-0.5 h-3 w-3 shrink-0 text-[#16B374]" />
+                      <li key={e} className="flex items-start gap-1.5 text-[11.5px] text-[#A2A7AF]">
+                        <CheckIcon className="mt-0.5 h-3 w-3 shrink-0 text-[#10B981]" />
                         {e}
                       </li>
                     ))}
                     {t.equipment.length > 6 && (
-                      <li className="text-[11px] text-[#A9AFB7]">
+                      <li className="text-[11px] text-[#A2A7AF]">
                         и ещё {t.equipment.length - 6} позиций — в сравнении комплектаций
                       </li>
                     )}
@@ -409,7 +409,7 @@ export default function ModelPage() {
               {specs.engines.map((e) => (
                 <Card key={e.code} className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-[13px] font-bold text-[#F3F4F4]">Двигатель {e.code}</p>
+                    <p className="text-[13px] font-bold text-[#F4F5F6]">Двигатель {e.code}</p>
                     <Tag>{e.fuel}</Tag>
                   </div>
                   <SpecRow label="Рабочий объём" value={e.displacementCc ? `${fmtNumber(e.displacementCc)} см³` : null} />
@@ -448,11 +448,11 @@ export default function ModelPage() {
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {equipment.standard.map((group) => (
               <Card key={group.group} className="flex flex-col gap-2">
-                <p className="text-[12px] font-bold uppercase tracking-wider text-[#E4002B]">{group.group}</p>
+                <p className="text-[12px] font-bold uppercase tracking-wider text-[#FF334B]">{group.group}</p>
                 <ul className="flex flex-col gap-1">
                   {group.items.map((item) => (
-                    <li key={item} className="flex items-start gap-1.5 text-[11.5px] leading-relaxed text-[#A9AFB7]">
-                      <CheckIcon className="mt-0.5 h-3 w-3 shrink-0 text-[#16B374]" />
+                    <li key={item} className="flex items-start gap-1.5 text-[11.5px] leading-relaxed text-[#A2A7AF]">
+                      <CheckIcon className="mt-0.5 h-3 w-3 shrink-0 text-[#10B981]" />
                       {item}
                     </li>
                   ))}
@@ -505,7 +505,7 @@ export default function ModelPage() {
           </Link>
         </div>
 
-        <p className="text-[11px] leading-relaxed text-[#A9AFB7]">
+        <p className="text-[11px] leading-relaxed text-[#A2A7AF]">
           Стоимость владения считается отдельно от кредитных платежей: эксплуатационные расходы и переплата по кредиту
           не смешиваются в один показатель. Страховка, включённая в тело кредита, не учитывается дважды.
         </p>
@@ -523,11 +523,11 @@ export default function ModelPage() {
                 key={p.id}
                 to="/programs"
                 onClick={() => track('program_view', { model: model.id, program: p.id })}
-                className="flex min-h-[40px] items-center gap-2 rounded-[8px] border border-[#363B43] bg-[#1A1D22] px-3 py-2 text-[12px] font-semibold text-[#A9AFB7] transition-colors hover:border-[#E4002B]/60 hover:text-[#F3F4F4]"
+                className="flex min-h-[40px] items-center gap-2 rounded-lg border border-[#2B3037] bg-[#181B1F] px-3 py-2 text-[12px] font-semibold text-[#A2A7AF] transition-colors hover:border-[#FF334B]/60 hover:text-[#F4F5F6]"
               >
-                <PercentIcon className="h-3.5 w-3.5 text-[#E4002B]" />
+                <PercentIcon className="h-3.5 w-3.5 text-[#FF334B]" />
                 {p.name}
-                {p.baseRate !== null && <span className="text-[#F3F4F4]">от {String(p.baseRate).replace('.', ',')}%</span>}
+                {p.baseRate !== null && <span className="text-[#F4F5F6]">от {String(p.baseRate).replace('.', ',')}%</span>}
               </Link>
             ))}
           </div>
@@ -551,7 +551,7 @@ function SourceLink({ href, label, model }: { href: string; label: string; model
     <>
       {' '}
       <a
-        className="inline-flex items-center gap-1 text-[#F3F4F4] underline decoration-[#363B43] underline-offset-2 hover:text-[#E4002B]"
+        className="inline-flex items-center gap-1 text-[#F4F5F6] underline decoration-[#2B3037] underline-offset-2 hover:text-[#FF334B]"
         href={href}
         target="_blank"
         rel="noreferrer"
@@ -593,9 +593,9 @@ function priceTypeLabel(type: string): string {
 
 function SpecRow({ label, value }: { label: string; value: string | null }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-[#363B43]/60 pb-1 last:border-0">
-      <span className="text-[11.5px] text-[#A9AFB7]">{label}</span>
-      <span className={`text-right text-[12px] font-semibold ${value ? 'text-[#F3F4F4]' : 'text-[#A9AFB7]'}`}>
+    <div className="flex items-baseline justify-between gap-3 border-b border-[#2B3037]/60 pb-1 last:border-0">
+      <span className="text-[11.5px] text-[#A2A7AF]">{label}</span>
+      <span className={`text-right text-[12px] font-semibold ${value ? 'text-[#F4F5F6]' : 'text-[#A2A7AF]'}`}>
         {value ?? 'нет данных'}
       </span>
     </div>
@@ -607,7 +607,7 @@ function SpecsCard({ specs }: { specs: NonNullable<ReturnType<typeof getOfficial
   return (
     <Card className="flex flex-col gap-1.5">
       <div className="mb-1 flex items-center justify-between gap-2">
-        <p className="text-[12px] font-bold uppercase tracking-wider text-[#E4002B]">Габариты и масса</p>
+        <p className="text-[12px] font-bold uppercase tracking-wider text-[#FF334B]">Габариты и масса</p>
         <Tag tone={specs.verifiedAt ? 'success' : 'warn'}>проверено {fmtDate(specs.verifiedAt)}</Tag>
       </div>
       <SpecRow
@@ -637,13 +637,13 @@ function SpecsCard({ specs }: { specs: NonNullable<ReturnType<typeof getOfficial
       <SpecRow label="Цвета кузова" value={specs.colorsExterior.length > 0 ? specs.colorsExterior.join(', ') : null} />
       <SpecRow label="Цвет салона" value={specs.colorsInterior.length > 0 ? specs.colorsInterior.join(', ') : null} />
       {specs.offroad.length > 0 && <SpecRow label="Внедорожные функции" value={specs.offroad.join('; ')} />}
-      <p className="mt-1 text-[10.5px] leading-relaxed text-[#A9AFB7]">
+      <p className="mt-1 text-[10.5px] leading-relaxed text-[#A2A7AF]">
         Источник:{' '}
         <a
           href={specs.sourceUrl}
           target="_blank"
           rel="noreferrer"
-          className="underline decoration-[#363B43] underline-offset-2 hover:text-[#F3F4F4]"
+          className="underline decoration-[#2B3037] underline-offset-2 hover:text-[#F4F5F6]"
         >
           {specs.sourceLabel}
         </a>
@@ -715,19 +715,19 @@ function TrimMatrix({ trimIds }: { trimIds: string[] }) {
         <button
           type="button"
           onClick={() => setOnlyDiff((v) => !v)}
-          className="min-h-[36px] rounded-[8px] border border-[#363B43] bg-[#1A1D22] px-3 text-[11.5px] font-bold text-[#A9AFB7] transition-colors hover:text-[#F3F4F4]"
+          className="min-h-[36px] rounded-lg border border-[#2B3037] bg-[#181B1F] px-3 text-[11.5px] font-bold text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]"
           aria-pressed={onlyDiff}
         >
           {onlyDiff ? 'Показать все позиции' : 'Показать только различия'}
         </button>
-        <p className="text-[11px] text-[#A9AFB7]">● есть · ○ опция · × нет · ? не подтверждено</p>
+        <p className="text-[11px] text-[#A2A7AF]">● есть · ○ опция · × нет · ? не подтверждено</p>
       </div>
 
       <DataTable head={['Параметр', ...trims.map((d) => `${d.model.name} ${d.trim.name}`)]}>
         {shown.map((row) => (
           <tr key={`${row.group}-${row.feature}`}>
             <TableCell sticky>
-              <span className="block text-[10px] uppercase tracking-wider text-[#A9AFB7]">{row.group}</span>
+              <span className="block text-[10px] uppercase tracking-wider text-[#A2A7AF]">{row.group}</span>
               {row.feature}
             </TableCell>
             {row.values.map((v, i) => (
@@ -747,7 +747,7 @@ function TrimMatrix({ trimIds }: { trimIds: string[] }) {
             return (
               <TableCell key={d.trim.id} className="text-center">
                 {diff !== null ? (
-                  <span className={diff >= 0 ? 'text-[#E4002B]' : 'text-[#16B374]'}>
+                  <span className={diff >= 0 ? 'text-[#FF334B]' : 'text-[#10B981]'}>
                     {diff >= 0 ? '+' : '−'}
                     {fmtMoney(Math.abs(diff))}
                   </span>
@@ -764,8 +764,8 @@ function TrimMatrix({ trimIds }: { trimIds: string[] }) {
 }
 
 function AvailabilityMark({ value }: { value: 'standard' | 'optional' | 'unavailable' | 'unknown' }) {
-  if (value === 'standard') return <CheckIcon className="mx-auto h-4 w-4 text-[#16B374]" aria-label="есть" />
-  if (value === 'optional') return <span className="font-bold text-[#F5A623]" aria-label="доступно опционально">○</span>
-  if (value === 'unavailable') return <CloseIcon className="mx-auto h-4 w-4 text-[#A9AFB7]" aria-label="нет" />
-  return <span className="text-[#A9AFB7]" aria-label="не подтверждено официальными данными">?</span>
+  if (value === 'standard') return <CheckIcon className="mx-auto h-4 w-4 text-[#10B981]" aria-label="есть" />
+  if (value === 'optional') return <span className="font-bold text-[#F59E0B]" aria-label="доступно опционально">○</span>
+  if (value === 'unavailable') return <CloseIcon className="mx-auto h-4 w-4 text-[#A2A7AF]" aria-label="нет" />
+  return <span className="text-[#A2A7AF]" aria-label="не подтверждено официальными данными">?</span>
 }

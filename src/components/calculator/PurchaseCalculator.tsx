@@ -111,7 +111,7 @@ export default function PurchaseCalculator() {
       <div className="flex flex-col gap-4">
         <Card className="flex flex-col gap-3.5">
           <div className="flex items-center gap-2">
-            <span className="h-4 w-1 rounded-full bg-[#E4002B]" aria-hidden="true" />
+            <span className="h-4 w-1 rounded-full bg-[#FF334B]" aria-hidden="true" />
             <h3 className="font-display-num text-[16px] font-bold uppercase tracking-wide">Автомобиль</h3>
           </div>
 
@@ -140,29 +140,29 @@ export default function PurchaseCalculator() {
           </div>
 
           {trim ? (
-            <div className="rounded-[10px] border border-[#363B43] bg-[#0E1013]/80 p-3.5">
+            <div className="rounded-2xl border border-[#2B3037] bg-[#0B0C0E]/80 p-3.5">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-[#A9AFB7]">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[#A2A7AF]">
                   Стоимость автомобиля
                 </p>
-                <p className="font-display-num text-[24px] font-bold leading-none text-[#F3F4F4]">
+                <p className="font-display-num text-[24px] font-bold leading-none text-[#F4F5F6]">
                   {trim.basePrice !== null ? fmtMoney(trim.basePrice) : 'Нет данных'}
                 </p>
               </div>
-              <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#A9AFB7]">
+              <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#A2A7AF]">
                 <span>
                   {[trim.engine !== 'Нет данных' ? trim.engine : null, trim.horsepower ? `${trim.horsepower} л.с.` : null, trim.transmission !== 'Нет данных' ? trim.transmission : null, trim.drivetrain !== 'Нет данных' ? trim.drivetrain : null]
                     .filter(Boolean)
                     .join(' · ') || 'Характеристики не опубликованы'}
                 </span>
               </div>
-              {trim.note && <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A9AFB7]">{trim.note}</p>}
+              {trim.note && <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A2A7AF]">{trim.note}</p>}
               <div className="mt-2">
                 <PriceMeta trim={trim} />
               </div>
             </div>
           ) : (
-            <p className="rounded-[10px] border border-[#F5A623]/40 bg-[#F5A623]/10 px-3.5 py-2.5 text-[12px] text-[#F5A623]">
+            <p className="rounded-xl border border-[#F59E0B]/40 bg-[#F59E0B]/10 px-3.5 py-2.5 text-[12px] text-[#F59E0B]">
               По выбранной модели нет подтверждённых цен — расчёт недоступен.
             </p>
           )}
@@ -170,7 +170,7 @@ export default function PurchaseCalculator() {
           {/* Скидки */}
           <div>
             <div className="mb-1.5 flex items-center gap-2">
-              <span className="text-[12.5px] font-semibold text-[#A9AFB7]">Скидка / спецпредложение</span>
+              <span className="text-[12.5px] font-semibold text-[#A2A7AF]">Скидка / спецпредложение</span>
               <InfoTip title="Скидки">
                 Применяются только подтверждённые предложения дилера. Процентные скидки (госпрограмма)
                 считаются от цены комплектации. Можно задать свою скидку вручную — например, согласованную в салоне.
@@ -197,7 +197,7 @@ export default function PurchaseCalculator() {
               />
             )}
             {state.offerId !== 'none' && state.offerId !== 'custom' && (
-              <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A9AFB7]">
+              <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A2A7AF]">
                 {offers.find((o) => o.id === state.offerId)?.conditions}
               </p>
             )}
@@ -206,7 +206,7 @@ export default function PurchaseCalculator() {
           {/* Официальная кредитная программа */}
           <div>
             <div className="mb-1.5 flex items-center gap-2">
-              <span className="text-[12.5px] font-semibold text-[#A9AFB7]">Сценарий расчёта ставки</span>
+              <span className="text-[12.5px] font-semibold text-[#A2A7AF]">Сценарий расчёта ставки</span>
               <InfoTip title="Сценарии">
                 Три разделённых сценария: свободный расчёт по вашей ставке; расчёт по опубликованным условиям
                 официальной программы (ставка подставляется из таблицы «взнос × срок»); сценарий с неизвестными
@@ -228,15 +228,15 @@ export default function PurchaseCalculator() {
               ))}
             </Select>
             {program && (
-              <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A9AFB7]">
+              <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A2A7AF]">
                 {program.name}: взнос {program.downPaymentMinPct}–{program.downPaymentMaxPct}%, срок{' '}
                 {program.termMonthsMin}–{program.termMonthsMax} мес
                 {program.requiredProducts.length > 0 ? `, условия: ${program.requiredProducts.join(', ')}` : ''}.{' '}
                 <span
                   className={
                     rateScenario === 'program'
-                      ? 'text-[#16B374]'
-                      : 'text-[#F5A623]'
+                      ? 'text-[#10B981]'
+                      : 'text-[#F59E0B]'
                   }
                 >
                   {rateScenario === 'program'
@@ -259,24 +259,24 @@ export default function PurchaseCalculator() {
 
         <Card className="flex flex-col gap-3.5">
           <div className="flex items-center gap-2">
-            <span className="h-4 w-1 rounded-full bg-[#E4002B]" aria-hidden="true" />
+            <span className="h-4 w-1 rounded-full bg-[#FF334B]" aria-hidden="true" />
             <h3 className="font-display-num text-[16px] font-bold uppercase tracking-wide">Параметры кредита</h3>
           </div>
 
           {/* Первоначальный взнос: ₽ / % */}
           <div>
             <div className="mb-1.5 flex items-center justify-between gap-2">
-              <span className="text-[12.5px] font-semibold text-[#A9AFB7]">Первоначальный взнос</span>
+              <span className="text-[12.5px] font-semibold text-[#A2A7AF]">Первоначальный взнос</span>
               <div className="flex gap-1">
                 {(['rub', 'percent'] as const).map((m) => (
                   <button
                     key={m}
                     type="button"
                     onClick={() => update({ downPaymentMode: m })}
-                    className={`min-h-[32px] rounded-[8px] border px-2.5 text-[11.5px] font-bold transition-colors ${
+                    className={`min-h-[32px] rounded-lg border px-2.5 text-[11.5px] font-bold transition-colors ${
                       state.downPaymentMode === m
-                        ? 'border-[#E4002B] bg-[#E4002B]/12 text-[#F3F4F4]'
-                        : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7]'
+                        ? 'border-[#FF334B] bg-[#FF334B]/12 text-[#F4F5F6]'
+                        : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF]'
                     }`}
                   >
                     {m === 'rub' ? '₽' : '%'}
@@ -312,24 +312,24 @@ export default function PurchaseCalculator() {
               step={1}
               value={Math.round(Math.min(100, Math.max(0, dpPct)))}
               onChange={(e) => update({ downPaymentMode: 'percent', downPaymentPercent: e.target.value })}
-              className="mt-2 w-full accent-[#E4002B]"
+              className="mt-2 w-full accent-[#FF334B]"
               aria-label="Первоначальный взнос, процентов"
             />
           </div>
 
           {/* Срок */}
           <div>
-            <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A9AFB7]">Срок кредита</span>
+            <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A2A7AF]">Срок кредита</span>
             <div className="flex flex-wrap gap-1.5">
               {TERM_OPTIONS.map((t) => (
                 <button
                   key={t}
                   type="button"
                   onClick={() => update({ termMonths: t })}
-                  className={`min-h-[38px] rounded-[8px] border px-3 text-[12px] font-bold transition-colors ${
+                  className={`min-h-[38px] rounded-lg border px-3 text-[12px] font-bold transition-colors ${
                     state.termMonths === t
-                      ? 'border-[#E4002B] bg-[#E4002B]/12 text-[#F3F4F4]'
-                      : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:text-[#F3F4F4]'
+                      ? 'border-[#FF334B] bg-[#FF334B]/12 text-[#F4F5F6]'
+                      : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
                   }`}
                 >
                   {t} {plural(t, ['мес', 'мес', 'мес'])}
@@ -337,7 +337,7 @@ export default function PurchaseCalculator() {
               ))}
             </div>
             {!(TERM_OPTIONS as readonly number[]).includes(state.termMonths) && (
-              <p className="mt-1.5 text-[11px] text-[#F5A623]">
+              <p className="mt-1.5 text-[11px] text-[#F59E0B]">
                 Выбран нестандартный срок: {state.termMonths} мес (допустимо {MIN_TERM}–{MAX_TERM}).
               </p>
             )}
@@ -346,7 +346,7 @@ export default function PurchaseCalculator() {
           {/* Ставка */}
           <div>
             <div className="mb-1.5 flex items-center gap-2">
-              <span className="text-[12.5px] font-semibold text-[#A9AFB7]">Процентная ставка</span>
+              <span className="text-[12.5px] font-semibold text-[#A2A7AF]">Процентная ставка</span>
               <InfoTip title="Ставка">
                 Расчётный сценарий: вы задаёте ставку сами. Кнопка «ставка программы» подставляет ставку
                 официальной программы для выбранных взноса и срока — при выполнении её условий (взнос,
@@ -377,13 +377,13 @@ export default function PurchaseCalculator() {
                   className="min-h-[46px] whitespace-nowrap"
                   onClick={() => update({ annualRate: String(suggestedRate.rate).replace('.', ',') })}
                 >
-                  <PercentIcon className="h-3.5 w-3.5 text-[#E4002B]" />
+                  <PercentIcon className="h-3.5 w-3.5 text-[#FF334B]" />
                   {suggestedRate.program.name}: {String(suggestedRate.rate).replace('.', ',')}%
                 </Button>
               )}
             </div>
             {suggestedRate && (
-              <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A9AFB7]">
+              <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A2A7AF]">
                 Ставка по программе «{suggestedRate.program.name}» для взноса {Math.round(dpPct)}% и срока{' '}
                 {state.termMonths} мес. Условия: {suggestedRate.program.requirements.join('; ')}.
               </p>
@@ -415,7 +415,7 @@ export default function PurchaseCalculator() {
               <AlertIcon className="h-5 w-5 shrink-0 text-[#EF4444]" />
               <div>
                 <p className="text-[13px] font-bold text-[#EF4444]">Проверьте параметры</p>
-                <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A9AFB7]">
+                <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A2A7AF]">
                   {plan.errors.map((e) => (
                     <li key={e}>{e}</li>
                   ))}
@@ -425,19 +425,19 @@ export default function PurchaseCalculator() {
           </Card>
         ) : (
           <>
-            <Card className="border-[#E4002B]/45 bg-gradient-to-b from-[#E4002B]/10 to-transparent">
+            <Card className="border-[#FF334B]/45 bg-gradient-to-b from-[#FF334B]/10 to-transparent">
               <div className="flex items-baseline justify-between gap-2">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-[#A9AFB7]">Ежемесячный платёж</p>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-[#A2A7AF]">Ежемесячный платёж</p>
               </div>
-              <p className="font-display-num mt-1 text-[38px] font-bold leading-none text-[#F3F4F4]">
+              <p className="font-display-num mt-1 text-[38px] font-bold leading-none text-[#F4F5F6]">
                 {plan.plan.noLoanNeeded ? '—' : fmtMoney(plan.plan.monthlyPayment)}
               </p>
               {plan.plan.noLoanNeeded ? (
-                <p className="mt-2 flex items-center gap-1.5 text-[12px] text-[#16B374]">
+                <p className="mt-2 flex items-center gap-1.5 text-[12px] text-[#10B981]">
                   <CheckIcon className="h-3.5 w-3.5" /> Взнос покрывает стоимость — кредит не требуется
                 </p>
               ) : (
-                <p className="mt-2 text-[11.5px] text-[#A9AFB7]">
+                <p className="mt-2 text-[11.5px] text-[#A2A7AF]">
                   {model?.name} · {trim?.name} · {state.termMonths} мес · ставка{' '}
                   {String(plan.plan.annualRate).replace('.', ',')}%
                   {rateScenario === 'program' && program ? ` (программа «${program.name}»)` : ''}
@@ -449,7 +449,7 @@ export default function PurchaseCalculator() {
             <Card className="flex flex-col gap-1.5">
               <ResultRow label="Стоимость автомобиля" value={fmtMoney(plan.plan.vehiclePrice)} />
               {plan.plan.discountApplied > 0 && (
-                <ResultRow label="Подтверждённая скидка" value={`−${fmtMoney(plan.plan.discountApplied)}`} accent="#16B374" />
+                <ResultRow label="Подтверждённая скидка" value={`−${fmtMoney(plan.plan.discountApplied)}`} accent="#10B981" />
               )}
               <ResultRow label="Цена после скидки" value={fmtMoney(plan.plan.effectivePrice)} />
               <ResultRow label={`Первоначальный взнос (${plan.plan.downPaymentPct.toFixed(0)}%)`} value={fmtMoney(plan.plan.downPayment)} />
@@ -462,18 +462,18 @@ export default function PurchaseCalculator() {
                 }`}
               />
               <ResultRow label="Общая сумма выплат" value={fmtMoney(plan.plan.downPayment + plan.plan.totalPaid)} />
-              <ResultRow label="Переплата по кредиту" value={`+${fmtMoney(plan.plan.interestOverpay)}`} accent="#E4002B" />
+              <ResultRow label="Переплата по кредиту" value={`+${fmtMoney(plan.plan.interestOverpay)}`} accent="#FF334B" />
               {plan.plan.extraCosts > 0 && (
                 <ResultRow label="Дополнительные расходы" value={fmtMoney(plan.plan.extraCosts)} />
               )}
-              <div className="mt-1 border-t border-[#363B43] pt-2">
+              <div className="mt-1 border-t border-[#2B3037] pt-2">
                 <ResultRow label="Всего затрат" value={fmtMoney(plan.plan.totalCost)} strong />
               </div>
             </Card>
 
             {!plan.plan.noLoanNeeded && (
               <Card>
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-[#A9AFB7]">
+                <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-[#A2A7AF]">
                   Структура платежей{state.termMonths > 24 ? ' по годам' : ' по месяцам'}
                 </p>
                 <ScheduleChart
@@ -541,8 +541,8 @@ export default function PurchaseCalculator() {
 
         {note && <Callout tone="success">{note}</Callout>}
 
-        <Card className="bg-[#0E1013]">
-          <p className="text-[10.5px] leading-relaxed text-[#A9AFB7]">
+        <Card className="bg-[#0B0C0E]">
+          <p className="text-[10.5px] leading-relaxed text-[#A2A7AF]">
             Расчёт — математическая симуляция аннуитетной схемы и не является офертой, рекламой ставки или
             одобрением кредита. Фактические условия определяет банк. Официальные программы и их ограничения —
             на вкладке «Программы». {model && <>Модель: {model.name}. </>}
@@ -557,10 +557,10 @@ export default function PurchaseCalculator() {
 function ResultRow({ label, value, accent, strong }: { label: string; value: string; accent?: string; strong?: boolean }) {
   return (
     <div className="flex items-baseline justify-between gap-2">
-      <span className={`text-[12px] ${strong ? 'font-bold text-[#F3F4F4]' : 'text-[#A9AFB7]'}`}>{label}</span>
+      <span className={`text-[12px] ${strong ? 'font-bold text-[#F4F5F6]' : 'text-[#A2A7AF]'}`}>{label}</span>
       <span
-        className={`font-display-num text-[14px] font-bold ${strong ? 'text-[17px] text-[#F3F4F4]' : ''}`}
-        style={{ color: accent ?? '#F3F4F4' }}
+        className={`font-display-num text-[14px] font-bold ${strong ? 'text-[17px] text-[#F4F5F6]' : ''}`}
+        style={{ color: accent ?? '#F4F5F6' }}
       >
         {value}
       </span>

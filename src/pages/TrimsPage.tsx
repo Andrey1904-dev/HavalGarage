@@ -239,13 +239,13 @@ export default function TrimsPage() {
   return (
     <div className="animate-page-enter flex flex-col gap-2">
       <header className="flex flex-col gap-2">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">
           Официальные прайс-листы · проверка {fmtDate(CATALOG_FIXED_AT)}
         </p>
-        <h1 className="font-display-num text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4] sm:text-[32px]">
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Каталог комплектаций
         </h1>
-        <p className="max-w-3xl text-[12.5px] leading-relaxed text-[#A9AFB7]">
+        <p className="max-w-3xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
           Все комплектации из официальных прайс-листов HAVAL. Фильтры применяются совместно: например, можно
           отобрать полноприводные бензиновые комплектации мощностью от 190 л.с. с адаптивным круиз-контролем.
           Цена — максимальная цена перепродажи (МЦП); выгоды по трейд-ин и спецпрограммам хранятся отдельно
@@ -329,16 +329,16 @@ export default function TrimsPage() {
               checked={includeArchive}
               onChange={(checked) => setParam('archive', checked ? '1' : null)}
             />
-            <p className="text-[11px] leading-relaxed text-[#A9AFB7]">
+            <p className="text-[11px] leading-relaxed text-[#A2A7AF]">
               Поиск функции идёт по подтверждённому оснащению: базовому оборудованию модели, матрице различий
               прайс-листа и описанию комплектации.
             </p>
           </div>
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[#363B43]/70 pt-3">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[#2B3037]/70 pt-3">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11.5px] font-semibold text-[#A9AFB7]">Сортировка:</span>
+            <span className="text-[11.5px] font-semibold text-[#A2A7AF]">Сортировка:</span>
             {SORT_LABELS.map(([value, label]) => (
               <button
                 key={value}
@@ -347,10 +347,10 @@ export default function TrimsPage() {
                   setParam('sort', value === 'price-asc' ? null : value)
                   track('budget_sort', { section: 'trims', sort: value })
                 }}
-                className={`min-h-[34px] rounded-[8px] border px-2.5 text-[11.5px] font-bold transition-colors ${
+                className={`min-h-[34px] rounded-lg border px-2.5 text-[11.5px] font-bold transition-colors ${
                   sort === value
-                    ? 'border-[#E4002B] bg-[#E4002B]/12 text-[#F3F4F4]'
-                    : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:text-[#F3F4F4]'
+                    ? 'border-[#FF334B] bg-[#FF334B]/12 text-[#F4F5F6]'
+                    : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
                 }`}
               >
                 {label}
@@ -358,8 +358,8 @@ export default function TrimsPage() {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <p className="text-[11.5px] text-[#A9AFB7]">
-              Найдено комплектаций: <strong className="text-[#F3F4F4]">{filtered.length}</strong> из {TRIMS.length}
+            <p className="text-[11.5px] text-[#A2A7AF]">
+              Найдено комплектаций: <strong className="text-[#F4F5F6]">{filtered.length}</strong> из {TRIMS.length}
             </p>
             <Button type="button" variant="ghost" className="min-h-[34px]" onClick={exportCsv} disabled={filtered.length === 0}>
               CSV
@@ -369,7 +369,7 @@ export default function TrimsPage() {
 
         {activeFilters.length > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="text-[11.5px] text-[#A9AFB7]">Фильтры:</span>
+            <span className="text-[11.5px] text-[#A2A7AF]">Фильтры:</span>
             {activeFilters.map((f) => (
               <Tag key={f} tone="accent">
                 {f}
@@ -378,7 +378,7 @@ export default function TrimsPage() {
             <button
               type="button"
               onClick={resetAll}
-              className="min-h-[28px] text-[11.5px] font-bold text-[#E4002B] underline underline-offset-2"
+              className="min-h-[28px] text-[11.5px] font-bold text-[#FF334B] underline underline-offset-2"
             >
               Сбросить всё
             </button>
@@ -412,17 +412,17 @@ export default function TrimsPage() {
           const creditAmount = Math.max(0, price - (price * downPaymentPct) / 100)
           const payment = creditAmount > 0 ? annuityPayment(creditAmount, paymentRate, paymentTerm) : 0
           return (
-            <Card key={t.id} className="flex flex-col gap-2.5 p-3.5">
+            <Card key={t.id} glass className="flex flex-col gap-2.5 border-[#2B3037] p-3.5 md:p-5 transition-all duration-200 hover:border-[#FF334B]/40">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <Link
                     to={`/models/${model?.slug ?? t.modelId}`}
-                    className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#E4002B] underline-offset-2 hover:underline"
+                    className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#FF334B] underline-offset-2 hover:underline"
                   >
                     {model?.name ?? t.modelId}
                   </Link>
-                  <h2 className="mt-0.5 truncate text-[14.5px] font-bold text-[#F3F4F4]">{t.name}</h2>
-                  <p className="mt-0.5 text-[11.5px] text-[#A9AFB7]">
+                  <h2 className="mt-0.5 truncate text-[14.5px] font-bold text-[#F4F5F6]">{t.name}</h2>
+                  <p className="mt-0.5 text-[11.5px] text-[#A2A7AF]">
                     {t.modelYear ? `${t.modelYear} м.г.` : 'модельный год не указан'}
                     {t.productionYear ? ` · ${t.productionYear} г.в.` : ''} · {t.engine}
                   </p>
@@ -431,37 +431,37 @@ export default function TrimsPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#A9AFB7]">Цена</p>
-                  <p className="font-display-num text-[15px] font-bold text-[#F3F4F4]">{fmtMoney(price)}</p>
+                <div className="rounded-xl border border-[#242930] bg-[#111316] p-2.5">
+                  <span className="block text-[10px] text-[#747B85]">Цена (МЦП)</span>
+                  <span className="font-mono text-sm font-bold tabular-nums text-[#F4F5F6]">{fmtMoney(price)}</span>
                 </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#A9AFB7]">Платёж</p>
-                  <p className="font-display-num text-[15px] font-bold text-[#F3F4F4]">{fmtMoney(payment)}</p>
+                <div className="rounded-xl border border-[#242930] bg-[#111316] p-2.5">
+                  <span className="block text-[10px] text-[#747B85]">Платёж/мес</span>
+                  <span className="font-mono text-sm font-bold tabular-nums text-emerald-400">{fmtMoney(payment)}</span>
                 </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#A9AFB7]">Мощность</p>
-                  <p className="font-display-num text-[15px] font-bold text-[#F3F4F4]">
-                    {t.horsepower ?? '—'} <span className="text-[10px] text-[#A9AFB7]">л.с.</span>
-                  </p>
+                <div className="rounded-xl border border-[#242930] bg-[#111316] p-2.5">
+                  <span className="block text-[10px] text-[#747B85]">Мощность</span>
+                  <span className="font-mono text-sm font-bold tabular-nums text-[#F4F5F6]">
+                    {t.horsepower ?? '—'} <span className="text-[10px] font-medium text-[#747B85]">л.с.</span>
+                  </span>
                 </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#A9AFB7]">Привод</p>
-                  <p className="text-[13px] font-bold text-[#F3F4F4]">{t.drivetrain}</p>
+                <div className="rounded-xl border border-[#242930] bg-[#111316] p-2.5">
+                  <span className="block text-[10px] text-[#747B85]">Привод</span>
+                  <span className="text-[13px] font-bold text-[#F4F5F6]">{t.drivetrain}</span>
                 </div>
               </div>
 
-              <p className="text-[11.5px] text-[#A9AFB7]">
+              <p className="text-[11.5px] text-[#A2A7AF]">
                 {t.transmission}
                 {details?.consumption?.combined !== null && details?.consumption?.combined !== undefined
                   ? ` · расход ${details.consumption.combined} л/100 км`
                   : ''}
               </p>
 
-              <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-[#363B43]/70 pt-2.5">
+              <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-[#2B3037]/70 pt-2.5">
                 <Link
                   to={`/calculator?trim=${t.id}`}
-                  className="min-h-[34px] rounded-[8px] bg-[#E4002B] px-3 py-2 text-[11.5px] font-bold text-white transition-opacity hover:opacity-90"
+                  className="min-h-[34px] rounded-lg bg-[#FF334B] px-3 py-2 text-[11.5px] font-bold text-white transition-opacity hover:opacity-90"
                 >
                   Рассчитать кредит
                 </Link>

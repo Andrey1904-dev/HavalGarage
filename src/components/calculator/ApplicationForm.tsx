@@ -75,8 +75,8 @@ export default function ApplicationForm() {
   return (
     <Card className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
-        <DatabaseIcon className="h-4 w-4 text-[#E4002B]" />
-        <h3 className="text-[15px] font-bold text-[#F3F4F4]">Отправить расчёт дилеру</h3>
+        <DatabaseIcon className="h-4 w-4 text-[#FF334B]" />
+        <h3 className="text-[15px] font-bold text-[#F4F5F6]">Отправить расчёт дилеру</h3>
         {isSupabaseConfigured ? (
           <Tag tone="success">БД подключена</Tag>
         ) : (
@@ -84,7 +84,7 @@ export default function ApplicationForm() {
         )}
       </div>
 
-      <p className="text-[12px] leading-relaxed text-[#A9AFB7]">
+      <p className="text-[12px] leading-relaxed text-[#A2A7AF]">
         Текущий расчёт ({model.name}
         {trim ? `, ${trim.name}` : ''}) будет сохранён в базе данных вместе с контактными
         данными — дилер сможет подготовить предметное предложение. Расчёт предварительный
@@ -119,21 +119,21 @@ export default function ApplicationForm() {
           </Button>
 
           {formError && (
-            <p className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#F5A623]">
+            <p className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#F59E0B]">
               <AlertIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               {formError}
             </p>
           )}
 
           {status === 'success' && (
-            <p className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#16B374]">
+            <p className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#10B981]">
               <CheckIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               {message}
             </p>
           )}
 
           {status === 'error' && (
-            <p className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#E4002B]">
+            <p className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#FF334B]">
               <AlertIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               {message} Расчёт доступен локально — калькулятор продолжает работать без БД.
             </p>

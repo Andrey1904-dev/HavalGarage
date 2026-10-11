@@ -1,19 +1,21 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import ModelCard from '../components/ModelCard'
-import { Button, Callout, Card, Field, SectionTitle, StatTile, Tag } from '../components/ui'
 import {
-  CalendarIcon,
-  CardIcon,
-  ChartIcon,
-  CompareIcon,
-  GaugeIcon,
-  SavingsIcon,
-  SearchIcon,
-  SparklesIcon,
-  TargetIcon,
-  TradeInIcon,
-} from '../components/icons'
+  ArrowRight,
+  Calculator,
+  Scale,
+  Wrench,
+  PiggyBank,
+  Wallet,
+  Database,
+  ShieldCheck,
+  Zap,
+  Sliders,
+  FileText,
+  Sparkles,
+} from 'lucide-react'
+import ModelCard from '../components/ModelCard'
+import { Badge, Button, Callout, Card, SectionTitle, Tag } from '../components/ui'
 import {
   CATALOG_FIXED_AT,
   HAVAL_PRICE_LISTS_URL,
@@ -23,22 +25,20 @@ import {
   modelSummary,
   pricedCurrentTrims,
 } from '../data/haval'
-import { fmtDate, fmtMoney, parseLocaleNumber } from '../utils/format'
-import { TERM_OPTIONS } from '../utils/credit'
-import { maxAffordablePrice } from '../utils/budget'
+import { fmtDate, fmtMoney } from '../utils/format'
+import { estimateMonthlyPayment } from '../utils/payment-estimate'
 import { assetUrl, useSeo } from '../utils/seo'
 import { track } from '../utils/analytics'
 
 /**
- * Главная страница: возможности сервиса, быстрый подбор по бюджету,
- * популярные модели, переход к сравнению, калькуляторы и актуальность данных.
+ * Главная страница HAVALGARAGE 3.0 — композиция HavalDesign (Hero +
+ * экспресс-подбор + популярные модели + инструменты + актуальность данных).
+ * Все числа берутся из реального слоя данных src/data/haval.
  */
 export default function HomePage() {
   const navigate = useNavigate()
-  const [payment, setPayment] = useState('45000')
-  const [down, setDown] = useState('400000')
-  const [term, setTerm] = useState(60)
-  const [rate, setRate] = useState('16,4')
+  const [budgetMax, setBudgetMax] = useState(3_500_000)
+  const [desiredPayment, setDesiredPayment] = useState(45_000)
 
   useSeo({
     title: 'HAVAL Гараж — каталог, кредитный калькулятор и подбор автомобиля по бюджету',
@@ -58,23 +58,6 @@ export default function HomePage() {
     },
   })
 
-  const paymentNum = parseLocaleNumber(payment)
-  const downNum = parseLocaleNumber(down) || 0
-  const rateNum = parseLocaleNumber(rate) || 0
-
-  const affordable = useMemo(() => {
-    if (!(paymentNum > 0) || !(term > 0)) return null
-    return maxAffordablePrice(paymentNum, downNum, term, rateNum)
-  }, [paymentNum, downNum, term, rateNum])
-
-  const popular = useMemo(() => {
-    const summaries = MODELS.map((m) => modelSummary(m.id)).filter((s) => s !== null && s.priceFrom !== null)
-    return summaries
-      .sort((a, b) => (b?.trims.length ?? 0) - (a?.trims.length ?? 0) || (a?.priceFrom ?? 0) - (b?.priceFrom ?? 0))
-      .slice(0, 4)
-      .map((s) => s!.model)
-  }, [])
-
   const stats = useMemo(() => {
     const trims = pricedCurrentTrims()
     const prices = trims.map((t) => t.basePrice as number)
@@ -86,307 +69,443 @@ export default function HomePage() {
     }
   }, [])
 
-  const submitQuickBudget = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!(paymentNum > 0)) return
-    track('budget_search', { source: 'home-quick', payment: Math.round(paymentNum), term, rate: rateNum })
-    const params = new URLSearchParams({
-      payment: String(Math.round(paymentNum)),
-      down: String(Math.round(downNum)),
-      term: String(term),
-      rate: String(rateNum).replace('.', ','),
-    })
+  const budgetRange = useMemo(() => {
+    const min = stats.priceFrom ? Math.floor(stats.priceFrom / 50_000) * 50_000 : 1_500_000
+    const max = stats.priceTo ? Math.ceil(stats.priceTo / 50_000) * 50_000 : 6_000_000
+    return { min, max }
+  }, [stats])
+
+  /** Модели, подходящие под бюджет или желаемый платёж — по реальным ценам и ставкам программ */
+  const quickMatches = useMemo(() => {
+    const summaries = MODELS.map((m) => modelSummary(m.id)).filter((s) => s !== null && s.priceFrom !== null)
+    return summaries
+      .map((s) => {
+        const fitPrice = (s!.priceFrom as number) <= budgetMax
+        const est = estimateMonthlyPayment(s!.model.id, s!.priceFrom as number)
+        const fitPayment = est ? est.monthly <= desiredPayment : false
+        return { summary: s!, fit: fitPrice || fitPayment }
+      })
+      .filter((x) => x.fit)
+      .map((x) => x.summary)
+      .sort((a, b) => (a.priceFrom ?? 0) - (b.priceFrom ?? 0))
+  }, [budgetMax, desiredPayment])
+
+  const popular = useMemo(() => {
+    const summaries = MODELS.map((m) => modelSummary(m.id)).filter((s) => s !== null && s.priceFrom !== null)
+    return summaries
+      .sort((a, b) => (b?.trims.length ?? 0) - (a?.trims.length ?? 0) || (a?.priceFrom ?? 0) - (b?.priceFrom ?? 0))
+      .slice(0, 4)
+      .map((s) => s!.model)
+  }, [])
+
+  const openFullBudget = () => {
+    track('budget_search', { source: 'home-quick', payment: desiredPayment, budget: budgetMax })
+    const params = new URLSearchParams({ payment: String(desiredPayment) })
     navigate(`/budget?${params.toString()}`)
   }
 
   return (
-    <div className="animate-page-enter flex flex-col gap-2">
-      {/* ---------------- Хиро ---------------- */}
-      <section className="relative overflow-hidden rounded-[14px] border border-[#363B43]/85 bg-[#1A1D22]">
-        <div className="absolute inset-0" aria-hidden="true">
-          <img src={assetUrl('/images/models/f7.webp')} alt="" className="h-full w-full object-cover opacity-40" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0E1013] via-[#0E1013]/82 to-[#0E1013]/30" />
+    <div className="animate-page-enter -mx-4 flex flex-col gap-14 pb-10 sm:-mx-6 lg:-mx-8 lg:gap-20">
+      {/* ================= HERO ================= */}
+      <section className="relative mt-4 mx-3 flex min-h-[520px] items-center justify-center overflow-hidden rounded-3xl border border-[#242930] bg-[#0E1013] sm:mx-6 lg:mx-8 lg:min-h-[640px]">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={assetUrl('/images/hero-haval-flagship.jpg')}
+            alt="HAVAL — студийный кадр модельного ряда"
+            fetchPriority="high"
+            className="h-full w-full scale-105 object-cover object-center brightness-90"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0B0C0E] via-[#0B0C0E]/75 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C0E] via-transparent to-[#0B0C0E]/40" />
         </div>
 
-        <div className="relative grid grid-cols-1 gap-6 px-5 py-8 sm:px-8 sm:py-10 lg:grid-cols-[1.15fr_1fr]">
-          <div className="flex flex-col gap-4">
-            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">
-              Независимый расчётный сервис · данные haval.ru
-            </p>
-            <h1 className="font-display-num max-w-xl text-[28px] font-bold uppercase leading-[1.08] tracking-wide text-[#F3F4F4] sm:text-[40px]">
-              Какой HAVAL <span className="text-[#A9AFB7]">вам по бюджету</span>
-            </h1>
-            <p className="max-w-lg text-[13px] leading-relaxed text-[#A9AFB7]">
-              Каталог всех моделей официального каталога haval.ru с ценами из прайс-листов производителя.
-              Рассчитайте кредит, подберите автомобиль по ежемесячному платежу, сравните комплектации по оснащению
-              и посчитайте полную стоимость владения — без выдуманных цен и тарифов.
-            </p>
-
-            <div className="flex flex-wrap gap-2.5">
-              <Link to="/budget">
-                <Button type="button">
-                  <SearchIcon className="h-4 w-4" /> Подобрать по бюджету
-                </Button>
-              </Link>
-              <Link to="/catalog">
-                <Button type="button" variant="secondary">
-                  Каталог моделей
-                </Button>
-              </Link>
-              <Link to="/compare">
-                <Button type="button" variant="ghost">
-                  <CompareIcon className="h-4 w-4" /> Сравнить комплектации
-                </Button>
-              </Link>
+        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col justify-between px-6 py-12 md:px-10 md:py-20 lg:px-12">
+          <div className="max-w-2xl space-y-6">
+            <div className="inline-flex flex-wrap items-center gap-2">
+              <Badge variant="red" size="md" icon={<Zap className="h-3.5 w-3.5" />}>
+                HAVAL · официальный модельный ряд
+              </Badge>
+              <Badge variant="glass" size="md">
+                {stats.models} моделей • {stats.trims} комплектаций
+              </Badge>
             </div>
 
-            <dl className="mt-1 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-              <StatTile label="Моделей" value={stats.models} hint="по официальному каталогу" />
-              <StatTile label="Комплектаций" value={stats.trims} hint="с подтверждённой ценой" />
-              <StatTile
-                label="Цена от"
-                value={stats.priceFrom ? fmtMoney(stats.priceFrom) : '—'}
-                hint="МЦП по прайс-листу"
-                tone="accent"
-              />
-              <StatTile
-                label="Цена до"
-                value={stats.priceTo ? fmtMoney(stats.priceTo) : '—'}
-                hint="максимум по ряду"
-              />
-            </dl>
-          </div>
-
-          {/* ---------------- Быстрый подбор ---------------- */}
-          <Card className="flex flex-col gap-3.5 self-start bg-[#0E1013]/85 backdrop-blur">
-            <div className="flex items-center gap-2">
-              <TargetIcon className="h-4 w-4 text-[#E4002B]" />
-              <h2 className="font-display-num text-[15px] font-bold uppercase tracking-wide">Быстрый подбор</h2>
+            <div className="space-y-2">
+              <h1 className="text-4xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                ВЫБЕРИ СВОЙ{' '}
+                <span className="text-[#FF334B] drop-shadow-[0_0_30px_rgba(255,51,75,0.6)]">HAVAL</span>
+              </h1>
+              <p className="text-base font-normal leading-relaxed text-[#C2C7D0] sm:text-lg">
+                Сравни комплектации по подтверждённым ценам прайс-листов haval.ru, рассчитай кредит по официальным
+                программам и узнай реальную стоимость владения до поездки к дилеру.
+              </p>
             </div>
 
-            <form onSubmit={submitQuickBudget} className="flex flex-col gap-3">
-              <Field
-                label="Комфортный платёж в месяц"
-                suffix="₽"
-                inputMode="numeric"
-                value={payment}
-                onChange={(e) => setPayment(e.target.value)}
-              />
-              <Field
-                label="Первоначальный взнос"
-                suffix="₽"
-                inputMode="numeric"
-                value={down}
-                onChange={(e) => setDown(e.target.value)}
-              />
-              <div className="grid grid-cols-2 gap-3">
-                <label className="block">
-                  <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A9AFB7]">Срок</span>
-                  <select
-                    className="min-h-[46px] w-full rounded-[10px] border border-[#363B43] bg-[#23272D] px-3 text-[14px] font-semibold text-[#F3F4F4] outline-none focus:border-[#E4002B]"
-                    value={term}
-                    onChange={(e) => setTerm(Number(e.target.value))}
-                  >
-                    {TERM_OPTIONS.map((t) => (
-                      <option key={t} value={t}>
-                        {t} мес
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <Field
-                  label="Ставка"
-                  suffix="%"
-                  inputMode="decimal"
-                  value={rate}
-                  onChange={(e) => setRate(e.target.value)}
-                />
+            {/* Маркер цены модельного ряда — данные прайс-листа */}
+            {stats.priceFrom !== null && (
+              <div className="inline-flex items-center gap-4 rounded-2xl border border-white/10 bg-[#181B1F]/80 p-3.5 pr-6 shadow-xl backdrop-blur-md">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF334B]/20 text-[#FF334B]">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="text-[11px] font-medium text-[#A2A7AF]">
+                    Модельный ряд — цена «от» по официальному прайс-листу
+                  </div>
+                  <div className="font-mono text-xl font-extrabold tabular-nums text-[#F4F5F6]">
+                    {fmtMoney(stats.priceFrom)}
+                  </div>
+                </div>
               </div>
+            )}
 
-              <div className="rounded-[10px] border border-[#363B43] bg-[#1A1D22] px-3.5 py-3">
-                <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A9AFB7]">
-                  Ориентировочный бюджет на автомобиль
-                </p>
-                <p className="font-display-num mt-1 text-[26px] font-bold leading-none text-[#F3F4F4]">
-                  {affordable ? fmtMoney(affordable) : '—'}
-                </p>
-                <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A9AFB7]">
-                  Взнос {fmtMoney(downNum)} + сумма кредита при ставке {String(rateNum).replace('.', ',')}% на {term} мес.
-                  Расчёт предварительный и не является одобрением кредита.
-                </p>
-              </div>
-
-              <Button type="submit" disabled={!(paymentNum > 0)}>
-                Показать подходящие модели <SearchIcon className="h-4 w-4" />
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Button
+                variant="glow"
+                size="lg"
+                icon={<ArrowRight className="h-4 w-4" />}
+                iconPosition="right"
+                onClick={() => navigate('/catalog')}
+              >
+                Подобрать автомобиль
               </Button>
-            </form>
-          </Card>
+              <Button variant="secondary" size="lg" icon={<Scale className="h-4 w-4" />} onClick={() => navigate('/compare')}>
+                Сравнить модели
+              </Button>
+              <Button variant="ghost" size="lg" onClick={() => navigate('/budget')}>
+                Подбор по платежу
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ---------------- Возможности ---------------- */}
-      <SectionTitle tip="Все расчёты выполняются детерминированными формулами аннуитета и проверяются модульными тестами. Никаких «приблизительных» чисел от модели — только арифметика.">
-        Что умеет сервис
-      </SectionTitle>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <FeatureCard
-          icon={<CardIcon className="h-4 w-4" />}
-          title="Кредитный калькулятор"
-          text="Аннуитетный платёж, взнос в ₽ или %, срок 1–120 мес, ставка, подтверждённые скидки, доп. расходы, график платежей."
-          to="/calculator"
-          cta="Рассчитать кредит"
-        />
-        <FeatureCard
-          icon={<SearchIcon className="h-4 w-4" />}
-          title="Подбор по бюджету"
-          text="Максимальный платёж, взнос, срок, тип кузова, привод и минимальные функции — система подберёт модели и комплектации с объяснением причин."
-          to="/budget"
-          cta="Подобрать автомобиль"
-        />
-        <FeatureCard
-          icon={<CompareIcon className="h-4 w-4" />}
-          title="Сравнение комплектаций"
-          text="До трёх автомобилей: цена, характеристики, оснащение по группам, кредитные платежи и стоимость перехода на следующую комплектацию."
-          to="/compare"
-          cta="Сравнить"
-        />
-        <FeatureCard
-          icon={<GaugeIcon className="h-4 w-4" />}
-          title="Стоимость владения"
-          text="Топливо, ТО, страховка, налог, шины, шиномонтаж и прочие расходы за выбранный период — с разделением подтверждённых значений и ваших оценок."
-          to="/ownership"
-          cta="Посчитать владение"
-        />
-        <FeatureCard
-          icon={<SavingsIcon className="h-4 w-4" />}
-          title="План покупки и накопления"
-          text="Недостающая сумма, необходимое ежемесячное накопление, дата цели и сценарии покупки с разным взносом и платежом."
-          to="/plan"
-          cta="Составить план"
-        />
-        <FeatureCard
-          icon={<TradeInIcon className="h-4 w-4" />}
-          title="Трейд-ин и обратный расчёт взноса"
-          text="Чистая сумма от продажи текущего автомобиля и ответ на вопрос «какой взнос нужен, чтобы платить меньше»."
-          to="/plan?tab=trade-in"
-          cta="Рассчитать взнос"
-        />
-      </div>
-
-      {/* ---------------- Популярные модели ---------------- */}
-      <SectionTitle
-        tip="Популярные — модели с наибольшим числом комплектаций в официальном каталоге (при равенстве — с меньшей ценой «от»)."
-        action={
-          <Link to="/catalog" className="text-[12px] font-bold text-[#A9AFB7] transition-colors hover:text-[#F3F4F4]">
-            Весь каталог →
-          </Link>
-        }
-      >
-        Популярные модели
-      </SectionTitle>
-      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
-        {popular.map((m) => (
-          <ModelCard key={m.id} model={m} />
-        ))}
-      </div>
-
-      {/* ---------------- Актуальность данных ---------------- */}
-      <SectionTitle tip="Каждая цена привязана к первоисточнику и дате проверки. Если дата действия цены не опубликована, интерфейс показывает предупреждение вместо молчаливой подмены данных.">
-        Актуальность данных
-      </SectionTitle>
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.4fr_1fr]">
-        <Card className="flex flex-col gap-2.5">
-          <div className="flex flex-wrap items-center gap-2">
-            <CalendarIcon className="h-4 w-4 text-[#E4002B]" />
-            <p className="text-[13px] font-bold text-[#F3F4F4]">Данные проверены {fmtDate(CATALOG_FIXED_AT)}</p>
-            <Tag tone="success">{OFFICIAL_PRICE_COUNT} цен из официальных прайс-листов</Tag>
+      {/* ================= ЭКСПРЕСС-ПОДБОР ================= */}
+      <section className="mx-4 sm:mx-6 lg:mx-8">
+        <div className="glass-card relative overflow-hidden rounded-3xl border border-[#2B3037] p-6 shadow-2xl sm:p-8">
+          <div className="flex flex-col items-start justify-between gap-4 border-b border-[#2B3037] pb-6 md:flex-row md:items-center">
+            <div>
+              <div className="flex items-center gap-2">
+                <Sliders className="h-4 w-4 text-[#FF334B]" />
+                <span className="text-xs font-bold uppercase tracking-wider text-[#FF334B]">Экспресс-подбор</span>
+              </div>
+              <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#F4F5F6]">Подбор под ваш бюджет и платёж</h2>
+            </div>
+            <div className="text-xs text-[#A2A7AF]">
+              Найдено подходящих моделей:{' '}
+              <span className="font-mono text-sm font-bold text-white">{quickMatches.length}</span>
+            </div>
           </div>
-          <ul className="flex flex-col gap-1.5 text-[12px] leading-relaxed text-[#A9AFB7]">
-            <li>
-              Основной источник —{' '}
-              <a
-                className="underline decoration-[#363B43] underline-offset-2 hover:text-[#F3F4F4]"
-                href={HAVAL_PRICE_LISTS_URL}
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => track('official_source_click', { source: 'home', url: HAVAL_PRICE_LISTS_URL })}
+
+          <div className="grid grid-cols-1 gap-6 pt-6 md:grid-cols-2">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-medium text-[#A2A7AF]">Максимальный бюджет (цена «от»):</span>
+                <span className="font-mono text-sm font-bold text-white">до {fmtMoney(budgetMax)}</span>
+              </div>
+              <input
+                type="range"
+                min={budgetRange.min}
+                max={budgetRange.max}
+                step={50_000}
+                value={Math.min(budgetRange.max, Math.max(budgetRange.min, budgetMax))}
+                onChange={(e) => setBudgetMax(Number(e.target.value))}
+                className="h-2 w-full cursor-pointer rounded-lg bg-[#20242A]"
+                style={{
+                  background: `linear-gradient(to right, #FF334B 0%, #FF334B ${
+                    ((budgetMax - budgetRange.min) / (budgetRange.max - budgetRange.min)) * 100
+                  }%, #20242A ${((budgetMax - budgetRange.min) / (budgetRange.max - budgetRange.min)) * 100}%, #20242A 100%)`,
+                }}
+                aria-label="Максимальный бюджет"
+              />
+              <div className="flex justify-between font-mono text-[11px] text-[#747B85]">
+                <span>{fmtMoney(budgetRange.min)} ₽</span>
+                <span>{fmtMoney(budgetRange.max)} ₽</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-medium text-[#A2A7AF]">
+                  Желаемый платёж в месяц (по ставкам официальных программ):
+                </span>
+                <span className="font-mono text-sm font-bold text-emerald-400">~ {fmtMoney(desiredPayment)}/мес</span>
+              </div>
+              <input
+                type="range"
+                min={20_000}
+                max={150_000}
+                step={5_000}
+                value={desiredPayment}
+                onChange={(e) => setDesiredPayment(Number(e.target.value))}
+                className="h-2 w-full cursor-pointer rounded-lg bg-[#20242A]"
+                style={{
+                  background: `linear-gradient(to right, #FF334B 0%, #FF334B ${
+                    ((desiredPayment - 20_000) / (150_000 - 20_000)) * 100
+                  }%, #20242A ${((desiredPayment - 20_000) / (150_000 - 20_000)) * 100}%, #20242A 100%)`,
+                }}
+                aria-label="Желаемый ежемесячный платёж"
+              />
+              <div className="flex justify-between font-mono text-[11px] text-[#747B85]">
+                <span>20 000 ₽</span>
+                <span>150 000 ₽</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Результаты подбора */}
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[#2B3037] pt-6">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-[#747B85]">Подходят:</span>
+              {quickMatches.length === 0 ? (
+                <span className="text-xs text-[#A2A7AF]">нет подтверждённых моделей под эти условия</span>
+              ) : (
+                quickMatches.slice(0, 6).map((s) => (
+                  <Link
+                    key={s.model.id}
+                    to={`/models/${s.model.slug}`}
+                    className="rounded-lg border border-[#333A44] bg-[#20242A] px-3 py-1.5 text-xs font-medium text-[#F4F5F6] transition-all hover:border-[#FF334B]/50 hover:bg-[#2A3038]"
+                  >
+                    {s.model.name} <span className="ml-1 text-[#747B85]">от {fmtMoney(s.priceFrom as number)}</span>
+                  </Link>
+                ))
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <Button variant="secondary" size="sm" onClick={openFullBudget}>
+                Полный подбор по бюджету
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                icon={<ArrowRight className="h-3.5 w-3.5" />}
+                iconPosition="right"
+                onClick={() => navigate('/catalog')}
               >
-                каталоги и прайс-листы haval.ru
-              </a>{' '}
-              (PDF «Максимальная цена перепродажи»).
-            </li>
-            <li>
-              Характеристики, оснащение, цвета и размеры колёс перенесены из тех же документов; неизвестные значения
-              помечены как «нет данных».
-            </li>
-            <li>
-              Обновление — не в реальном времени: цены перепроверяются скриптами (<code>npm run update:prices</code>) и
-              импортом прайс-листов (<code>npm run import:price-list</code>).
-            </li>
-          </ul>
-          <Link to="/sources" className="mt-1">
-            <Button type="button" variant="secondary" className="min-h-[40px]">
-              Источники данных и история проверок
-            </Button>
-          </Link>
-        </Card>
-
-        <div className="flex flex-col gap-3">
-          <Callout tone="warn" title="Независимый сервис">
-            HavalGarage не является официальным сайтом HAVAL или официальным дилером. Цены и условия подтверждает
-            первоисточник; расчёт кредита — математическая симуляция, а не оферта и не одобрение.
-          </Callout>
-          {PRICE_HISTORY.length > 0 && (
-            <Card className="flex flex-col gap-1.5">
-              <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#A9AFB7]">
-                <ChartIcon className="h-3.5 w-3.5 text-[#E4002B]" /> Последняя проверка
-              </p>
-              <p className="text-[12px] leading-relaxed text-[#A9AFB7]">
-                {fmtDate(PRICE_HISTORY[PRICE_HISTORY.length - 1].checkedAt)} ·{' '}
-                {PRICE_HISTORY[PRICE_HISTORY.length - 1].summary.slice(0, 220)}…
-              </p>
-            </Card>
-          )}
+                Смотреть в каталоге
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <p className="mt-4 flex items-start gap-2 text-[11px] leading-relaxed text-[#A9AFB7]">
-        <SparklesIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#E4002B]" />
-        * Рекламные ставки кредитных программ (в том числе «от 0,01%») достигаются только при выполнении опубликованных
-        условий: размер взноса, срок, сумма кредита и страхование КАСКО. Ограничения приведены в разделе{' '}
-        <Link to="/programs" className="underline decoration-[#363B43] underline-offset-2 hover:text-[#F3F4F4]">
-          «Кредитные программы»
-        </Link>
-        .
-      </p>
+      {/* ================= ПОПУЛЯРНЫЕ МОДЕЛИ ================= */}
+      <section className="mx-4 space-y-6 sm:mx-6 lg:mx-8">
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">
+              Модельный ряд официального каталога
+            </div>
+            <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-3xl">
+              Популярные автомобили HAVAL
+            </h2>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            icon={<ArrowRight className="h-3.5 w-3.5" />}
+            iconPosition="right"
+            onClick={() => navigate('/catalog')}
+          >
+            Весь модельный ряд ({stats.models})
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {popular.map((m) => (
+            <ModelCard key={m.id} model={m} />
+          ))}
+        </div>
+      </section>
+
+      {/* ================= ИНСТРУМЕНТЫ ================= */}
+      <section className="mx-4 space-y-6 sm:mx-6 lg:mx-8">
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">
+            Инструменты для взвешенного решения
+          </div>
+          <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-3xl">
+            Все расчёты — до поездки к дилеру
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <FeatureCard
+            to="/calculator"
+            icon={<Calculator className="h-6 w-6" />}
+            tone="red"
+            title="Кредитный калькулятор"
+            text="Аннуитетный платёж, взнос в ₽ или %, срок 1–120 мес, официальные кредитные программы с реальными ставками, график платежей и экспорт в PDF."
+            cta="Рассчитать платёж"
+          />
+          <FeatureCard
+            to="/compare"
+            icon={<Scale className="h-6 w-6" />}
+            tone="blue"
+            title="Сравнение комплектаций"
+            text="До трёх автомобилей бок о бок: цена, характеристики, оснащение по группам, платежи и стоимость перехода на следующую комплектацию."
+            cta="Перейти к сравнению"
+          />
+          <FeatureCard
+            to="/ownership"
+            icon={<Wrench className="h-6 w-6" />}
+            tone="emerald"
+            title="Стоимость владения (TCO)"
+            text="Топливо, ТО, страховка, налог, шины и шиномонтаж за выбранный период — с разделением подтверждённых значений и ваших оценок."
+            cta="Оценить расходы"
+          />
+          <FeatureCard
+            to="/plan"
+            icon={<PiggyBank className="h-6 w-6" />}
+            tone="violet"
+            title="План накопления и покупки"
+            text="Недостающая сумма, необходимое ежемесячное накопление, дата цели, сценарии с разным взносом и зачёт текущего авто в трейд-ин."
+            cta="Составить план"
+          />
+          <FeatureCard
+            to="/budget"
+            icon={<Wallet className="h-6 w-6" />}
+            tone="sky"
+            title="Подбор по бюджету и платежу"
+            text="Максимальный платёж, взнос, срок, тип кузова и минимальное оснащение — система подберёт комплектации с объяснением причин."
+            cta="Подобрать автомобиль"
+          />
+          <FeatureCard
+            to="/sources"
+            icon={<Database className="h-6 w-6" />}
+            tone="amber"
+            title="Источники и история цен"
+            text="Журнал проверок прайс-листов, даты фиксации, история изменений цен и статусы достоверности каждой комплектации."
+            cta="Смотреть реестр"
+          />
+        </div>
+      </section>
+
+      {/* ================= АКТУАЛЬНОСТЬ ДАННЫХ ================= */}
+      <section className="mx-4 sm:mx-6 lg:mx-8">
+        <SectionTitle tip="Каждая цена привязана к первоисточнику и дате проверки. Если дата действия цены не опубликована, интерфейс показывает предупреждение вместо молчаливой подмены данных.">
+          Актуальность данных
+        </SectionTitle>
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.4fr_1fr]">
+          <Card glass className="flex flex-col gap-2.5 rounded-2xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <FileText className="h-4 w-4 text-[#FF334B]" />
+              <p className="text-[13px] font-bold text-[#F4F5F6]">Данные проверены {fmtDate(CATALOG_FIXED_AT)}</p>
+              <Tag tone="success">{OFFICIAL_PRICE_COUNT} цен из официальных прайс-листов</Tag>
+            </div>
+            <ul className="flex flex-col gap-1.5 text-[12px] leading-relaxed text-[#A2A7AF]">
+              <li>
+                Основной источник —{' '}
+                <a
+                  className="underline decoration-[#2B3037] underline-offset-2 hover:text-[#F4F5F6]"
+                  href={HAVAL_PRICE_LISTS_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => track('official_source_click', { source: 'home', url: HAVAL_PRICE_LISTS_URL })}
+                >
+                  каталоги и прайс-листы haval.ru
+                </a>{' '}
+                (PDF «Максимальная цена перепродажи»).
+              </li>
+              <li>
+                Характеристики, оснащение, цвета и размеры колёс перенесены из тех же документов; неизвестные значения
+                помечены как «нет данных».
+              </li>
+              <li>
+                Обновление — не в реальном времени: цены перепроверяются скриптами (<code>npm run update:prices</code>)
+                и импортом прайс-листов (<code>npm run import:price-list</code>).
+              </li>
+            </ul>
+            <Link to="/sources" className="mt-1 self-start">
+              <Button type="button" variant="outline" size="sm">
+                Источники данных и история проверок
+              </Button>
+            </Link>
+          </Card>
+
+          <div className="flex flex-col gap-3">
+            <Callout tone="warn" title="Независимый сервис">
+              HavalGarage не является официальным сайтом HAVAL или официальным дилером. Цены и условия подтверждает
+              первоисточник; расчёт кредита — математическая симуляция, а не оферта и не одобрение.
+            </Callout>
+            {PRICE_HISTORY.length > 0 && (
+              <Card className="flex flex-col gap-1.5">
+                <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#A2A7AF]">
+                  <Zap className="h-3.5 w-3.5 text-[#FF334B]" /> Последняя проверка
+                </p>
+                <p className="text-[12px] leading-relaxed text-[#A2A7AF]">
+                  {fmtDate(PRICE_HISTORY[PRICE_HISTORY.length - 1].checkedAt)} ·{' '}
+                  {PRICE_HISTORY[PRICE_HISTORY.length - 1].summary.slice(0, 220)}…
+                </p>
+              </Card>
+            )}
+          </div>
+        </div>
+
+        <p className="mt-4 flex items-start gap-2 text-[11px] leading-relaxed text-[#A2A7AF]">
+          <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#FF334B]" />
+          * Рекламные ставки кредитных программ (в том числе «от 0,01%») достигаются только при выполнении
+          опубликованных условий: размер взноса, срок, сумма кредита и страхование КАСКО. Ограничения приведены в
+          разделе{' '}
+          <Link to="/programs" className="underline decoration-[#2B3037] underline-offset-2 hover:text-[#F4F5F6]">
+            «Кредитные программы»
+          </Link>
+          .
+        </p>
+      </section>
     </div>
   )
 }
 
+const TONES = {
+  red: 'bg-[#FF334B]/15 border-[#FF334B]/30 text-[#FF334B]',
+  blue: 'bg-blue-500/15 border-blue-500/30 text-blue-400',
+  emerald: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400',
+  violet: 'bg-purple-500/15 border-purple-500/30 text-purple-400',
+  sky: 'bg-sky-500/15 border-sky-500/30 text-sky-400',
+  amber: 'bg-amber-500/15 border-amber-500/30 text-amber-400',
+} as const
+
+const CTA_TONES = {
+  red: 'text-[#FF334B]',
+  blue: 'text-blue-400',
+  emerald: 'text-emerald-400',
+  violet: 'text-purple-400',
+  sky: 'text-sky-400',
+  amber: 'text-amber-400',
+} as const
+
 function FeatureCard({
+  to,
   icon,
+  tone,
   title,
   text,
-  to,
   cta,
 }: {
+  to: string
   icon: React.ReactNode
+  tone: keyof typeof TONES
   title: string
   text: string
-  to: string
   cta: string
 }) {
   return (
-    <Link
-      to={to}
-      className="hover-lift group flex flex-col gap-2 rounded-[10px] border border-[#363B43]/85 bg-[#1A1D22] p-4"
-    >
-      <span className="flex items-center gap-2 text-[#E4002B]">
-        {icon}
-        <span className="font-display-num text-[14.5px] font-bold uppercase tracking-wide text-[#F3F4F4]">{title}</span>
-      </span>
-      <p className="flex-1 text-[12px] leading-relaxed text-[#A9AFB7]">{text}</p>
-      <span className="text-[12px] font-bold text-[#A9AFB7] transition-colors group-hover:text-[#E4002B]">{cta} →</span>
+    <Link to={to} className="group glass-card glass-card-hover flex flex-col justify-between rounded-2xl border-[#2B3037] p-6">
+      <div className="space-y-4">
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-xl border ${TONES[tone]}`}
+        >
+          {icon}
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-[#F4F5F6] group-hover:text-white">{title}</h3>
+          <p className="mt-2 text-xs leading-relaxed text-[#A2A7AF]">{text}</p>
+        </div>
+      </div>
+      <div className={`flex items-center gap-1 pt-6 text-xs font-semibold transition-transform group-hover:translate-x-1 ${CTA_TONES[tone]}`}>
+        {cta} <ArrowRight className="h-3.5 w-3.5" />
+      </div>
     </Link>
   )
 }

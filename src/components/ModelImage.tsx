@@ -28,7 +28,7 @@ export function ModelImage({
   if (!src) {
     return (
       <div
-        className={`flex items-center justify-center bg-[#0E1013] font-display-num text-[26px] font-bold uppercase tracking-widest text-[#363B43] ${className}`}
+        className={`flex items-center justify-center bg-[#0B0C0E] font-display-num text-[26px] font-bold uppercase tracking-widest text-[#2B3037] ${className}`}
         role="img"
         aria-label={label}
       >
@@ -65,7 +65,7 @@ export function ModelGallery({ model }: { model: HavalModel }) {
   const visible = images.filter((src) => !broken[src])
   if (visible.length === 0) {
     return (
-      <div className="flex h-56 items-center justify-center rounded-[10px] border border-[#363B43] bg-[#0E1013] text-[12px] text-[#A9AFB7] sm:h-72">
+      <div className="flex h-56 items-center justify-center rounded-2xl border border-[#2B3037] bg-[#0B0C0E] text-[12px] text-[#A2A7AF] sm:h-72">
         Фотография модели недоступны — проверьте соединение или откройте официальный источник
       </div>
     )
@@ -75,7 +75,7 @@ export function ModelGallery({ model }: { model: HavalModel }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="relative h-56 overflow-hidden rounded-[10px] border border-[#363B43] bg-[#0E1013] sm:h-72">
+      <div className="relative h-56 overflow-hidden rounded-2xl border border-[#2B3037] bg-[#0B0C0E] sm:h-72">
         <img
           key={current}
           src={current}
@@ -85,16 +85,16 @@ export function ModelGallery({ model }: { model: HavalModel }) {
           onError={() => setBroken((b) => ({ ...b, [current]: true }))}
         />
         {visible.length > 1 && (
-          <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-[#0E1013] to-transparent px-3 pb-2.5 pt-6">
+          <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-[#0B0C0E] to-transparent px-3 pb-2.5 pt-6">
             <button
               type="button"
               onClick={() => setIndex((i) => (i - 1 + visible.length) % visible.length)}
-              className="min-h-[36px] rounded-[8px] border border-[#363B43] bg-[#1A1D22]/90 px-3 text-[12px] font-bold text-[#F3F4F4]"
+              className="min-h-[36px] rounded-lg border border-[#2B3037] bg-[#181B1F]/90 px-3 text-[12px] font-bold text-[#F4F5F6]"
               aria-label="Предыдущее фото"
             >
               ←
             </button>
-            <span className="text-[11px] font-semibold text-[#A9AFB7]">
+            <span className="text-[11px] font-semibold text-[#A2A7AF]">
               {Math.min(index, visible.length - 1) + 1} / {visible.length}
               <span className="ml-2 hidden sm:inline">официальные фото haval.ru</span>
             </span>
@@ -104,7 +104,7 @@ export function ModelGallery({ model }: { model: HavalModel }) {
                 setIndex((i) => (i + 1) % visible.length)
                 track('trim_view', { model: model.id, action: 'gallery-next' })
               }}
-              className="min-h-[36px] rounded-[8px] border border-[#363B43] bg-[#1A1D22]/90 px-3 text-[12px] font-bold text-[#F3F4F4]"
+              className="min-h-[36px] rounded-lg border border-[#2B3037] bg-[#181B1F]/90 px-3 text-[12px] font-bold text-[#F4F5F6]"
               aria-label="Следующее фото"
             >
               →
@@ -122,8 +122,8 @@ export function ModelGallery({ model }: { model: HavalModel }) {
               onClick={() => setIndex(i)}
               aria-label={`Показать фото ${i + 1}`}
               aria-current={i === index}
-              className={`h-14 w-20 shrink-0 overflow-hidden rounded-[8px] border transition-colors ${
-                i === index ? 'border-[#E4002B]' : 'border-[#363B43] hover:border-[#A9AFB7]'
+              className={`h-14 w-20 shrink-0 overflow-hidden rounded-lg border transition-colors ${
+                i === index ? 'border-[#FF334B]' : 'border-[#2B3037] hover:border-[#A2A7AF]'
               }`}
             >
               <img

@@ -37,7 +37,7 @@ function RouteFallback() {
   return (
     <div className="flex min-h-[45dvh] flex-col items-center justify-center gap-3">
       <Spinner className="h-8 w-8" />
-      <p className="text-[12px] text-[#A9AFB7]">Загрузка раздела…</p>
+      <p className="text-[12px] text-[#A2A7AF]">Загрузка раздела…</p>
     </div>
   )
 }

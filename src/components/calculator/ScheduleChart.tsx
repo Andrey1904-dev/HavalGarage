@@ -42,7 +42,7 @@ export default function ScheduleChart({
             {
               label: isYear ? 'Проценты за год' : 'Проценты',
               data: points.map((p) => p.interestPart),
-              backgroundColor: '#E4002B',
+              backgroundColor: '#FF334B',
               borderRadius: 3,
               borderSkipped: false,
               stack: 'total',
@@ -66,15 +66,15 @@ export default function ScheduleChart({
             x: {
               stacked: true,
               grid: { display: false },
-              border: { color: '#363B43' },
-              ticks: { color: '#A9AFB7', font: { size: 10 } },
+              border: { color: '#2B3037' },
+              ticks: { color: '#A2A7AF', font: { size: 10 } },
             },
             y: {
               stacked: true,
-              grid: { color: '#363B43' },
+              grid: { color: '#2B3037' },
               border: { display: false },
               ticks: {
-                color: '#A9AFB7',
+                color: '#A2A7AF',
                 font: { size: 10 },
                 maxTicksLimit: 4,
                 callback: (value) =>
@@ -85,10 +85,10 @@ export default function ScheduleChart({
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: '#0E1013',
-              titleColor: '#A9AFB7',
-              bodyColor: '#F3F4F4',
-              borderColor: '#363B43',
+              backgroundColor: '#0B0C0E',
+              titleColor: '#A2A7AF',
+              bodyColor: '#F4F5F6',
+              borderColor: '#2B3037',
               borderWidth: 1,
               padding: 10,
               callbacks: {
@@ -100,9 +100,9 @@ export default function ScheduleChart({
           },
         }}
       />
-      <div className="mt-2 flex gap-4 text-[10.5px] text-[#A9AFB7]">
+      <div className="mt-2 flex gap-4 text-[10.5px] text-[#A2A7AF]">
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-[2px] bg-[#E4002B]" /> Проценты
+          <span className="h-2 w-2 rounded-[2px] bg-[#FF334B]" /> Проценты
         </span>
         <span className="inline-flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-[2px] bg-[#3B424C]" /> Тело долга

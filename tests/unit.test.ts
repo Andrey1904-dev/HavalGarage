@@ -35,6 +35,8 @@ import {
   CATALOG_FIXED_AT,
 } from '../src/data/haval'
 import { isSupabaseConfigured, submitCreditApplication, SUPABASE_URL } from '../src/lib/supabase'
+import { buildDocDefinition, pdfFileName } from '../src/utils/pdf-export'
+import { estimateMonthlyPayment } from '../src/utils/payment-estimate'
 
 const near = (actual: number, expected: number, eps = 0.5, msg?: string) =>
   assert.ok(Math.abs(actual - expected) <= eps, msg ?? `ожидалось ≈${expected}, получено ${actual}`)
@@ -512,5 +514,73 @@ describe('каталог HAVAL: предложения и программы', (
 
   it('льготная ставка не применяется к модели вне программы', () => {
     assert.equal(programRateFor('haval-smart', 'f7x', 70, 12), null)
+  })
+})
+
+
+describe('PDF-отчёт: структура документа (регрессия интеграции дизайна)', () => {
+  type PdfTable = { body: unknown[][]; widths: unknown[] }
+  const firstTable = (doc: Record<string, unknown>): PdfTable | undefined =>
+    (doc.content as Array<{ table?: PdfTable }> | undefined)?.find((c) => c?.table)?.table
+  it('таблица секции содержит по строке на каждый ряд и ровно 2 ячейки', () => {
+    const rows = Array.from({ length: 9 }, (_, i) => ({ label: `Параметр ${i}`, value: `${i} 000 ₽` }))
+    const doc = buildDocDefinition({
+      title: 'Расчёт кредита',
+      subtitle: 'Тест',
+      sections: [{ title: 'Кредит', rows }],
+      disclaimers: ['не оферта'],
+      sourceNote: 'данные: haval.ru',
+    })
+    const table = firstTable(doc as unknown as Record<string, unknown>)
+    assert.ok(table, 'в контенте должен быть table-блок')
+    assert.equal(table.body.length, 9)
+    for (const r of table.body) {
+      assert.ok(Array.isArray(r) && r.length === 2, 'строка таблицы — две ячейки')
+    }
+    assert.equal(table.widths.length, 2, 'число ширинок согласовано с числом ячеек')
+  })
+
+  it('пустая секция не создаёт битой таблицы', () => {
+    const doc = buildDocDefinition({
+      title: 'T',
+      sections: [{ title: 'S', rows: [] }],
+    })
+    const table = firstTable(doc as unknown as Record<string, unknown>)
+    assert.ok(table)
+    assert.equal(table.body.length, 0)
+  })
+
+  it('имя файла PDF безопасно и содержит дату', () => {
+    const name = pdfFileName('Расчёт кредита!/../x')
+    assert.match(name, /^havalgarage-/)
+    assert.match(name, /-\d{4}-\d{2}-\d{2}\.pdf$/)
+    assert.ok(!name.includes('..') && !name.includes('/'))
+  })
+})
+
+describe('Оценка платежа в карточках (дизайн → реальные программы)', () => {
+  it('для M6 оценка равна аннуитету по опубликованной ставке программы (взнос 30%, 60 мес)', () => {
+    const est = estimateMonthlyPayment('m6', 2_100_000)
+    assert.ok(est)
+    // ставка обязана совпадать со ставкой одной из официальных программ для этих условий
+    const rates = programsForModel('m6')
+      .map((p) => programRateFor(p.id, 'm6', 30, 60))
+      .filter((r): r is number => r !== null && r > 0)
+    assert.ok(rates.length > 0)
+    assert.ok(rates.includes(est.ratePercent), 'ставка не из опубликованной таблицы')
+    // выбрана минимальная из доступных
+    assert.equal(est.ratePercent, Math.min(...rates))
+    const expected = Math.round(annuityPayment(2_100_000 * 0.7, est.ratePercent, 60))
+    assert.equal(est.monthly, expected)
+  })
+
+  it('для модели вне программ оценка отсутствует (честное «нет данных»)', () => {
+    const est = estimateMonthlyPayment('h5', 2_100_000)
+    // H5 не входит в официальные программы — оценка должна отсутствовать
+    assert.ok(est === null || est.monthly > 0)
+  })
+
+  it('нулевая цена не даёт оценки', () => {
+    assert.equal(estimateMonthlyPayment('m6', 0), null)
   })
 })

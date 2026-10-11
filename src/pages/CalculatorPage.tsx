@@ -64,12 +64,12 @@ export default function CalculatorPage() {
 
   return (
     <div className="animate-page-enter flex flex-col gap-4">
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">Расчётный сценарий</p>
-        <h1 className="font-display-num text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4] sm:text-[32px]">
+      <header className="flex flex-col gap-1.5 border-b border-[#242930] pb-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">Расчётный сценарий</p>
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Кредитный калькулятор
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A9AFB7]">
+        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
           Выберите модель и комплектацию — цена подставится из официального прайс-листа. Задайте взнос в рублях или
           процентах, срок и ставку: результат пересчитывается мгновенно. Официальные программы и их ограничения — в
           разделе «Программы».

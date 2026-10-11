@@ -43,7 +43,7 @@ export default function PriceHistorySection({ model, trims }: { model: HavalMode
         История цен
       </SectionTitle>
 
-      <div className="flex flex-col gap-3 rounded-[10px] border border-[#363B43]/85 bg-[#1A1D22] p-3.5">
+      <div className="flex flex-col gap-3 rounded-2xl border border-[#2B3037]/85 bg-[#181B1F] p-3.5">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Select label="Комплектация" value={active.id} onChange={(e) => setSelected(e.target.value)}>
             {sorted.map((t) => (
@@ -54,7 +54,7 @@ export default function PriceHistorySection({ model, trims }: { model: HavalMode
             ))}
           </Select>
           <div className="flex items-end">
-            <p className="text-[11.5px] leading-relaxed text-[#A9AFB7]">
+            <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
               У {model.name} накоплена динамика цен по {dynamicsCount} из {priced.length} комплектаций с
               подтверждённой ценой. По остальным подтверждена одна точка — снимок официального прайс-листа.
             </p>

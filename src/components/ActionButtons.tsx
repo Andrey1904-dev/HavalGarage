@@ -29,10 +29,10 @@ export function FavoriteButton({
       aria-pressed={active}
       aria-label={active ? 'Убрать из избранного' : 'Добавить в избранное'}
       title={active ? 'В избранном — нажмите, чтобы убрать' : 'Добавить в избранное'}
-      className={`flex min-h-[38px] min-w-[38px] items-center justify-center gap-1.5 rounded-[8px] border px-2.5 text-[11.5px] font-bold transition-colors ${
+      className={`flex min-h-[38px] min-w-[38px] items-center justify-center gap-1.5 rounded-lg border px-2.5 text-[11.5px] font-bold transition-colors ${
         active
-          ? 'border-[#E4002B] bg-[#E4002B]/15 text-[#E4002B]'
-          : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:text-[#F3F4F4]'
+          ? 'border-[#FF334B] bg-[#FF334B]/15 text-[#FF334B]'
+          : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
       } ${className}`}
     >
       <HeartIcon className="h-4 w-4" />
@@ -53,7 +53,7 @@ export function CompareToggle({ trimId, label = 'Сравнить' }: { trimId: 
     return (
       <Link
         to={`/compare?trims=${trimIds.join(',')}`}
-        className="flex min-h-[38px] items-center justify-center gap-1.5 rounded-[8px] border border-[#16B374]/50 bg-[#16B374]/12 px-2.5 text-[11.5px] font-bold text-[#16B374] transition-colors hover:bg-[#16B374]/20"
+        className="flex min-h-[38px] items-center justify-center gap-1.5 rounded-lg border border-[#10B981]/50 bg-[#10B981]/12 px-2.5 text-[11.5px] font-bold text-[#10B981] transition-colors hover:bg-[#10B981]/20"
       >
         <CheckIcon className="h-4 w-4" /> В сравнении ({trimIds.length}/{MAX_COMPARE})
       </Link>
@@ -66,10 +66,10 @@ export function CompareToggle({ trimId, label = 'Сравнить' }: { trimId: 
       disabled={isFull}
       onClick={() => toggle(trimId)}
       title={isFull ? `Уже выбрано ${MAX_COMPARE} комплектации — уберите одну` : 'Добавить к сравнению'}
-      className={`flex min-h-[38px] items-center justify-center gap-1.5 rounded-[8px] border px-2.5 text-[11.5px] font-bold transition-colors ${
+      className={`flex min-h-[38px] items-center justify-center gap-1.5 rounded-lg border px-2.5 text-[11.5px] font-bold transition-colors ${
         isFull
-          ? 'cursor-not-allowed border-[#363B43] bg-[#23272D] text-[#A9AFB7]/50'
-          : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:border-[#E4002B]/60 hover:text-[#F3F4F4]'
+          ? 'cursor-not-allowed border-[#2B3037] bg-[#20242A] text-[#A2A7AF]/50'
+          : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:border-[#FF334B]/60 hover:text-[#F4F5F6]'
       }`}
     >
       <CompareIcon className="h-4 w-4" /> {label}

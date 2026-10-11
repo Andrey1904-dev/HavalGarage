@@ -47,7 +47,7 @@ export default function PdfExportButton({
         {state === 'loading' ? 'Готовим PDF…' : label}
       </Button>
       {state === 'error' && (
-        <span role="alert" className="mt-1 text-[10.5px] text-[#F5A623]">
+        <span role="alert" className="mt-1 text-[10.5px] text-[#F59E0B]">
           Не удалось сформировать файл — воспользуйтесь печатью
         </span>
       )}

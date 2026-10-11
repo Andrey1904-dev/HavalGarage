@@ -40,12 +40,12 @@ export default function PdnCalculator() {
 
   const zoneConfig = {
     safe: {
-      color: '#16B374',
+      color: '#10B981',
       badge: 'Безопасная зона (до 30%)',
       text: 'Долговая нагрузка в зелёной зоне: платежи занимают менее 30% ежемесячного дохода.',
     },
     warn: {
-      color: '#F5A623',
+      color: '#F59E0B',
       badge: 'Повышенная нагрузка (30–50%)',
       text: 'Умеренная зона риска: от 30% до 50% дохода уходит на кредиты. Рекомендуется финансовый резерв.',
     },
@@ -61,10 +61,10 @@ export default function PdnCalculator() {
 
   return (
     <Card className="p-0 overflow-hidden">
-      <div className="border-b border-[#363B43] bg-[#23272D]/60 px-4 py-3.5">
+      <div className="border-b border-[#2B3037] bg-[#20242A]/60 px-4 py-3.5">
         <div className="flex flex-wrap items-center gap-2">
-          <PercentIcon className="h-4 w-4 text-[#E4002B]" />
-          <h3 className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F3F4F4]">
+          <PercentIcon className="h-4 w-4 text-[#FF334B]" />
+          <h3 className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F4F5F6]">
             Показатель долговой нагрузки (ПДН)
           </h3>
           <InfoTip title="ПДН">
@@ -74,7 +74,7 @@ export default function PdnCalculator() {
             всегда отказ. До 30 % — комфортная зона, когда платёж не мешает жить.
           </InfoTip>
         </div>
-        <p className="mt-1 text-[12px] leading-relaxed text-[#A9AFB7]">
+        <p className="mt-1 text-[12px] leading-relaxed text-[#A2A7AF]">
           Оценка доли ежемесячного дохода, уходящей на обслуживание всех кредитов (пороги ЦБ: 30% и 50%)
         </p>
       </div>
@@ -107,13 +107,13 @@ export default function PdnCalculator() {
           />
         </div>
 
-        <div className="mt-4 rounded-[10px] border border-[#363B43] bg-[#0E1013] p-4">
+        <div className="mt-4 rounded-2xl border border-[#2B3037] bg-[#0B0C0E] p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <div>
-              <span className="text-[11.5px] font-bold uppercase tracking-wider text-[#A9AFB7]">Расчётный ПДН</span>
+              <span className="text-[11.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">Расчётный ПДН</span>
               <p
                 className="font-display-num mt-0.5 text-[30px] font-bold leading-none"
-                style={{ color: zone ? zoneConfig[zone].color : '#F3F4F4' }}
+                style={{ color: zone ? zoneConfig[zone].color : '#F4F5F6' }}
               >
                 {pdn === null ? '—' : `${Math.min(999, Math.round(pdn))}%`}
               </p>
@@ -133,43 +133,43 @@ export default function PdnCalculator() {
           </div>
 
           <div className="relative mt-4">
-            <div className="grid h-3 w-full grid-cols-[30fr_20fr_50fr] overflow-hidden rounded-full border border-[#363B43] bg-[#1A1D22]">
-              <div className="bg-[#16B374]/80" title="До 30% — безопасная зона" />
-              <div className="border-x border-[#0E1013] bg-[#F5A623]/80" title="30–50% — умеренная нагрузка" />
+            <div className="grid h-3 w-full grid-cols-[30fr_20fr_50fr] overflow-hidden rounded-full border border-[#2B3037] bg-[#181B1F]">
+              <div className="bg-[#10B981]/80" title="До 30% — безопасная зона" />
+              <div className="border-x border-[#0B0C0E] bg-[#F59E0B]/80" title="30–50% — умеренная нагрузка" />
               <div className="bg-[#EF4444]/80" title="Свыше 50% — высокая нагрузка" />
             </div>
             {pdn !== null && (
               <div
-                className="pointer-events-none absolute -top-1.5 h-6 w-1.5 -translate-x-1/2 rounded-full bg-[#F3F4F4] shadow-[0_0_0_2px_#0E1013] transition-all duration-200"
+                className="pointer-events-none absolute -top-1.5 h-6 w-1.5 -translate-x-1/2 rounded-full bg-[#F4F5F6] shadow-[0_0_0_2px_#0B0C0E] transition-all duration-200"
                 style={{ left: `${Math.min(100, Math.max(0, pdn))}%` }}
                 aria-hidden="true"
               />
             )}
           </div>
 
-          <div className="relative mt-1.5 h-4 text-[11px] font-mono font-semibold text-[#A9AFB7]">
+          <div className="relative mt-1.5 h-4 text-[11px] font-mono font-semibold text-[#A2A7AF]">
             <span className="absolute left-0">0%</span>
-            <span className="absolute left-[30%] -translate-x-1/2 text-[#16B374]">30%</span>
-            <span className="absolute left-[50%] -translate-x-1/2 text-[#F5A623]">50%</span>
+            <span className="absolute left-[30%] -translate-x-1/2 text-[#10B981]">30%</span>
+            <span className="absolute left-[50%] -translate-x-1/2 text-[#F59E0B]">50%</span>
             <span className="absolute right-0 text-[#EF4444]">100%</span>
           </div>
 
           {zone && calc ? (
-            <div className="mt-3 border-t border-[#363B43]/70 pt-2.5 text-[12.5px] leading-relaxed text-[#A9AFB7]">
-              Суммарный платёж <strong className="text-[#F3F4F4]">{fmtMoney(calc.total)}</strong> в месяц.{' '}
+            <div className="mt-3 border-t border-[#2B3037]/70 pt-2.5 text-[12.5px] leading-relaxed text-[#A2A7AF]">
+              Суммарный платёж <strong className="text-[#F4F5F6]">{fmtMoney(calc.total)}</strong> в месяц.{' '}
               {zoneConfig[zone].text}
             </div>
           ) : (
-            <p className="mt-3 border-t border-[#363B43]/70 pt-2.5 text-[12.5px] text-[#A9AFB7]">
+            <p className="mt-3 border-t border-[#2B3037]/70 pt-2.5 text-[12.5px] text-[#A2A7AF]">
               Укажите ваш ежемесячный доход и платежи, чтобы рассчитать ПДН и увидеть зону нагрузки.
             </p>
           )}
         </div>
 
         {calc && (calc.safe || calc.limit) && (
-          <div className="mt-3 rounded-[10px] border border-[#363B43] bg-[#0E1013] p-4">
+          <div className="mt-3 rounded-2xl border border-[#2B3037] bg-[#0B0C0E] p-4">
             <div className="flex flex-wrap items-center gap-2">
-              <h4 className="font-display-num text-[13.5px] font-bold uppercase tracking-wide text-[#F3F4F4]">
+              <h4 className="font-display-num text-[13.5px] font-bold uppercase tracking-wide text-[#F4F5F6]">
                 Что закрыть, чтобы снизить ПДН
               </h4>
               <InfoTip title="Как считаем">
@@ -184,31 +184,31 @@ export default function PdnCalculator() {
               {(['limit', 'safe'] as const).map((key) => {
                 const r = calc[key]
                 if (!r) return null
-                const color = key === 'limit' ? '#F5A623' : '#16B374'
+                const color = key === 'limit' ? '#F59E0B' : '#10B981'
                 return (
                   <div
                     key={key}
-                    className="rounded-[8px] border px-3 py-2.5 text-[12.5px] leading-relaxed"
+                    className="rounded-lg border px-3 py-2.5 text-[12.5px] leading-relaxed"
                     style={{ borderColor: `${color}45`, backgroundColor: `${color}12` }}
                   >
                     <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                       <span className="text-[11.5px] font-bold uppercase tracking-wider" style={{ color }}>
                         Цель — ПДН до {r.targetPercent}%
                       </span>
-                      <span className="font-mono text-[11.5px] text-[#A9AFB7]">
+                      <span className="font-mono text-[11.5px] text-[#A2A7AF]">
                         предел платежей {fmtMoney(r.allowedPayment)}/мес
                       </span>
                     </div>
                     {r.reached ? (
-                      <p className="mt-1 text-[#A9AFB7]">
-                        Порог уже соблюдён — запас <strong className="text-[#F3F4F4]">{fmtMoney(r.headroom)}</strong> в
+                      <p className="mt-1 text-[#A2A7AF]">
+                        Порог уже соблюдён — запас <strong className="text-[#F4F5F6]">{fmtMoney(r.headroom)}</strong> в
                         месяц до его превышения.
                       </p>
                     ) : (
-                      <p className="mt-1 text-[#A9AFB7]">
+                      <p className="mt-1 text-[#A2A7AF]">
                         Снизьте ежемесячные платежи на{' '}
-                        <strong className="text-[#F3F4F4]">{fmtMoney(r.paymentToCut)}</strong> — это примерно{' '}
-                        <strong className="text-[#F3F4F4]">
+                        <strong className="text-[#F4F5F6]">{fmtMoney(r.paymentToCut)}</strong> — это примерно{' '}
+                        <strong className="text-[#F4F5F6]">
                           {Number.isFinite(r.principalToClose) ? fmtMoney(r.principalToClose) : '—'}
                         </strong>{' '}
                         остатка долга, который нужно погасить или закрыть досрочно.
@@ -237,7 +237,7 @@ export default function PdnCalculator() {
                 onChange={(e) => setCloseTerm(e.target.value)}
               />
             </div>
-            <p className="mt-2 text-[11.5px] leading-relaxed text-[#A9AFB7]">
+            <p className="mt-2 text-[11.5px] leading-relaxed text-[#A2A7AF]">
               Выгоднее закрывать самые дорогие и короткие долги — кредитные карты и микрозаймы: они дают
               максимальное снижение платежа на каждый вложенный рубль.
             </p>

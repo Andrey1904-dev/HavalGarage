@@ -149,12 +149,12 @@ export default function BudgetPage() {
 
   return (
     <div className="animate-page-enter flex flex-col gap-4">
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">Что можно купить с вашим бюджетом</p>
-        <h1 className="font-display-num text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4] sm:text-[32px]">
+      <header className="flex flex-col gap-1.5 border-b border-[#242930] pb-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">Что можно купить с вашим бюджетом</p>
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Подбор по бюджету
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A9AFB7]">
+        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
           Расчёт воспроизводимый: максимальная сумма кредита определяется обратной аннуитетной формулой, затем к ней
           добавляется ваш взнос. Обязательные ограничения (кузов, привод, функции, лимиты программы) исключают
           неподходящие варианты; превышающие бюджет показываются отдельно и помечаются.
@@ -165,8 +165,8 @@ export default function BudgetPage() {
         {/* ---------------- Параметры ---------------- */}
         <div className="flex flex-col gap-3">
           <Card className="flex flex-col gap-3">
-            <p className="flex items-center gap-2 text-[13px] font-bold text-[#F3F4F4]">
-              <TargetIcon className="h-4 w-4 text-[#E4002B]" /> Бюджет и кредит
+            <p className="flex items-center gap-2 text-[13px] font-bold text-[#F4F5F6]">
+              <TargetIcon className="h-4 w-4 text-[#FF334B]" /> Бюджет и кредит
             </p>
 
             <Field
@@ -238,7 +238,7 @@ export default function BudgetPage() {
             />
 
             <div>
-              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A9AFB7]">Какую цену использовать</span>
+              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A2A7AF]">Какую цену использовать</span>
               <div className="flex gap-1.5">
                 {(
                   [
@@ -250,10 +250,10 @@ export default function BudgetPage() {
                     key={value}
                     type="button"
                     onClick={() => setPriceMode(value)}
-                    className={`min-h-[40px] flex-1 rounded-[8px] border px-2.5 text-[11.5px] font-bold transition-colors ${
+                    className={`min-h-[40px] flex-1 rounded-lg border px-2.5 text-[11.5px] font-bold transition-colors ${
                       priceMode === value
-                        ? 'border-[#E4002B] bg-[#E4002B]/12 text-[#F3F4F4]'
-                        : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:text-[#F3F4F4]'
+                        ? 'border-[#FF334B] bg-[#FF334B]/12 text-[#F4F5F6]'
+                        : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
                     }`}
                   >
                     {label}
@@ -261,7 +261,7 @@ export default function BudgetPage() {
                 ))}
               </div>
               {priceMode === 'best-available' && (
-                <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A9AFB7]">
+                <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A2A7AF]">
                   Показываются и варианты с выгодой (трейд-ин, спеццены в наличии). Выгода не применяется автоматически:
                   в карточке указаны условия её получения.
                 </p>
@@ -270,10 +270,10 @@ export default function BudgetPage() {
           </Card>
 
           <Card className="flex flex-col gap-3">
-            <p className="text-[13px] font-bold text-[#F3F4F4]">Обязательные требования</p>
+            <p className="text-[13px] font-bold text-[#F4F5F6]">Обязательные требования</p>
 
             <div>
-              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A9AFB7]">Тип кузова</span>
+              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A2A7AF]">Тип кузова</span>
               <div className="grid grid-cols-2 gap-1.5">
                 {['Кроссовер', 'Купе-кроссовер', 'Внедорожник', 'Пикап'].map((b) => (
                   <Checkbox
@@ -297,7 +297,7 @@ export default function BudgetPage() {
             </Select>
 
             <div>
-              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A9AFB7]">Минимально необходимые функции</span>
+              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A2A7AF]">Минимально необходимые функции</span>
               <div className="flex flex-wrap gap-1.5">
                 {FEATURE_PRESETS.map((f) => (
                   <button
@@ -305,10 +305,10 @@ export default function BudgetPage() {
                     type="button"
                     onClick={() => toggleFeature(f)}
                     aria-pressed={features.includes(f)}
-                    className={`min-h-[36px] rounded-[8px] border px-2.5 text-[11.5px] font-semibold transition-colors ${
+                    className={`min-h-[36px] rounded-lg border px-2.5 text-[11.5px] font-semibold transition-colors ${
                       features.includes(f)
-                        ? 'border-[#E4002B] bg-[#E4002B]/12 text-[#F3F4F4]'
-                        : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:text-[#F3F4F4]'
+                        ? 'border-[#FF334B] bg-[#FF334B]/12 text-[#F4F5F6]'
+                        : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
                     }`}
                   >
                     {f}
@@ -334,7 +334,7 @@ export default function BudgetPage() {
                 </Button>
               </div>
               {features.length > 0 && (
-                <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A9AFB7]">
+                <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A2A7AF]">
                   Требования проверяются по официальным прайс-листам. Если документ не раскрывает функцию для
                   комплектации, вариант исключается — отсутствие сведений не считается наличием функции.
                 </p>
@@ -351,7 +351,7 @@ export default function BudgetPage() {
                 <AlertIcon className="h-5 w-5 shrink-0 text-[#EF4444]" />
                 <div>
                   <p className="text-[13px] font-bold text-[#EF4444]">Проверьте параметры подбора</p>
-                  <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A9AFB7]">
+                  <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A2A7AF]">
                     {result.errors.map((e) => (
                       <li key={e}>{e}</li>
                     ))}
@@ -378,7 +378,7 @@ export default function BudgetPage() {
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-[12px] text-[#A9AFB7]">
+                <p className="text-[12px] text-[#A2A7AF]">
                   Срок {pluralMonths(term)} · ставка{' '}
                   {usingProgram && program ? `по программе «${program.name}»` : `${String(rateNum).replace('.', ',')}%`} ·
                   взнос {fmtMoney(downNum)}
@@ -392,10 +392,10 @@ export default function BudgetPage() {
                         setSort(s.value)
                         track('budget_sort', { sort: s.value })
                       }}
-                      className={`min-h-[34px] rounded-[8px] border px-2.5 text-[11px] font-bold transition-colors ${
+                      className={`min-h-[34px] rounded-lg border px-2.5 text-[11px] font-bold transition-colors ${
                         sort === s.value
-                          ? 'border-[#E4002B] bg-[#E4002B]/12 text-[#F3F4F4]'
-                          : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:text-[#F3F4F4]'
+                          ? 'border-[#FF334B] bg-[#FF334B]/12 text-[#F4F5F6]'
+                          : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
                       }`}
                     >
                       {s.label}
@@ -490,21 +490,21 @@ function MatchCard({ match, onOpen }: { match: BudgetMatch; onOpen: (trimId: str
   const consumption = trim ? trimCombinedConsumption(trim.id) : null
 
   return (
-    <Card className={`flex flex-col gap-2.5 ${match.withinBudget ? '' : 'border-[#F5A623]/40'}`}>
+    <Card className={`flex flex-col gap-2.5 ${match.withinBudget ? '' : 'border-[#F59E0B]/40'}`}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <Link
             to={`/models/${match.model?.slug ?? match.candidate.modelId}`}
-            className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F3F4F4] hover:text-[#E4002B]"
+            className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F4F5F6] hover:text-[#FF334B]"
           >
             {match.candidate.modelName}
           </Link>
-          <p className="text-[12px] text-[#A9AFB7]">
+          <p className="text-[12px] text-[#A2A7AF]">
             {match.candidate.trimName} · {match.candidate.bodyType} · {match.candidate.drivetrain}
           </p>
         </div>
         <div className="flex flex-col items-end gap-1">
-          <p className="font-display-num text-[20px] font-bold leading-none text-[#F3F4F4]">{fmtMoney(match.price)}</p>
+          <p className="font-mono text-xl font-extrabold tabular-nums leading-none text-[#F4F5F6]">{fmtMoney(match.price)}</p>
           {match.withinBudget ? (
             <Tag tone="success">в бюджете</Tag>
           ) : (
@@ -526,10 +526,10 @@ function MatchCard({ match, onOpen }: { match: BudgetMatch; onOpen: (trimId: str
       </div>
 
       {consumption !== null && (
-        <p className="text-[11px] text-[#A9AFB7]">
+        <p className="text-[11px] text-[#A2A7AF]">
           Расход топлива (смешанный, по прайс-листу): {fmtNumber(consumption)} л/100 км. Полная стоимость владения с ТО,
           страховкой и налогом — в разделе{' '}
-          <Link to={`/ownership?trim=${match.candidate.trimId}`} className="underline underline-offset-2 hover:text-[#F3F4F4]">
+          <Link to={`/ownership?trim=${match.candidate.trimId}`} className="underline underline-offset-2 hover:text-[#F4F5F6]">
             «Стоимость владения»
           </Link>
           .
@@ -538,8 +538,8 @@ function MatchCard({ match, onOpen }: { match: BudgetMatch; onOpen: (trimId: str
 
       <ul className="flex flex-col gap-1">
         {match.reasons.map((r) => (
-          <li key={r} className="flex items-start gap-1.5 text-[11.5px] leading-relaxed text-[#A9AFB7]">
-            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#16B374]" aria-hidden="true" />
+          <li key={r} className="flex items-start gap-1.5 text-[11.5px] leading-relaxed text-[#A2A7AF]">
+            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#10B981]" aria-hidden="true" />
             {r}
           </li>
         ))}
@@ -548,7 +548,7 @@ function MatchCard({ match, onOpen }: { match: BudgetMatch; onOpen: (trimId: str
       {match.warnings.length > 0 && (
         <ul className="flex flex-col gap-1">
           {match.warnings.map((w) => (
-            <li key={w} className="flex items-start gap-1.5 text-[11px] leading-relaxed text-[#F5A623]">
+            <li key={w} className="flex items-start gap-1.5 text-[11px] leading-relaxed text-[#F59E0B]">
               <AlertIcon className="mt-0.5 h-3 w-3 shrink-0" />
               {w}
             </li>
@@ -581,16 +581,16 @@ function MiniStat({
   tone?: 'default' | 'accent'
 }) {
   return (
-    <div className="rounded-[8px] border border-[#363B43] bg-[#0E1013]/70 px-2.5 py-2">
-      <p className="text-[10px] font-bold uppercase tracking-wider text-[#A9AFB7]">{label}</p>
+    <div className="rounded-lg border border-[#2B3037] bg-[#0B0C0E]/70 px-2.5 py-2">
+      <p className="text-[10px] font-bold uppercase tracking-wider text-[#A2A7AF]">{label}</p>
       <p
         className={`font-display-num mt-0.5 text-[14px] font-bold ${
-          tone === 'accent' ? 'text-[#E4002B]' : 'text-[#F3F4F4]'
+          tone === 'accent' ? 'text-[#FF334B]' : 'text-[#F4F5F6]'
         }`}
       >
         {value}
       </p>
-      {hint && <p className="mt-0.5 text-[10px] text-[#A9AFB7]">{hint}</p>}
+      {hint && <p className="mt-0.5 text-[10px] text-[#A2A7AF]">{hint}</p>}
     </div>
   )
 }

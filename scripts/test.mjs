@@ -60,6 +60,10 @@ await build({
     'node:url',
     // jsdom поднимает реальное DOM-окружение и не переносит сборку в бандл
     'jsdom',
+    // pdfmake — браузерная сборка: в тестах не выполняется (используется только
+    // чистая функция построения docDefinition), оставляем внешним модулем
+    'pdfmake/build/pdfmake.min.js',
+    'pdfmake/build/vfs_fonts.js',
   ],
 })
 
