@@ -1,30 +1,45 @@
 @import "tailwindcss";
 
 @theme {
-  /* Визуальная система HAVAL Garage: тёмная тема,
-     акцент — фирменный красный HAVAL */
-  --color-bg: #0e1013;
-  --color-surface: #1a1d22;
-  --color-surface-2: #23272d;
-  --color-ink: #f3f4f4;
-  --color-muted: #a9afb7;
-  --color-line: #363b43;
+  /* ================================================================
+     Дизайн-токены HAVALGARAGE 3.0 (перенесены из HavalDesign):
+     глубокий тёмный фон, стеклянные поверхности, фирменный красный
+     акцент #FF334B, янтарные/изумрудные статусы, моноширинные цифры.
+     Единый источник цветов и отступов для всего приложения.
+     ================================================================ */
+  --color-bg: #0b0c0e;          /* --bg-primary */
+  --color-bg-2: #111316;        /* --bg-secondary */
+  --color-bg-3: #0e1013;        /* панели/треки скролла */
+  --color-surface: #181b1f;     /* --surface-card */
+  --color-surface-2: #20242a;   /* --surface-elevated */
+  --color-surface-3: #2a3038;   /* hover-поверхность */
+
+  --color-ink: #f4f5f6;         /* --text-primary */
+  --color-muted: #a2a7af;       /* --text-secondary */
+  --color-faint: #747b85;       /* --text-muted */
+
+  --color-line: #242930;        /* --border-subtle */
+  --color-line-card: #2b3037;   /* границы карточек */
+  --color-line-strong: #333a44; /* --border-strong */
+
+  /* Акцент HAVAL Red */
+  --color-sport: #ff334b;
+  --color-sport-hover: #e5223a;
+  --color-sport-bright: #ff6b7e;
+  --color-sport-glow: rgba(255, 51, 75, 0.35);
+  --color-sport-soft: rgba(255, 51, 75, 0.14);
+
+  /* Семантические цвета статусов (палитра HavalDesign) */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
 
   --breakpoint-xs: 30rem;
 
-  /* Акцент HAVAL Red */
-  --color-sport: #e4002b;
-  --color-sport-hover: #b80023;
-  --color-sport-soft: rgba(228, 0, 43, 0.14);
-
-  /* Семантические цвета статусов */
-  --color-success: #16b374;
-  --color-warning: #f5a623;
-  --color-danger: #ef4444;
-
   /* Типографика */
   --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Oswald", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -44,11 +59,21 @@ body {
   overflow-x: hidden;
 }
 
-/* Выразительный узкий гротеск для коротких заголовков и сумм */
+::selection {
+  background: #ff334b;
+  color: #fff;
+}
+
+/* Плотный гротеск для коротких заголовков и сумм (в типографике
+   HavalDesign — тяжёлое начертание sans + tabular-nums) */
 .font-display-num {
   font-family: var(--font-display);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.005em;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Технический фокус с клавиатуры */
@@ -57,17 +82,20 @@ body {
   outline-offset: 2px;
 }
 
-/* Аккуратные скроллбары */
+/* Аккуратный тёмный скроллбар (HavalDesign) */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0e1013;
+  background: var(--color-bg-3);
 }
 ::-webkit-scrollbar-thumb {
-  background: #363b43;
-  border-radius: 3px;
+  background: #282e37;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3b4350;
 }
 
 /* Убираем стрелки у number-инпутов */
@@ -79,6 +107,103 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+/* ---------- Glassmorphism-утилиты HavalDesign ---------- */
+.glass-panel {
+  background: rgba(24, 27, 31, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: linear-gradient(180deg, rgba(32, 36, 42, 0.8) 0%, rgba(24, 27, 31, 0.95) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-hover:hover {
+  border-color: rgba(255, 51, 75, 0.4);
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 30px -10px rgba(0, 0, 0, 0.7),
+    0 0 20px -5px rgba(255, 51, 75, 0.15);
+}
+
+.glow-red {
+  box-shadow: 0 0 25px -5px rgba(255, 51, 75, 0.5);
+}
+
+.glow-red-sm {
+  box-shadow: 0 0 12px -2px rgba(255, 51, 75, 0.4);
+}
+
+/* ---------- Слайдеры HavalDesign ---------- */
+input[type="range"] {
+  accent-color: #ff334b;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background: #ff334b;
+  box-shadow: 0 0 10px rgba(255, 51, 75, 0.8);
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  margin-top: -5px;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 8px;
+}
+input[type="range"]::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background: #ff334b;
+  box-shadow: 0 0 10px rgba(255, 51, 75, 0.8);
+  cursor: pointer;
+  border: 2px solid #ffffff;
+}
+input[type="range"]:disabled {
+  opacity: 0.5;
+}
+
+/* ---------- Анимации ---------- */
+@keyframes pulseGlow {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes floatSlow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: floatSlow 6s ease-in-out infinite;
 }
 
 @keyframes fade-in {
@@ -136,6 +261,11 @@ input[type="number"] {
 
 .animate-fade-in {
   animation: fade-in 180ms ease-out;
+}
+
+/* Алиас из HavalDesign (animate-fadeIn в компонентах дизайн-проекта) */
+.animate-fadeIn {
+  animation: fade-in 220ms ease-out;
 }
 
 .animate-pop-in {
@@ -227,8 +357,13 @@ input[type="number"] {
 
   header,
   footer,
+  .no-print,
   .print\:hidden {
     display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
   }
 
   main {
@@ -240,13 +375,15 @@ input[type="number"] {
   section,
   article,
   table,
-  [class*="rounded-["] {
+  [class*='rounded-[' ],
+  [class*='glass'] {
     break-inside: avoid;
     page-break-inside: avoid;
     background: #fff !important;
     border-color: #c9ced3 !important;
     color: #14171a !important;
     box-shadow: none !important;
+    backdrop-filter: none !important;
   }
 
   h1,
@@ -262,8 +399,8 @@ input[type="number"] {
     text-shadow: none !important;
   }
 
-  a[href^="http"]::after {
-    content: " (" attr(href) ")";
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
     font-size: 9px;
     color: #5b636d !important;
     word-break: break-all;

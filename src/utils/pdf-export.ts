@@ -30,11 +30,20 @@ let pdfMakePromise: Promise<PdfMakeType> | null = null
 async function loadPdfMake() {
   if (pdfMakePromise === null) {
     pdfMakePromise = (async () => {
-      const [{ default: pdfMake }, { default: vfsFonts }] = await Promise.all([
+      const [{ default: pdfMake }, vfsModule] = await Promise.all([
         import('pdfmake/build/pdfmake.min.js'),
         import('pdfmake/build/vfs_fonts.js'),
       ])
-      pdfMake.vfs = vfsFonts.pdfMake?.vfs ?? (vfsFonts as unknown as Record<string, string>)
+      // pdfmake 0.3.x регистрирует виртуальную ФС через addVirtualFileSystem
+      // (присваивание pdfMake.vfs в этой версии игнорируется);
+      // модуль может отдавать шрифты как в vfsFonts, так и в vfsFonts.pdfMake.vfs
+      const vfsFonts = (vfsModule as unknown as { default?: unknown }).default ?? vfsModule
+      const vfs =
+        (vfsFonts as { pdfMake?: { vfs?: Record<string, string> } }).pdfMake?.vfs ??
+        (vfsFonts as unknown as Record<string, string>)
+      const withVfs = pdfMake as unknown as { addVirtualFileSystem?: (v: Record<string, string>) => void; vfs?: Record<string, string> }
+      if (typeof withVfs.addVirtualFileSystem === 'function') withVfs.addVirtualFileSystem(vfs)
+      else withVfs.vfs = vfs
       pdfMake.fonts = {
         [FONT]: {
           normal: 'Roboto-Regular.ttf',
@@ -66,15 +75,13 @@ export function buildDocDefinition(options: ReportOptions, createdAt = new Date(
       style: 'section',
       margin: [0, 14, 0, 6] as [number, number, number, number],
     })
-    const body: unknown[] = [
-      section.rows.map((row) => [
-        { text: row.label, style: row.tone === 'muted' ? 'labelMuted' : 'label' },
-        {
-          text: row.value,
-          style: row.tone === 'accent' ? 'valueAccent' : row.tone === 'muted' ? 'valueMuted' : 'value',
-        },
-      ]),
-    ]
+    const body: unknown[] = section.rows.map((row) => [
+      { text: row.label, style: row.tone === 'muted' ? 'labelMuted' : 'label' },
+      {
+        text: row.value,
+        style: row.tone === 'accent' ? 'valueAccent' : row.tone === 'muted' ? 'valueMuted' : 'value',
+      },
+    ])
     content.push({
       table: { widths: ['58%', '*'], body },
       layout: {
@@ -135,14 +142,14 @@ export async function exportReportPdf(options: ReportOptions, filename: string):
   try {
     const pdfMake = await loadPdfMake()
     const doc = pdfMake.createPdf(buildDocDefinition(options) as unknown as Record<string, unknown>)
-    return await new Promise<boolean>((resolve) => {
-      try {
-        doc.download(filename)
-        resolve(true)
-      } catch {
-        resolve(false)
-      }
-    })
+    try {
+      // pdfmake 0.3.x: download() асинхронный (getBlob → saveAs) — ошибки
+      // видны только через Promise, синхронный try/catch их не ловит
+      await doc.download(filename)
+      return true
+    } catch {
+      return false
+    }
   } catch {
     return false
   }

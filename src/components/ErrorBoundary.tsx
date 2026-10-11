@@ -42,15 +42,15 @@ export default class ErrorBoundary extends Component<Props, State> {
         role="alert"
         className="mx-auto flex min-h-[60dvh] w-full max-w-lg flex-col items-center justify-center gap-4 px-4 py-10 text-center"
       >
-        <p className="font-display text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4]">
+        <p className="font-display text-[26px] font-bold uppercase tracking-wide text-[#F4F5F6]">
           {chunkFailure ? 'Вышла новая версия сайта' : 'Раздел не открылся'}
         </p>
-        <p className="text-[13px] leading-relaxed text-[#A9AFB7]">
+        <p className="text-[13px] leading-relaxed text-[#A2A7AF]">
           {chunkFailure
             ? 'Файлы предыдущей версии больше недоступны. Обновите страницу — загрузится актуальная сборка, сохранённые расчёты и избранное останутся на месте.'
             : 'Что-то пошло не так при отображении страницы. Данные каталога не повреждены: попробуйте вернуться в каталог или обновить страницу. Если ошибка повторяется — сообщите нам, мы исправим.'}
         </p>
-        <pre className="max-h-28 w-full overflow-auto rounded-[10px] border border-[#363B43] bg-[#14171B] p-3 text-left font-mono text-[11px] leading-relaxed text-[#A9AFB7]">
+        <pre className="max-h-28 w-full overflow-auto rounded-2xl border border-[#2B3037] bg-[#14171B] p-3 text-left font-mono text-[11px] leading-relaxed text-[#A2A7AF]">
           {error.name}: {error.message}
         </pre>
         <div className="flex flex-wrap items-center justify-center gap-2">
@@ -60,13 +60,13 @@ export default class ErrorBoundary extends Component<Props, State> {
               this.setState({ error: null })
               window.location.reload()
             }}
-            className="min-h-[42px] rounded-[8px] bg-[#E4002B] px-5 text-[13px] font-bold text-white transition-opacity hover:opacity-90"
+            className="min-h-[42px] rounded-lg bg-[#FF334B] px-5 text-[13px] font-bold text-white transition-opacity hover:opacity-90"
           >
             Обновить страницу
           </button>
           <a
             href={assetUrl('/')}
-            className="min-h-[42px] rounded-[8px] border border-[#363B43] px-5 py-2.5 text-[13px] font-bold text-[#F3F4F4] transition-colors hover:border-[#A9AFB7]"
+            className="min-h-[42px] rounded-lg border border-[#2B3037] px-5 py-2.5 text-[13px] font-bold text-[#F4F5F6] transition-colors hover:border-[#A2A7AF]"
           >
             В каталог моделей
           </a>

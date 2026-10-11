@@ -37,14 +37,14 @@ export default function StockPage() {
 
   return (
     <div className="animate-page-enter flex flex-col gap-4">
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">
+      <header className="flex flex-col gap-1.5 border-b border-[#242930] pb-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">
           Проверено {fmtDate(STOCK_SOURCE.checkedAt)}
         </p>
-        <h1 className="font-display-num text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4] sm:text-[32px]">
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Автомобили в наличии
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A9AFB7]">
+        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
           Раздел работает в условном режиме: мы показываем только те предложения, которые подтверждены публикуемым
           источником. VIN, остатки на складе и конкретные автомобили не выдумываются.
         </p>
@@ -100,7 +100,7 @@ export default function StockPage() {
                       <div className="flex flex-wrap items-center gap-2">
                         <Link
                           to={`/models/${model?.slug ?? item.modelId}`}
-                          className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F3F4F4] hover:text-[#E4002B]"
+                          className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F4F5F6] hover:text-[#FF334B]"
                         >
                           {model?.name ?? item.modelId}
                         </Link>
@@ -110,14 +110,14 @@ export default function StockPage() {
                           <Tag tone="warn">требует подтверждения</Tag>
                         )}
                       </div>
-                      <p className="text-[12px] text-[#A9AFB7]">{item.trimName}</p>
+                      <p className="text-[12px] text-[#A2A7AF]">{item.trimName}</p>
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                      <p className="font-display-num text-[20px] font-bold leading-none text-[#F3F4F4]">
+                      <p className="font-mono text-xl font-extrabold tabular-nums leading-none text-[#F4F5F6]">
                         {fmtMoney(item.price)}
                       </p>
                       {details?.trim.basePrice != null && details.trim.basePrice > item.price && (
-                        <p className="text-[11px] text-[#16B374]">
+                        <p className="text-[11px] text-[#10B981]">
                           выгода {fmtMoney(details.trim.basePrice - item.price)} к МЦП {fmtMoney(details.trim.basePrice)}
                         </p>
                       )}
@@ -137,7 +137,7 @@ export default function StockPage() {
                       <TableCell sticky>Идентификатор автомобиля</TableCell>
                       <TableCell>
                         {item.vehicleId ?? (
-                          <span className="flex items-center gap-1.5 text-[#A9AFB7]">
+                          <span className="flex items-center gap-1.5 text-[#A2A7AF]">
                             <AlertIcon className="h-3 w-3" /> не публикуется — VIN не выдумывается
                           </span>
                         )}
@@ -169,7 +169,7 @@ export default function StockPage() {
                           href={item.sourceUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1 underline underline-offset-2 hover:text-[#F3F4F4]"
+                          className="inline-flex items-center gap-1 underline underline-offset-2 hover:text-[#F4F5F6]"
                           onClick={() => track('official_source_click', { source: 'stock-item', url: item.sourceUrl })}
                         >
                           открыть источник

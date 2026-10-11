@@ -117,23 +117,29 @@ export default function CatalogPage() {
   )
 
   return (
-    <div className="animate-page-enter flex flex-col gap-2">
-      <header className="flex flex-col gap-2">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">
-          Официальный каталог haval.ru · проверка {fmtDate(CATALOG_FIXED_AT)}
-        </p>
-        <h1 className="font-display-num text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4] sm:text-[32px]">
-          Каталог моделей HAVAL
-        </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A9AFB7]">
-          Цены, комплектации, характеристики и оснащение — из официальных прайс-листов производителя
-          (PDF «Максимальная цена перепродажи»). Выгода по трейд-ин и специальным программам хранится отдельно
-          и не вычитается из базовой цены автоматически.
-        </p>
+    <div className="animate-page-enter space-y-8">
+      <header className="flex flex-col gap-4 border-b border-[#242930] pb-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">
+            Официальный модельный ряд · проверка {fmtDate(CATALOG_FIXED_AT)}
+          </div>
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
+            Каталог автомобилей HAVAL
+          </h1>
+          <p className="mt-1.5 text-xs text-[#A2A7AF] sm:text-sm">
+            Актуальные комплектации, характеристики и цены прайс-листов haval.ru. Выгода по трейд-ин и специальным
+            программам хранится отдельно и не вычитается из базовой цены автоматически.
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2 text-xs text-[#A2A7AF]">
+          <span className="rounded-lg border border-[#2B3037] bg-[#181B1F] px-3 py-2 font-mono tabular-nums">
+            {filtered.length} из {MODELS.length}
+          </span>
+        </div>
       </header>
 
       {/* ---------------- Фильтры ---------------- */}
-      <div className="rounded-[10px] border border-[#363B43]/85 bg-[#1A1D22] p-3.5">
+      <div className="glass-card rounded-2xl border border-[#2B3037] p-4 sm:p-5">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Field
             label="Поиск по названию"
@@ -166,7 +172,7 @@ export default function CatalogPage() {
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11.5px] font-semibold text-[#A9AFB7]">Сортировка:</span>
+            <span className="text-[11.5px] font-semibold text-[#A2A7AF]">Сортировка:</span>
             {(
               [
                 ['price-asc', 'по цене ↑'],
@@ -182,18 +188,18 @@ export default function CatalogPage() {
                   setParam('sort', value === 'price-asc' ? null : value)
                   track('budget_sort', { section: 'catalog', sort: value })
                 }}
-                className={`min-h-[34px] rounded-[8px] border px-2.5 text-[11.5px] font-bold transition-colors ${
+                className={`cursor-pointer rounded-lg px-2.5 py-1 text-xs transition-colors ${
                   sort === value
-                    ? 'border-[#E4002B] bg-[#E4002B]/12 text-[#F3F4F4]'
-                    : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:text-[#F3F4F4]'
+                    ? 'border border-[#FF334B]/40 bg-[#FF334B]/20 font-semibold text-[#FF6B7E]'
+                    : 'border border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:bg-[#2A3038] hover:text-white'
                 }`}
               >
                 {label}
               </button>
             ))}
           </div>
-          <p className="text-[11.5px] text-[#A9AFB7]">
-            Найдено моделей: <strong className="text-[#F3F4F4]">{filtered.length}</strong> из {MODELS.length}
+          <p className="text-[11.5px] text-[#A2A7AF]">
+            Найдено моделей: <strong className="text-[#F4F5F6]">{filtered.length}</strong> из {MODELS.length}
           </p>
         </div>
       </div>
@@ -239,8 +245,8 @@ export default function CatalogPage() {
       {/* ---------------- Архивные цены ---------------- */}
       {archiveCount > 0 && (
         <div className="mt-2 flex flex-col gap-2">
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-[10px] border border-[#363B43] bg-[#1A1D22] px-3.5 py-3">
-            <p className="text-[12px] leading-relaxed text-[#A9AFB7]">
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#2B3037] bg-[#181B1F] px-3.5 py-3">
+            <p className="text-[12px] leading-relaxed text-[#A2A7AF]">
               Архивные цены прошлых лет производства ({archiveCount} позиций) скрыты по умолчанию, чтобы не смешивать
               модельные годы. Они видны на страницах моделей.
             </p>
@@ -263,18 +269,18 @@ export default function CatalogPage() {
           <SectionTitle tip="Данные собраны скриптом обновления (npm run update:prices) или импортом прайс-листа. Они не подменяют подтверждённые цены каталога и показываются отдельно.">
             Собрано автоматически
           </SectionTitle>
-          <div className="rounded-[10px] border border-[#363B43] bg-[#1A1D22] p-4">
-            <p className="mb-2 text-[11px] text-[#A9AFB7]">
+          <div className="rounded-2xl border border-[#2B3037] bg-[#181B1F] p-4">
+            <p className="mb-2 text-[11px] text-[#A2A7AF]">
               Источник: {GENERATED_PRICES.source} · сбор {GENERATED_PRICES.fetchedAt}
             </p>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {GENERATED_PRICES.teasers.map((t) => (
-                <div key={`${t.slug}-${t.trimName ?? ''}`} className="rounded-[8px] border border-[#363B43] bg-[#0E1013]/70 px-2.5 py-2">
-                  <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A9AFB7]">
+                <div key={`${t.slug}-${t.trimName ?? ''}`} className="rounded-lg border border-[#2B3037] bg-[#0B0C0E]/70 px-2.5 py-2">
+                  <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">
                     {getModel(t.slug)?.name ?? t.slug}
                   </p>
-                  <p className="font-display-num mt-0.5 text-[15px] font-bold text-[#F3F4F4]">{fmtMoney(t.price)}</p>
-                  {t.trimName && <p className="text-[10px] text-[#A9AFB7]">{t.trimName}</p>}
+                  <p className="font-display-num mt-0.5 text-[15px] font-bold text-[#F4F5F6]">{fmtMoney(t.price)}</p>
+                  {t.trimName && <p className="text-[10px] text-[#A2A7AF]">{t.trimName}</p>}
                 </div>
               ))}
             </div>
@@ -290,7 +296,7 @@ export default function CatalogPage() {
           href={HAVAL_PRICE_LISTS_URL}
           target="_blank"
           rel="noreferrer"
-          className="text-[11.5px] text-[#A9AFB7] underline decoration-[#363B43] underline-offset-2 transition-colors hover:text-[#F3F4F4]"
+          className="text-[11.5px] text-[#A2A7AF] underline decoration-[#2B3037] underline-offset-2 transition-colors hover:text-[#F4F5F6]"
           onClick={() => track('official_source_click', { source: 'catalog', url: HAVAL_PRICE_LISTS_URL })}
         >
           Открыть каталоги и прайс-листы haval.ru

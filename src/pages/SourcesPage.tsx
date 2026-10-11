@@ -63,12 +63,12 @@ export default function SourcesPage() {
 
   return (
     <div className="animate-page-enter flex flex-col gap-4">
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">Прозрачность данных</p>
-        <h1 className="font-display-num text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4] sm:text-[32px]">
+      <header className="flex flex-col gap-1.5 border-b border-[#242930] pb-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">Прозрачность данных</p>
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Источники данных и актуальность
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A9AFB7]">
+        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
           HavalGarage — независимый информационный сервис. Единственный первоисточник цен, комплектаций и характеристик —
           официальные каталоги и прайс-листы производителя. Данные дилера используются как вторичные и помечаются.
         </p>
@@ -102,17 +102,17 @@ export default function SourcesPage() {
         {priceCounts.map(({ model, trims }) => (
           <tr key={model.id}>
             <TableCell sticky>
-              <Link to={`/models/${model.slug}`} className="hover:text-[#E4002B]">
+              <Link to={`/models/${model.slug}`} className="hover:text-[#FF334B]">
                 {model.name}
               </Link>
-              <span className="block text-[10.5px] font-normal text-[#A9AFB7]">{model.bodyType}</span>
+              <span className="block text-[10.5px] font-normal text-[#A2A7AF]">{model.bodyType}</span>
             </TableCell>
             <TableCell>{trims > 0 ? trims : <Tag tone="warn">нет данных</Tag>}</TableCell>
             <TableCell>
               {model.priceListUrl ? (
                 <SourceLink href={model.priceListUrl} label="открыть прайс-лист" />
               ) : (
-                <span className="text-[#F5A623]">не опубликован</span>
+                <span className="text-[#F59E0B]">не опубликован</span>
               )}
             </TableCell>
             <TableCell>
@@ -181,39 +181,39 @@ export default function SourcesPage() {
         Что осталось неподтверждённым
       </SectionTitle>
       <Card className="flex flex-col gap-2.5">
-        <ul className="flex list-disc flex-col gap-1.5 pl-4 text-[12px] leading-relaxed text-[#A9AFB7]">
+        <ul className="flex list-disc flex-col gap-1.5 pl-4 text-[12px] leading-relaxed text-[#A2A7AF]">
           <li>
-            <strong className="text-[#F3F4F4]">GWM POER KINGKONG</strong> — отсутствует в официальном каталоге haval.ru,
+            <strong className="text-[#F4F5F6]">GWM POER KINGKONG</strong> — отсутствует в официальном каталоге haval.ru,
             прайс-лист не опубликован. Цена «от {fmtMoney(3_099_000)}» известна только из тизера дилера, комплектация не
             раскрыта, характеристики не заполнены.
           </li>
           <li>
-            <strong className="text-[#F3F4F4]">HAVAL H7</strong> — рабочий объём двигателя и размер шин в прайс-листе не
+            <strong className="text-[#F4F5F6]">HAVAL H7</strong> — рабочий объём двигателя и размер шин в прайс-листе не
             указаны; расход опубликован только для смешанного цикла.
           </li>
           <li>
-            <strong className="text-[#F3F4F4]">Даты окончания акций</strong> — официальные документы публикуют только
+            <strong className="text-[#F4F5F6]">Даты окончания акций</strong> — официальные документы публикуют только
             «действует с»; поле «действует до» остаётся пустым, статус предложения помечен как требующий проверки.
           </li>
           <li>
-            <strong className="text-[#F3F4F4]">Стоимость КАСКО, ОСАГО, ТО и транспортного налога</strong> — не
+            <strong className="text-[#F4F5F6]">Стоимость КАСКО, ОСАГО, ТО и транспортного налога</strong> — не
             рассчитывается по выдуманным тарифам: в калькуляторе стоимости владения эти поля заполняет пользователь.
           </li>
           <li>
-            <strong className="text-[#F3F4F4]">Остатки автомобилей, VIN и цвета конкретных машин</strong> — официальный
+            <strong className="text-[#F4F5F6]">Остатки автомобилей, VIN и цвета конкретных машин</strong> — официальный
             онлайн-склад отдаёт данные только через клиентское приложение, поэтому раздел «В наличии» условный.
           </li>
           <li>
-            <strong className="text-[#F3F4F4]">Индивидуальные условия банка</strong> — ставки и одобрение определяются
+            <strong className="text-[#F4F5F6]">Индивидуальные условия банка</strong> — ставки и одобрение определяются
             банком; расчёт предварительный и не выдаётся за точный.
           </li>
           <li>
-            <strong className="text-[#F3F4F4]">Расхождение тизера дилера и прайс-листа</strong> — тизер «DARGO X от
+            <strong className="text-[#F4F5F6]">Расхождение тизера дилера и прайс-листа</strong> — тизер «DARGO X от
             3 199 000 ₽» не совпадает с официальными 3 499 000 ₽ (Оптимум 2.0T 4WD 2025 м.г.); в приложении используется
             цена прайс-листа.
           </li>
           <li>
-            <strong className="text-[#F3F4F4]">H5: тип двигателя</strong> — карточка каталога производителя описывает
+            <strong className="text-[#F4F5F6]">H5: тип двигателя</strong> — карточка каталога производителя описывает
             комплектацию «с дизельным двигателем 2.0T», а прайс-лист указывает бензиновый 1967 см³ / 200 л.с.
             Использован прайс-лист как более детальный документ; расхождение зафиксировано.
           </li>
@@ -236,23 +236,23 @@ export default function SourcesPage() {
           .map((entry, i) => (
             <Card key={`${entry.checkedAt}-${i}`} className="flex flex-col gap-2">
               <div className="flex flex-wrap items-center gap-2">
-                <HistoryIcon className="h-4 w-4 text-[#E4002B]" />
-                <p className="text-[13px] font-bold text-[#F3F4F4]">{fmtDate(entry.checkedAt)}</p>
+                <HistoryIcon className="h-4 w-4 text-[#FF334B]" />
+                <p className="text-[13px] font-bold text-[#F4F5F6]">{fmtDate(entry.checkedAt)}</p>
                 <Tag tone={entry.outcome === 'failed' ? 'warn' : 'success'}>{outcomeLabel(entry.outcome)}</Tag>
                 {entry.confirmedPrices !== undefined && (
                   <Tag>подтверждено цен: {entry.confirmedPrices}</Tag>
                 )}
               </div>
-              <p className="text-[12px] leading-relaxed text-[#A9AFB7]">{entry.summary}</p>
-              <p className="text-[11px] text-[#A9AFB7]">
+              <p className="text-[12px] leading-relaxed text-[#A2A7AF]">{entry.summary}</p>
+              <p className="text-[11px] text-[#A2A7AF]">
                 Источник:{' '}
-                <a href={entry.source} target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-[#F3F4F4]">
+                <a href={entry.source} target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-[#F4F5F6]">
                   {entry.source}
                 </a>{' '}
                 · модели: {entry.models.length}
               </p>
               {entry.errors && entry.errors.length > 0 && (
-                <ul className="ml-4 list-disc text-[11.5px] text-[#F5A623]">
+                <ul className="ml-4 list-disc text-[11.5px] text-[#F59E0B]">
                   {entry.errors.map((e) => (
                     <li key={e}>{e}</li>
                   ))}
@@ -270,15 +270,15 @@ export default function SourcesPage() {
         </p>
         <ul className="mt-2 ml-4 list-disc">
           <li>
-            <code className="text-[#F3F4F4]">npm run update:prices</code> — сбор тизеров и сносок со страниц источника;
+            <code className="text-[#F4F5F6]">npm run update:prices</code> — сбор тизеров и сносок со страниц источника;
             при ошибке сети существующие данные не изменяются и не обнуляются.
           </li>
           <li>
-            <code className="text-[#F3F4F4]">npm run import:price-list -- price-lists/file.json</code> — структурированный
+            <code className="text-[#F4F5F6]">npm run import:price-list -- price-lists/file.json</code> — структурированный
             импорт из официального прайс-листа с валидацией; ошибки отклоняют импорт целиком.
           </li>
           <li>
-            <code className="text-[#F3F4F4]">.github/workflows/prices.yml</code> — периодическая проверка доступности
+            <code className="text-[#F4F5F6]">.github/workflows/prices.yml</code> — периодическая проверка доступности
             источников и фиксация результата в истории (без обхода CAPTCHA и авторизации).
           </li>
         </ul>
@@ -294,8 +294,8 @@ export default function SourcesPage() {
       <Card className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-[13px] font-bold text-[#F3F4F4]">Внешняя система аналитики</p>
-            <p className="text-[11.5px] leading-relaxed text-[#A9AFB7]">
+            <p className="text-[13px] font-bold text-[#F4F5F6]">Внешняя система аналитики</p>
+            <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
               По умолчанию провайдер не подключён: события остаются в локальном буфере браузера и никуда не отправляются.
               При согласии события могут передаваться подключённому счётчику (без персональных данных).
             </p>
@@ -310,12 +310,12 @@ export default function SourcesPage() {
               setConsent(next)
             }}
             className={`relative min-h-[40px] w-[92px] shrink-0 rounded-full border px-1 text-[11.5px] font-bold transition-colors ${
-              consent ? 'border-[#16B374] bg-[#16B374]/20 text-[#16B374]' : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7]'
+              consent ? 'border-[#10B981] bg-[#10B981]/20 text-[#10B981]' : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF]'
             }`}
           >
             <span
               className={`absolute top-1 h-7 w-7 rounded-full transition-all ${
-                consent ? 'left-[54px] bg-[#16B374]' : 'left-1 bg-[#A9AFB7]'
+                consent ? 'left-[54px] bg-[#10B981]' : 'left-1 bg-[#A2A7AF]'
               }`}
               aria-hidden="true"
             />
@@ -324,7 +324,7 @@ export default function SourcesPage() {
         </div>
 
         <Disclosure title="Какие события отслеживаются" defaultOpen={false}>
-          <ul className="ml-4 list-disc text-[11.5px] leading-relaxed text-[#A9AFB7]">
+          <ul className="ml-4 list-disc text-[11.5px] leading-relaxed text-[#A2A7AF]">
             <li>открытие модели и просмотр комплектации;</li>
             <li>запуск калькулятора и изменение параметров кредита;</li>
             <li>использование подбора по бюджету и сортировки;</li>
@@ -332,7 +332,7 @@ export default function SourcesPage() {
             <li>сохранение расчёта, печать/экспорт;</li>
             <li>переход к официальному источнику.</li>
           </ul>
-          <p className="mt-2 text-[11.5px] text-[#A9AFB7]">
+          <p className="mt-2 text-[11.5px] text-[#A2A7AF]">
             Не собираются: имя, телефон, e-mail, адрес, паспортные и банковские данные, VIN. Поля с такими ключами
             отбрасываются до записи события.
           </p>
@@ -340,13 +340,13 @@ export default function SourcesPage() {
 
         <Disclosure title="Последние события в этой сессии" defaultOpen={false}>
           {recentEvents(15).length === 0 ? (
-            <p className="text-[11.5px] text-[#A9AFB7]">Событий пока нет.</p>
+            <p className="text-[11.5px] text-[#A2A7AF]">Событий пока нет.</p>
           ) : (
             <ul className="flex flex-col gap-1">
               {recentEvents(15).map((e, i) => (
-                <li key={`${e.at}-${i}`} className="flex items-center gap-2 text-[11px] text-[#A9AFB7]">
-                  <DatabaseIcon className="h-3 w-3 shrink-0 text-[#E4002B]" />
-                  <code className="text-[#F3F4F4]">{e.name}</code>
+                <li key={`${e.at}-${i}`} className="flex items-center gap-2 text-[11px] text-[#A2A7AF]">
+                  <DatabaseIcon className="h-3 w-3 shrink-0 text-[#FF334B]" />
+                  <code className="text-[#F4F5F6]">{e.name}</code>
                   <span>{JSON.stringify(e.props)}</span>
                 </li>
               ))}
@@ -354,7 +354,7 @@ export default function SourcesPage() {
           )}
         </Disclosure>
 
-        <p className="text-[11.5px] leading-relaxed text-[#A9AFB7]">
+        <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
           Избранное, сравнения, расчёты и планы хранятся только в localStorage этого браузера. На сервер отправляются
           лишь те данные, которые вы сами вводите в форме заявки (имя и телефон) — и только при явной отправке.
         </p>
@@ -369,7 +369,7 @@ function SourceLink({ href, label }: { href: string; label: string }) {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="inline-flex items-center gap-1 underline decoration-[#363B43] underline-offset-2 hover:text-[#F3F4F4]"
+      className="inline-flex items-center gap-1 underline decoration-[#2B3037] underline-offset-2 hover:text-[#F4F5F6]"
       onClick={() => track('official_source_click', { url: href, source: 'sources-page' })}
     >
       {label}
@@ -397,10 +397,10 @@ function PriceTypeCard({
   return (
     <Card className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[12.5px] font-bold text-[#F3F4F4]">{title}</p>
+        <p className="text-[12.5px] font-bold text-[#F4F5F6]">{title}</p>
         {warn ? <Tag tone="warn">{count}</Tag> : <Tag>{count}</Tag>}
       </div>
-      <p className="text-[11.5px] leading-relaxed text-[#A9AFB7]">{text}</p>
+      <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">{text}</p>
     </Card>
   )
 }

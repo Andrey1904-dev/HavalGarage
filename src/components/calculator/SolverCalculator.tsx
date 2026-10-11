@@ -120,15 +120,15 @@ export default function SolverCalculator() {
 
   return (
     <Card className="p-0 overflow-hidden">
-      <div className="flex flex-wrap items-start justify-between gap-2 border-b border-[#363B43] bg-[#23272D]/60 px-4 py-3.5">
+      <div className="flex flex-wrap items-start justify-between gap-2 border-b border-[#2B3037] bg-[#20242A]/60 px-4 py-3.5">
         <div>
           <div className="flex items-center gap-2">
-            <span className="h-4 w-1 rounded-full bg-[#E4002B]" aria-hidden="true" />
-            <h3 className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F3F4F4]">
+            <span className="h-4 w-1 rounded-full bg-[#FF334B]" aria-hidden="true" />
+            <h3 className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F4F5F6]">
               Подбор параметров кредита
             </h3>
           </div>
-          <p className="mt-1 text-[12px] leading-relaxed text-[#A9AFB7]">
+          <p className="mt-1 text-[12px] leading-relaxed text-[#A2A7AF]">
             Заполните любые 3 поля — четвёртое рассчитается автоматически (ставка ищется бисекцией)
           </p>
         </div>
@@ -137,7 +137,7 @@ export default function SolverCalculator() {
             type="button"
             onClick={clearAll}
             aria-label="Сбросить поля калькулятора"
-            className="flex min-h-[38px] items-center gap-1 rounded-[8px] border border-[#363B43] bg-[#1A1D22] px-2.5 py-1.5 text-[12px] font-semibold text-[#A9AFB7] transition-colors hover:text-[#F3F4F4]"
+            className="flex min-h-[38px] items-center gap-1 rounded-lg border border-[#2B3037] bg-[#181B1F] px-2.5 py-1.5 text-[12px] font-semibold text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]"
           >
             <RefreshIcon className="h-3.5 w-3.5" />
             Сброс
@@ -167,20 +167,20 @@ export default function SolverCalculator() {
         </div>
 
         {error && (
-          <div role="alert" className="mt-3.5 rounded-[8px] border border-[#EF4444]/40 bg-[#EF4444]/12 px-3.5 py-2.5 text-[12.5px] font-medium text-[#EF4444]">
+          <div role="alert" className="mt-3.5 rounded-lg border border-[#EF4444]/40 bg-[#EF4444]/12 px-3.5 py-2.5 text-[12.5px] font-medium text-[#EF4444]">
             {error}
           </div>
         )}
 
         {summary && !error && (
-          <div className="mt-4 grid grid-cols-2 gap-3 rounded-[8px] border border-[#363B43] bg-[#0E1013]/80 p-3.5">
+          <div className="mt-4 grid grid-cols-2 gap-3 rounded-lg border border-[#2B3037] bg-[#0B0C0E]/80 p-3.5">
             <div>
-              <p className="text-[11px] font-medium text-[#A9AFB7]">Итого выплат за весь срок</p>
-              <p className="font-display-num mt-0.5 text-[18px] font-bold text-[#F3F4F4]">{fmtMoney(summary.totalPaid)}</p>
+              <p className="text-[11px] font-medium text-[#A2A7AF]">Итого выплат за весь срок</p>
+              <p className="font-display-num mt-0.5 text-[18px] font-bold text-[#F4F5F6]">{fmtMoney(summary.totalPaid)}</p>
             </div>
             <div>
-              <p className="text-[11px] font-medium text-[#A9AFB7]">Переплата по процентам</p>
-              <p className="font-display-num mt-0.5 text-[18px] font-bold text-[#E4002B]">+{fmtMoney(summary.overpay)}</p>
+              <p className="text-[11px] font-medium text-[#A2A7AF]">Переплата по процентам</p>
+              <p className="font-display-num mt-0.5 text-[18px] font-bold text-[#FF334B]">+{fmtMoney(summary.overpay)}</p>
             </div>
           </div>
         )}

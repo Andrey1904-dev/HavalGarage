@@ -100,12 +100,12 @@ export default function PrepaymentCalculator() {
       <Card className="flex flex-col gap-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#A9AFB7]">Остаток основного долга</p>
-            <p className="font-display-num mt-1 text-[26px] font-bold leading-none text-[#F3F4F4]">{fmtMoney(base.balance)}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#A2A7AF]">Остаток основного долга</p>
+            <p className="font-display-num mt-1 text-[26px] font-bold leading-none text-[#F4F5F6]">{fmtMoney(base.balance)}</p>
           </div>
           <div className="text-right">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#A9AFB7]">Осталось платежей</p>
-            <p className="font-display-num mt-1 text-[20px] font-bold leading-none text-[#F3F4F4]">{base.termLeft}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#A2A7AF]">Осталось платежей</p>
+            <p className="mt-1 font-mono text-[20px] font-extrabold leading-none tabular-nums text-[#F4F5F6]">{base.termLeft}</p>
           </div>
           {scenarioAvailable && (
             <Button type="button" variant="ghost" className="min-h-[36px] px-2.5 py-1 text-[12px]" onClick={fillFromScenario}>
@@ -140,7 +140,7 @@ export default function PrepaymentCalculator() {
 
         <div>
           <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
-            <p className="text-[12.5px] font-semibold text-[#A9AFB7]">Что пересчитывает банк</p>
+            <p className="text-[12.5px] font-semibold text-[#A2A7AF]">Что пересчитывает банк</p>
             <InfoTip title="Сократить срок или уменьшить платёж">
               При досрочном погашении вы выбираете, что банк пересчитает. «Сократить срок» — платёж остаётся
               прежним, но месяцев до конца кредита становится меньше: проценты начисляются на остаток, поэтому
@@ -159,10 +159,10 @@ export default function PrepaymentCalculator() {
                 key={value}
                 type="button"
                 onClick={() => setMode(value)}
-                className={`min-h-[44px] rounded-[10px] border px-3 py-2 text-[13px] font-semibold transition-colors ${
+                className={`min-h-[44px] rounded-xl border px-3 py-2 text-[13px] font-semibold transition-colors ${
                   mode === value
-                    ? 'border-[#E4002B] bg-[#23272D] text-[#F3F4F4]'
-                    : 'border-[#363B43] bg-[#1A1D22] text-[#A9AFB7]'
+                    ? 'border-[#FF334B] bg-[#20242A] text-[#F4F5F6]'
+                    : 'border-[#2B3037] bg-[#181B1F] text-[#A2A7AF]'
                 }`}
               >
                 {label}
@@ -174,24 +174,24 @@ export default function PrepaymentCalculator() {
 
       {!chosen || !baseline ? (
         <Card>
-          <p className="text-[13px] text-[#A9AFB7]">
+          <p className="text-[13px] text-[#A2A7AF]">
             С такими параметрами кредит не гасится: платёж меньше начисляемых процентов. Проверьте ставку и
             сумму платежа.
           </p>
         </Card>
       ) : (
         <>
-          <Card className="border-[#16B374]/40 bg-[#16B374]/8">
+          <Card className="border-[#10B981]/40 bg-[#10B981]/8">
             <div className="flex items-start gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#16B374]/16 text-[#16B374]">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#10B981]/16 text-[#10B981]">
                 <TrendDownIcon className="h-5 w-5" />
               </span>
               <div className="min-w-0">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-[#A9AFB7]">Экономия на процентах</p>
-                <p className="font-display-num mt-1 text-[26px] font-bold leading-none text-[#16B374]">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[#A2A7AF]">Экономия на процентах</p>
+                <p className="font-display-num mt-1 text-[26px] font-bold leading-none text-[#10B981]">
                   {fmtMoney(Math.max(0, saved))}
                 </p>
-                <p className="mt-1.5 text-[12.5px] leading-relaxed text-[#A9AFB7]">
+                <p className="mt-1.5 text-[12.5px] leading-relaxed text-[#A2A7AF]">
                   {mode === 'term'
                     ? monthsSaved > 0
                       ? `Кредит закроется на ${monthsSaved} ${plural(monthsSaved, ['месяц', 'месяца', 'месяцев'])} раньше — ${fmtDate(addMonths(new Date(), chosen.months))} вместо ${fmtDate(addMonths(new Date(), baseline.months))}.`
@@ -218,20 +218,20 @@ export default function PrepaymentCalculator() {
           </div>
 
           <Card className="flex gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#E4002B]/14 text-[#E4002B]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FF334B]/14 text-[#FF334B]">
               <SparklesIcon className="h-5 w-5" />
             </span>
-            <div className="text-[12.5px] leading-relaxed text-[#A9AFB7]">
-              <p className="mb-1 font-semibold text-[#F3F4F4]">Как это работает у банка</p>
+            <div className="text-[12.5px] leading-relaxed text-[#A2A7AF]">
+              <p className="mb-1 font-semibold text-[#F4F5F6]">Как это работает у банка</p>
               Проценты начисляются на остаток долга, поэтому досрочный взнос выгоднее вносить как можно раньше и
-              направлять на <strong className="text-[#F3F4F4]">сокращение срока</strong>: платёж остаётся прежним, но
+              направлять на <strong className="text-[#F4F5F6]">сокращение срока</strong>: платёж остаётся прежним, но
               месяцев начисления меньше. Уменьшение платежа выбирают, когда важнее снизить нагрузку на бюджет прямо
               сейчас.
             </div>
           </Card>
 
           <Card className="flex flex-col gap-2">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#A9AFB7]">Без досрочного погашения</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#A2A7AF]">Без досрочного погашения</p>
             <Row label="Платежей осталось" value={`${baseline.months}`} />
             <Row label="Проценты за оставшийся срок" value={fmtMoney(baseline.interest)} />
             <Row label="Всего к выплате" value={fmtMoney(baseline.totalPaid)} />
@@ -239,7 +239,7 @@ export default function PrepaymentCalculator() {
           </Card>
         </>
       )}
-      <p className="text-[10.5px] text-[#A9AFB7]">Сценарий: {state.modelId} · расчёт симуляцией, не оферта.</p>
+      <p className="text-[10.5px] text-[#A2A7AF]">Сценарий: {state.modelId} · расчёт симуляцией, не оферта.</p>
     </div>
   )
 }
@@ -263,16 +263,16 @@ function PlanCard({
 }) {
   const saved = plan ? Math.max(0, baseline.interest - plan.interest) : 0
   return (
-    <Card className={`flex flex-col gap-2 transition-colors ${active ? 'border-[#E4002B]/60' : 'border-[#363B43]'}`}>
+    <Card className={`flex flex-col gap-2 transition-colors ${active ? 'border-[#FF334B]/60' : 'border-[#2B3037]'}`}>
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[13px] font-bold text-[#F3F4F4]">{title}</p>
+        <p className="text-[13px] font-bold text-[#F4F5F6]">{title}</p>
         {active && (
-          <span className="rounded-full bg-[#E4002B]/14 px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-[#E4002B]">
+          <span className="rounded-full bg-[#FF334B]/14 px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-[#FF334B]">
             выбрано
           </span>
         )}
       </div>
-      <p className="text-[11.5px] leading-snug text-[#A9AFB7]">{hint}</p>
+      <p className="text-[11.5px] leading-snug text-[#A2A7AF]">{hint}</p>
       {plan ? (
         <>
           <Row label="Экономия процентов" value={fmtMoney(saved)} accent />
@@ -281,7 +281,7 @@ function PlanCard({
           <Row label="Проценты" value={fmtMoney(plan.interest)} />
         </>
       ) : (
-        <p className="text-[12px] text-[#A9AFB7]">Расчёт невозможен с этими параметрами</p>
+        <p className="text-[12px] text-[#A2A7AF]">Расчёт невозможен с этими параметрами</p>
       )}
     </Card>
   )
@@ -289,9 +289,9 @@ function PlanCard({
 
 function Row({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className="flex items-baseline justify-between gap-2 border-t border-[#363B43]/70 pt-1.5 first:border-0 first:pt-0">
-      <span className="text-[12px] text-[#A9AFB7]">{label}</span>
-      <span className={`font-display-num text-[13.5px] font-bold ${accent ? 'text-[#16B374]' : 'text-[#F3F4F4]'}`}>
+    <div className="flex items-baseline justify-between gap-2 border-t border-[#2B3037]/70 pt-1.5 first:border-0 first:pt-0">
+      <span className="text-[12px] text-[#A2A7AF]">{label}</span>
+      <span className={`font-display-num text-[13.5px] font-bold ${accent ? 'text-[#10B981]' : 'text-[#F4F5F6]'}`}>
         {value}
       </span>
     </div>

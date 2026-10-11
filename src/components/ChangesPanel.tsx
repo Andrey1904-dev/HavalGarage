@@ -70,20 +70,20 @@ export default function ChangesPanel() {
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
         <Card className="p-3">
-          <p className="text-[10px] uppercase tracking-wider text-[#A9AFB7]">Событий в журнале</p>
-          <p className="font-display-num mt-0.5 text-[19px] font-bold text-[#F3F4F4]">{CATALOG_CHANGES.length}</p>
+          <p className="text-[10px] uppercase tracking-wider text-[#A2A7AF]">Событий в журнале</p>
+          <p className="font-display-num mt-0.5 text-[19px] font-bold text-[#F4F5F6]">{CATALOG_CHANGES.length}</p>
         </Card>
         <Card className="p-3">
-          <p className="text-[10px] uppercase tracking-wider text-[#A9AFB7]">Документов требует проверки</p>
-          <p className="font-display-num mt-0.5 text-[19px] font-bold text-[#F5A623]">{reviewDocs.length}</p>
+          <p className="text-[10px] uppercase tracking-wider text-[#A2A7AF]">Документов требует проверки</p>
+          <p className="font-display-num mt-0.5 text-[19px] font-bold text-[#F59E0B]">{reviewDocs.length}</p>
         </Card>
         <Card className="p-3">
-          <p className="text-[10px] uppercase tracking-wider text-[#A9AFB7]">Разобрано автоматически</p>
-          <p className="font-display-num mt-0.5 text-[19px] font-bold text-[#16B374]">{parsed.length}</p>
+          <p className="text-[10px] uppercase tracking-wider text-[#A2A7AF]">Разобрано автоматически</p>
+          <p className="font-display-num mt-0.5 text-[19px] font-bold text-[#10B981]">{parsed.length}</p>
         </Card>
         <Card className="p-3">
-          <p className="text-[10px] uppercase tracking-wider text-[#A9AFB7]">Комплектаций с динамикой цен</p>
-          <p className="font-display-num mt-0.5 text-[19px] font-bold text-[#F3F4F4]">{dynamics.length}</p>
+          <p className="text-[10px] uppercase tracking-wider text-[#A2A7AF]">Комплектаций с динамикой цен</p>
+          <p className="font-display-num mt-0.5 text-[19px] font-bold text-[#F4F5F6]">{dynamics.length}</p>
         </Card>
       </div>
 
@@ -92,10 +92,10 @@ export default function ChangesPanel() {
           type="button"
           onClick={() => setFilter('all')}
           aria-pressed={filter === 'all'}
-          className={`min-h-[34px] rounded-[8px] border px-2.5 text-[11.5px] font-bold transition-colors ${
+          className={`min-h-[34px] rounded-lg border px-2.5 text-[11.5px] font-bold transition-colors ${
             filter === 'all'
-              ? 'border-[#E4002B] bg-[#E4002B]/12 text-[#F3F4F4]'
-              : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:text-[#F3F4F4]'
+              ? 'border-[#FF334B] bg-[#FF334B]/12 text-[#F4F5F6]'
+              : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
           }`}
         >
           все ({changes.length})
@@ -106,10 +106,10 @@ export default function ChangesPanel() {
             type="button"
             onClick={() => setFilter(kind)}
             aria-pressed={filter === kind}
-            className={`min-h-[34px] rounded-[8px] border px-2.5 text-[11.5px] font-bold transition-colors ${
+            className={`min-h-[34px] rounded-lg border px-2.5 text-[11.5px] font-bold transition-colors ${
               filter === kind
-                ? 'border-[#E4002B] bg-[#E4002B]/12 text-[#F3F4F4]'
-                : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:text-[#F3F4F4]'
+                ? 'border-[#FF334B] bg-[#FF334B]/12 text-[#F4F5F6]'
+                : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
             }`}
           >
             {CHANGE_KIND_LABELS[kind] ?? kind} ({changes.filter((c) => c.kind === kind).length})
@@ -129,13 +129,13 @@ export default function ChangesPanel() {
         <Callout tone="info" title="Изменений не зафиксировано">
           С момента предыдущей проверки официальный каталог не изменился: ни новых моделей и комплектаций, ни
           изменений цен, ни новых версий прайс-листов. Проверка выполняется командой{' '}
-          <code className="text-[#F3F4F4]">npm run catalog -- full</code> и еженедельно в GitHub Actions.
+          <code className="text-[#F4F5F6]">npm run catalog -- full</code> и еженедельно в GitHub Actions.
         </Callout>
       ) : (
-        <div className="overflow-x-auto rounded-[10px] border border-[#363B43]/70">
+        <div className="overflow-x-auto rounded-2xl border border-[#2B3037]/70">
           <table className="w-full min-w-[620px] border-collapse text-left text-[11.5px]">
             <thead>
-              <tr className="bg-[#1A1D22] text-[10px] uppercase tracking-wider text-[#A9AFB7]">
+              <tr className="bg-[#181B1F] text-[10px] uppercase tracking-wider text-[#A2A7AF]">
                 <th className="px-3 py-2 font-semibold">Дата</th>
                 <th className="px-3 py-2 font-semibold">Тип</th>
                 <th className="px-3 py-2 font-semibold">Описание</th>
@@ -145,7 +145,7 @@ export default function ChangesPanel() {
             </thead>
             <tbody>
               {shown.map((c) => (
-                <tr key={c.id} className="border-t border-[#363B43]/50">
+                <tr key={c.id} className="border-t border-[#2B3037]/50">
                   <TableCell>{fmtDate(c.detectedAt)}</TableCell>
                   <TableCell>
                     <Tag tone={c.kind === 'price-changed' ? 'warn' : c.kind === 'new-model' ? 'success' : 'default'}>
@@ -168,7 +168,7 @@ export default function ChangesPanel() {
                         href={c.sourceUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="underline decoration-[#363B43] underline-offset-2 hover:text-[#F3F4F4]"
+                        className="underline decoration-[#2B3037] underline-offset-2 hover:text-[#F4F5F6]"
                       >
                         документ
                       </a>
@@ -185,8 +185,8 @@ export default function ChangesPanel() {
 
       {reviewDocs.length > 0 && (
         <Card className="flex flex-col gap-2 p-3.5">
-          <p className="text-[12.5px] font-bold text-[#F3F4F4]">Документы, требующие ручной проверки</p>
-          <p className="text-[11.5px] leading-relaxed text-[#A9AFB7]">
+          <p className="text-[12.5px] font-bold text-[#F4F5F6]">Документы, требующие ручной проверки</p>
+          <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
             Пайплайн не смог разобрать эти документы полностью — данные из них в каталог не попадали, чтобы не
             подменять подтверждённые цены неполным результатом.
           </p>
@@ -194,9 +194,9 @@ export default function ChangesPanel() {
             {reviewDocs.map((d) => (
               <li key={d.id} className="flex flex-wrap items-center gap-2 text-[11.5px]">
                 <Tag tone="warn">{PARSING_STATUS_LABELS[d.parsingStatus]}</Tag>
-                <span className="font-bold text-[#F3F4F4]">{d.modelId ? (getModel(d.modelId)?.name ?? d.modelId) : '—'}</span>
-                <span className="text-[#A9AFB7]">{d.label ?? d.documentType}</span>
-                {d.notes && <span className="text-[#A9AFB7]">· {d.notes}</span>}
+                <span className="font-bold text-[#F4F5F6]">{d.modelId ? (getModel(d.modelId)?.name ?? d.modelId) : '—'}</span>
+                <span className="text-[#A2A7AF]">{d.label ?? d.documentType}</span>
+                {d.notes && <span className="text-[#A2A7AF]">· {d.notes}</span>}
               </li>
             ))}
           </ul>

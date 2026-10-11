@@ -34,7 +34,7 @@ const ORIGIN_LABELS: Record<PricePoint['origin'], string> = {
   archive: 'архивная запись прошлых лет',
 }
 
-const COLORS = ['#E4002B', '#3B82F6', '#16B374', '#F5A623']
+const COLORS = ['#FF334B', '#3B82F6', '#10B981', '#F59E0B']
 
 /**
  * История цены комплектации.
@@ -116,13 +116,13 @@ export default function PriceHistoryChart({ trimId, trimName }: { trimId: string
                   label: TYPE_LABELS[activeType] ?? activeType,
                   data: points.map((p) => p.amount),
                   borderColor: COLORS[0],
-                  backgroundColor: 'rgba(228, 0, 43, 0.12)',
+                  backgroundColor: 'rgba(255, 51, 75, 0.12)',
                   borderWidth: 2,
                   fill: true,
                   tension: 0.25,
                   pointRadius: points.map((p) => (p.origin === 'archive' ? 5 : 4)),
-                  pointBackgroundColor: points.map((p) => (p.origin === 'archive' ? '#F5A623' : COLORS[0])),
-                  pointBorderColor: '#0E1013',
+                  pointBackgroundColor: points.map((p) => (p.origin === 'archive' ? '#F59E0B' : COLORS[0])),
+                  pointBorderColor: '#0B0C0E',
                   pointBorderWidth: 2,
                   spanGaps: true,
                 },
@@ -134,14 +134,14 @@ export default function PriceHistoryChart({ trimId, trimName }: { trimId: string
               scales: {
                 x: {
                   grid: { display: false },
-                  border: { color: '#363B43' },
-                  ticks: { color: '#A9AFB7', font: { size: 10 }, maxRotation: 0, autoSkipPadding: 12 },
+                  border: { color: '#2B3037' },
+                  ticks: { color: '#A2A7AF', font: { size: 10 }, maxRotation: 0, autoSkipPadding: 12 },
                 },
                 y: {
-                  grid: { color: '#363B43' },
+                  grid: { color: '#2B3037' },
                   border: { display: false },
                   ticks: {
-                    color: '#A9AFB7',
+                    color: '#A2A7AF',
                     font: { size: 10 },
                     maxTicksLimit: 5,
                     callback: (value) => `${Math.round(Number(value) / 1000)} тыс. ₽`,
@@ -151,10 +151,10 @@ export default function PriceHistoryChart({ trimId, trimName }: { trimId: string
               plugins: {
                 legend: { display: false },
                 tooltip: {
-                  backgroundColor: '#0E1013',
-                  titleColor: '#A9AFB7',
-                  bodyColor: '#F3F4F4',
-                  borderColor: '#363B43',
+                  backgroundColor: '#0B0C0E',
+                  titleColor: '#A2A7AF',
+                  bodyColor: '#F4F5F6',
+                  borderColor: '#2B3037',
                   borderWidth: 1,
                   padding: 10,
                   callbacks: {
@@ -168,12 +168,12 @@ export default function PriceHistoryChart({ trimId, trimName }: { trimId: string
               },
             }}
           />
-          <div className="mt-2 flex flex-wrap gap-4 text-[10.5px] text-[#A9AFB7]">
+          <div className="mt-2 flex flex-wrap gap-4 text-[10.5px] text-[#A2A7AF]">
             <span className="inline-flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#E4002B]" /> подтверждённая цена прайс-листа
+              <span className="h-2 w-2 rounded-full bg-[#FF334B]" /> подтверждённая цена прайс-листа
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#F5A623]" /> архивная запись прошлых лет
+              <span className="h-2 w-2 rounded-full bg-[#F59E0B]" /> архивная запись прошлых лет
             </span>
           </div>
         </div>
@@ -185,10 +185,10 @@ export default function PriceHistoryChart({ trimId, trimName }: { trimId: string
         </Callout>
       )}
 
-      <div className="overflow-x-auto rounded-[10px] border border-[#363B43]/70">
+      <div className="overflow-x-auto rounded-2xl border border-[#2B3037]/70">
         <table className="w-full min-w-[560px] border-collapse text-left text-[11.5px]">
           <thead>
-            <tr className="bg-[#1A1D22] text-[10px] uppercase tracking-wider text-[#A9AFB7]">
+            <tr className="bg-[#181B1F] text-[10px] uppercase tracking-wider text-[#A2A7AF]">
               <th className="px-3 py-2 font-semibold">Дата</th>
               <th className="px-3 py-2 font-semibold">Цена</th>
               <th className="px-3 py-2 font-semibold">Тип</th>
@@ -198,7 +198,7 @@ export default function PriceHistoryChart({ trimId, trimName }: { trimId: string
           </thead>
           <tbody>
             {changes.map((c) => (
-              <tr key={c.id} className="border-t border-[#363B43]/50">
+              <tr key={c.id} className="border-t border-[#2B3037]/50">
                 <TableCell>{fmtDate(c.changedAt)}</TableCell>
                 <TableCell className="font-display-num font-bold">{fmtMoney(c.newPrice)}</TableCell>
                 <TableCell>{TYPE_LABELS[c.newPriceType] ?? c.newPriceType}</TableCell>
@@ -208,7 +208,7 @@ export default function PriceHistoryChart({ trimId, trimName }: { trimId: string
                     href={c.sourceUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[11px] underline decoration-[#363B43] underline-offset-2 hover:text-[#F3F4F4]"
+                    className="text-[11px] underline decoration-[#2B3037] underline-offset-2 hover:text-[#F4F5F6]"
                   >
                     документ
                   </a>

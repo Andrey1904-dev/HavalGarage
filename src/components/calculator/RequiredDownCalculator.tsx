@@ -111,7 +111,7 @@ export default function RequiredDownCalculator() {
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.1fr_1fr]">
       <Card className="flex flex-col gap-3.5">
         <div className="flex items-center gap-2">
-          <span className="h-4 w-1 rounded-full bg-[#E4002B]" aria-hidden="true" />
+          <span className="h-4 w-1 rounded-full bg-[#FF334B]" aria-hidden="true" />
           <h3 className="font-display-num text-[16px] font-bold uppercase tracking-wide">
             Какой взнос нужен, чтобы платить меньше
           </h3>
@@ -206,7 +206,7 @@ export default function RequiredDownCalculator() {
               <AlertIcon className="h-5 w-5 shrink-0 text-[#EF4444]" />
               <div>
                 <p className="text-[13px] font-bold text-[#EF4444]">Проверьте параметры</p>
-                <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A9AFB7]">
+                <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A2A7AF]">
                   {result.errors.map((e) => (
                     <li key={e}>{e}</li>
                   ))}
@@ -263,8 +263,8 @@ export default function RequiredDownCalculator() {
             ))}
 
             <Card className="flex flex-col gap-2">
-              <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#A9AFB7]">
-                <TrendDownIcon className="h-3.5 w-3.5 text-[#E4002B]" /> Варианты по срокам
+              <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-[#A2A7AF]">
+                <TrendDownIcon className="h-3.5 w-3.5 text-[#FF334B]" /> Варианты по срокам
               </p>
               <DataTable head={['Срок', 'Нужен взнос', 'Доля от цены', 'Макс. кредит', 'Возможно']} className="border-0">
                 {result.plan.alternatives.map((a) => (
@@ -275,11 +275,11 @@ export default function RequiredDownCalculator() {
                     <TableCell>{fmtMoney(a.maxLoanAmount)}</TableCell>
                     <TableCell>
                       {a.requiredDownPayment <= 0 ? (
-                        <span className="text-[#16B374]">взнос не нужен</span>
+                        <span className="text-[#10B981]">взнос не нужен</span>
                       ) : a.achievable ? (
-                        <span className="text-[#16B374]">да</span>
+                        <span className="text-[#10B981]">да</span>
                       ) : (
-                        <span className="text-[#F5A623]">нет</span>
+                        <span className="text-[#F59E0B]">нет</span>
                       )}
                     </TableCell>
                   </tr>

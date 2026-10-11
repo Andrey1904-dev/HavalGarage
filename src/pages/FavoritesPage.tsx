@@ -131,11 +131,11 @@ export default function FavoritesPage() {
     <div className="animate-page-enter flex flex-col gap-4">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-1.5">
-          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">Локально в браузере</p>
-          <h1 className="font-display-num text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4] sm:text-[32px]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">Локально в браузере</p>
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
             Избранное и расчёты
           </h1>
-          <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A9AFB7]">
+          <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
             Сохранённые автомобили, сравнения, параметры кредита и планы покупки. Регистрация не требуется, данные не
             отправляются на сервер: всё хранится в localStorage этого браузера.
           </p>
@@ -202,24 +202,24 @@ export default function FavoritesPage() {
                     <Card key={f.id} className="flex flex-col gap-2">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A9AFB7]">
+                          <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">
                             {f.kind === 'trim' ? 'Комплектация' : 'Модель'} · {fmtDate(f.addedAt)}
                           </p>
-                          <Link to={`/models/${model.slug}`} className="text-[14px] font-bold text-[#F3F4F4] hover:text-[#E4002B]">
+                          <Link to={`/models/${model.slug}`} className="text-[14px] font-bold text-[#F4F5F6] hover:text-[#FF334B]">
                             {model.name}
                           </Link>
-                          {trim && <p className="text-[11.5px] text-[#A9AFB7]">{trim.name}</p>}
+                          {trim && <p className="text-[11.5px] text-[#A2A7AF]">{trim.name}</p>}
                         </div>
                         <button
                           type="button"
                           onClick={() => removeFavorite(f.id)}
                           aria-label="Убрать из избранного"
-                          className="flex h-8 w-8 items-center justify-center rounded-[6px] border border-[#363B43] text-[#A9AFB7] hover:text-[#EF4444]"
+                          className="flex h-8 w-8 items-center justify-center rounded-[6px] border border-[#2B3037] text-[#A2A7AF] hover:text-[#EF4444]"
                         >
                           <TrashIcon className="h-3.5 w-3.5" />
                         </button>
                       </div>
-                      <p className="font-display-num text-[20px] font-bold text-[#F3F4F4]">
+                      <p className="font-mono text-xl font-extrabold tabular-nums text-[#F4F5F6]">
                         {trim?.basePrice !== null && trim?.basePrice !== undefined
                           ? fmtMoney(trim.basePrice)
                           : d?.model
@@ -244,7 +244,7 @@ export default function FavoritesPage() {
                         {trim && (
                           <Link
                             to={`/compare?trims=${trim.id}`}
-                            className="flex min-h-[38px] items-center gap-1.5 rounded-[8px] border border-[#363B43] bg-[#23272D] px-2.5 text-[11.5px] font-bold text-[#A9AFB7] hover:text-[#F3F4F4]"
+                            className="flex min-h-[38px] items-center gap-1.5 rounded-lg border border-[#2B3037] bg-[#20242A] px-2.5 text-[11.5px] font-bold text-[#A2A7AF] hover:text-[#F4F5F6]"
                             onClick={() => setCompare([trim.id])}
                           >
                             <CompareIcon className="h-3.5 w-3.5" /> Сравнить
@@ -269,13 +269,13 @@ export default function FavoritesPage() {
                   <tr key={c.id}>
                     <TableCell sticky>
                       {c.modelName}
-                      {c.trimName && <span className="block text-[10.5px] font-normal text-[#A9AFB7]">{c.trimName}</span>}
+                      {c.trimName && <span className="block text-[10.5px] font-normal text-[#A2A7AF]">{c.trimName}</span>}
                       {c.programName && <Tag tone="accent">{c.programName}</Tag>}
                     </TableCell>
                     <TableCell strong>{fmtMoney(c.monthlyPayment)}</TableCell>
                     <TableCell>
                       {fmtMoney(c.downPayment)}
-                      <span className="block text-[10.5px] text-[#A9AFB7]">{c.downPaymentPct.toFixed(0)}%</span>
+                      <span className="block text-[10.5px] text-[#A2A7AF]">{c.downPaymentPct.toFixed(0)}%</span>
                     </TableCell>
                     <TableCell>
                       {c.termMonths} мес · {String(c.annualRate).replace('.', ',')}%
@@ -325,8 +325,8 @@ export default function FavoritesPage() {
                 {comparisons.map((c) => (
                   <Card key={c.id} className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <p className="text-[13px] font-bold text-[#F3F4F4]">{c.title}</p>
-                      <p className="text-[11px] text-[#A9AFB7]">
+                      <p className="text-[13px] font-bold text-[#F4F5F6]">{c.title}</p>
+                      <p className="text-[11px] text-[#A2A7AF]">
                         Сохранено {fmtDate(c.createdAt)} · {c.trimIds.length} комплектации
                       </p>
                     </div>
@@ -356,12 +356,12 @@ export default function FavoritesPage() {
                 {plans.map((p) => (
                   <Card key={p.id} className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <p className="flex items-center gap-2 text-[13px] font-bold text-[#F3F4F4]">
-                        <SavingsIcon className="h-4 w-4 text-[#E4002B]" />
+                      <p className="flex items-center gap-2 text-[13px] font-bold text-[#F4F5F6]">
+                        <SavingsIcon className="h-4 w-4 text-[#FF334B]" />
                         {p.title}
                       </p>
-                      <p className="text-[11.5px] text-[#A9AFB7]">{p.summary}</p>
-                      <p className="mt-0.5 text-[10.5px] text-[#A9AFB7]">
+                      <p className="text-[11.5px] text-[#A2A7AF]">{p.summary}</p>
+                      <p className="mt-0.5 text-[10.5px] text-[#A2A7AF]">
                         {fmtDate(p.createdAt)} · тип: {p.kind === 'savings' ? 'план/владение' : p.kind}
                       </p>
                     </div>

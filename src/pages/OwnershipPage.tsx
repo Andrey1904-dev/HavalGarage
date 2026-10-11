@@ -12,6 +12,7 @@ import {
   TableCell,
   Tag,
 } from '../components/ui'
+import { RadialChart } from '../components/RadialChart'
 import {
   DropletIcon,
   FuelIcon,
@@ -224,12 +225,12 @@ export default function OwnershipPage() {
 
   return (
     <div className="animate-page-enter flex flex-col gap-4">
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">Эксплуатация и кредит</p>
-        <h1 className="font-display-num text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4] sm:text-[32px]">
+      <header className="flex flex-col gap-1.5 border-b border-[#242930] pb-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">Эксплуатация и кредит</p>
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Стоимость владения
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A9AFB7]">
+        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
           Сколько автомобиль будет стоить за выбранный период: топливо, обслуживание, страхование, налоги, шины,
           шиномонтаж, прочие расходы и кредитные платежи. Подтверждённые значения отделены от ваших оценок.
         </p>
@@ -239,8 +240,8 @@ export default function OwnershipPage() {
         {/* ---------------- Параметры ---------------- */}
         <div className="flex flex-col gap-3">
           <Card className="flex flex-col gap-3">
-            <p className="flex items-center gap-2 text-[13px] font-bold text-[#F3F4F4]">
-              <GaugeIcon className="h-4 w-4 text-[#E4002B]" /> Автомобиль
+            <p className="flex items-center gap-2 text-[13px] font-bold text-[#F4F5F6]">
+              <GaugeIcon className="h-4 w-4 text-[#FF334B]" /> Автомобиль
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Select label="Модель" value={modelId} onChange={(e) => {
@@ -303,10 +304,10 @@ export default function OwnershipPage() {
           </Card>
 
           <Card className="flex flex-col gap-3">
-            <p className="flex items-center gap-2 text-[13px] font-bold text-[#F3F4F4]">
-              <WrenchIcon className="h-4 w-4 text-[#E4002B]" /> Расходы (ваши оценки)
+            <p className="flex items-center gap-2 text-[13px] font-bold text-[#F4F5F6]">
+              <WrenchIcon className="h-4 w-4 text-[#FF334B]" /> Расходы (ваши оценки)
             </p>
-            <p className="text-[11.5px] leading-relaxed text-[#A9AFB7]">
+            <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
               Тарифы дилера, страховых и налоговой не публикуются в прайс-листах, поэтому поля оставлены пустыми.
               Заполните те статьи, которые знаете: пропущенные не учитываются и помечаются в результатах.
             </p>
@@ -373,8 +374,8 @@ export default function OwnershipPage() {
           </Card>
 
           <Card className="flex flex-col gap-3">
-            <p className="flex items-center gap-2 text-[13px] font-bold text-[#F3F4F4]">
-              <TaxIcon className="h-4 w-4 text-[#E4002B]" /> Кредитные платежи
+            <p className="flex items-center gap-2 text-[13px] font-bold text-[#F4F5F6]">
+              <TaxIcon className="h-4 w-4 text-[#FF334B]" /> Кредитные платежи
             </p>
             <div className="flex flex-wrap gap-2">
               <CheckboxRow
@@ -389,13 +390,13 @@ export default function OwnershipPage() {
                 onChange={(v) => set({ loanIncludesInsurance: v })}
               />
             </div>
-            <p className="text-[11.5px] leading-relaxed text-[#A9AFB7]">
+            <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
               {plan.ok
                 ? `Текущий расчёт калькулятора: ${fmtMoney(plan.plan.monthlyPayment)} в месяц на ${plan.plan.termMonths} мес (ставка ${String(
                     plan.plan.annualRate,
                   ).replace('.', ',')}%).`
                 : 'В калькуляторе нет корректного расчёта — кредитные платежи не учитываются.'}{' '}
-              <Link to="/calculator" className="underline underline-offset-2 hover:text-[#F3F4F4]">
+              <Link to="/calculator" className="underline underline-offset-2 hover:text-[#F4F5F6]">
                 Изменить параметры кредита →
               </Link>
             </p>
@@ -407,7 +408,7 @@ export default function OwnershipPage() {
           {!result.ok ? (
             <Card className="border-[#EF4444]/40">
               <p className="text-[13px] font-bold text-[#EF4444]">Проверьте параметры</p>
-              <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A9AFB7]">
+              <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A2A7AF]">
                 {result.errors.map((e) => (
                   <li key={e}>{e}</li>
                 ))}
@@ -434,6 +435,32 @@ export default function OwnershipPage() {
                   hint={`кредит отдельно: ${fmtMoney(result.result.loanPaymentsTotal)}`}
                 />
               </div>
+
+              <RadialChart
+                centerLabel="Всего за период"
+                centerValue={fmtMoney(result.result.grandTotal)}
+                centerSubvalue={'≈ ' + fmtMoney(result.result.monthlyAverage) + ' / мес'}
+                segments={[
+                  ...result.result.categories
+                    .filter((c) => c.total > 0)
+                    .map((c, i) => ({
+                      label: c.label,
+                      value: c.total,
+                      color: ['#FF334B', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#22D3EE', '#F472B6'][i % 7],
+                      formattedValue: fmtMoney(c.total),
+                    })),
+                  ...(result.result.loanPaymentsTotal > 0
+                    ? [
+                        {
+                          label: 'Кредитные платежи',
+                          value: result.result.loanPaymentsTotal,
+                          color: '#64748B',
+                          formattedValue: fmtMoney(result.result.loanPaymentsTotal),
+                        },
+                      ]
+                    : []),
+                ]}
+              />
 
               <DataTable head={['Статья расходов', 'В год', 'В месяц', `За ${form.years} г.`, 'Источник']}>
                 {result.result.categories.map((c) => (
@@ -488,10 +515,10 @@ export default function OwnershipPage() {
               )}
 
               <Disclosure title="Подтверждённые значения и ваши оценки">
-                <div className="flex flex-col gap-2 text-[11.5px] leading-relaxed text-[#A9AFB7]">
+                <div className="flex flex-col gap-2 text-[11.5px] leading-relaxed text-[#A2A7AF]">
                   {result.result.confirmed.length > 0 && (
                     <div>
-                      <p className="mb-1 font-bold text-[#16B374]">Подтверждено официальными данными:</p>
+                      <p className="mb-1 font-bold text-[#10B981]">Подтверждено официальными данными:</p>
                       <ul className="ml-4 list-disc">
                         {result.result.confirmed.map((c) => (
                           <li key={c}>{c}</li>
@@ -501,7 +528,7 @@ export default function OwnershipPage() {
                   )}
                   {result.result.estimates.length > 0 && (
                     <div>
-                      <p className="mb-1 font-bold text-[#F5A623]">Пользовательские оценки и пропуски:</p>
+                      <p className="mb-1 font-bold text-[#F59E0B]">Пользовательские оценки и пропуски:</p>
                       <ul className="ml-4 list-disc">
                         {result.result.estimates.map((c) => (
                           <li key={c}>{c}</li>
@@ -558,23 +585,23 @@ function CheckboxRow({
   onChange: (v: boolean) => void
 }) {
   return (
-    <label className="flex min-h-[40px] cursor-pointer items-start gap-2.5 rounded-[8px] border border-[#363B43] bg-[#23272D] px-3 py-2 text-[12px] text-[#A9AFB7] transition-colors hover:text-[#F3F4F4]">
+    <label className="flex min-h-[40px] cursor-pointer items-start gap-2.5 rounded-lg border border-[#2B3037] bg-[#20242A] px-3 py-2 text-[12px] text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]">
       <input
         type="checkbox"
-        className="mt-0.5 h-4 w-4 accent-[#E4002B]"
+        className="mt-0.5 h-4 w-4 accent-[#FF334B]"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
       />
       <span>
         {label}
-        {hint && <span className="mt-0.5 block text-[10.5px] text-[#A9AFB7]">{hint}</span>}
+        {hint && <span className="mt-0.5 block text-[10.5px] text-[#A2A7AF]">{hint}</span>}
       </span>
     </label>
   )
 }
 
 function CategoryIcon({ category }: { category: string }) {
-  const cls = 'h-3.5 w-3.5 shrink-0 text-[#E4002B]'
+  const cls = 'h-3.5 w-3.5 shrink-0 text-[#FF334B]'
   switch (category) {
     case 'fuel':
       return <FuelIcon className={cls} />

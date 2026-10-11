@@ -14,14 +14,14 @@ export default function PriceMeta({ trim, compact = false }: { trim: Trim; compa
       ? 'agat-ekb-haval.ru'
       : 'каталог наличия ГК АГАТ'
   return (
-    <p className={`text-[10.5px] leading-relaxed text-[#A9AFB7] ${compact ? 'line-clamp-2' : ''}`}>
+    <p className={`text-[10.5px] leading-relaxed text-[#A2A7AF] ${compact ? 'line-clamp-2' : ''}`}>
       Источник:{' '}
-      <a href={trim.priceSourceUrl} target="_blank" rel="noreferrer" className="underline decoration-[#363B43] underline-offset-2 hover:text-[#F3F4F4]">
+      <a href={trim.priceSourceUrl} target="_blank" rel="noreferrer" className="underline decoration-[#2B3037] underline-offset-2 hover:text-[#F4F5F6]">
         {sourceLabel}
       </a>
       {trim.priceValidFrom ? ` · действует с ${fmtDate(trim.priceValidFrom)}` : ' · дата начала действия не опубликована'}
       {` · данные зафиксированы ${fmtDate(CATALOG_FIXED_AT)}`}
-      {stale && <span className="text-[#F5A623]"> · актуальность подтвердите у дилера</span>}
+      {stale && <span className="text-[#F59E0B]"> · актуальность подтвердите у дилера</span>}
     </p>
   )
 }

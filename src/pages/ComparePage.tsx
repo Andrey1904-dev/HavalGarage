@@ -292,7 +292,7 @@ export default function ComparePage() {
       {/* Выбор участников */}
       <Card className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-[12.5px] font-bold text-[#F3F4F4]">
+          <p className="text-[12.5px] font-bold text-[#F4F5F6]">
             Выбрано {details.length} из {MAX_COMPARE}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -311,32 +311,32 @@ export default function ComparePage() {
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {details.map((d, i) => (
-            <div key={d.trim.id} className="flex flex-col gap-2 rounded-[10px] border border-[#363B43] bg-[#0E1013]/70 p-3">
+            <div key={d.trim.id} className="flex flex-col gap-2 rounded-2xl border border-[#2B3037] bg-[#0B0C0E]/70 p-3">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A9AFB7]">Вариант {i + 1}</p>
-                  <Link to={`/models/${d.model.slug}`} className="text-[13px] font-bold text-[#F3F4F4] hover:text-[#E4002B]">
+                  <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">Вариант {i + 1}</p>
+                  <Link to={`/models/${d.model.slug}`} className="text-[13px] font-bold text-[#F4F5F6] hover:text-[#FF334B]">
                     {d.model.name}
                   </Link>
-                  <p className="text-[11.5px] text-[#A9AFB7]">{d.trim.name}</p>
+                  <p className="text-[11.5px] text-[#A2A7AF]">{d.trim.name}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => remove(d.trim.id)}
                   aria-label={`Убрать ${d.model.name} ${d.trim.name} из сравнения`}
-                  className="flex h-7 w-7 items-center justify-center rounded-[6px] border border-[#363B43] text-[#A9AFB7] hover:text-[#EF4444]"
+                  className="flex h-7 w-7 items-center justify-center rounded-[6px] border border-[#2B3037] text-[#A2A7AF] hover:text-[#EF4444]"
                 >
                   <TrashIcon className="h-3.5 w-3.5" />
                 </button>
               </div>
-              <p className="font-display-num text-[18px] font-bold text-[#F3F4F4]">
+              <p className="font-display-num text-[18px] font-bold text-[#F4F5F6]">
                 {d.trim.basePrice !== null ? fmtMoney(d.trim.basePrice) : 'нет данных'}
               </p>
               <div className="flex flex-wrap gap-1.5">
                 <FavoriteButton modelId={d.model.id} trimId={d.trim.id} />
                 <Link
                   to={`/calculator?trim=${d.trim.id}`}
-                  className="flex min-h-[38px] items-center rounded-[8px] border border-[#363B43] bg-[#23272D] px-2.5 text-[11.5px] font-bold text-[#A9AFB7] hover:text-[#F3F4F4]"
+                  className="flex min-h-[38px] items-center rounded-lg border border-[#2B3037] bg-[#20242A] px-2.5 text-[11.5px] font-bold text-[#A2A7AF] hover:text-[#F4F5F6]"
                 >
                   В калькулятор
                 </Link>
@@ -379,7 +379,7 @@ export default function ComparePage() {
       <SectionTitle
         tip={`Параметры кредита общие для всех вариантов: срок ${term} мес, ставка ${String(rate).replace('.', ',')}%, взнос ${downPct}%. Изменяются во вкладке «Кредит» — сравнение пересчитается.`}
         action={
-          <Link to="/calculator" className="text-[12px] font-bold text-[#A9AFB7] hover:text-[#F3F4F4]">
+          <Link to="/calculator" className="text-[12px] font-bold text-[#A2A7AF] hover:text-[#F4F5F6]">
             Изменить параметры →
           </Link>
         }
@@ -417,7 +417,7 @@ export default function ComparePage() {
           <TableCell sticky>Переплата по процентам</TableCell>
           {credit.map((c, i) => (
             <TableCell key={details[i].trim.id}>
-              <span className="text-[#E4002B]">{fmtMoney(Math.max(0, c.totalPaid - c.creditAmount))}</span>
+              <span className="text-[#FF334B]">{fmtMoney(Math.max(0, c.totalPaid - c.creditAmount))}</span>
             </TableCell>
           ))}
         </tr>
@@ -488,11 +488,11 @@ export default function ComparePage() {
             ))}
           </tr>
         </DataTable>
-        <p className="text-[11px] leading-relaxed text-[#A9AFB7]">
+        <p className="text-[11px] leading-relaxed text-[#A2A7AF]">
           Кредитный платёж и эксплуатационные расходы показаны раздельно и не суммируются в «стоимость автомобиля»:
           переплата по кредиту и расходы на топливо — разные статьи. Полная стоимость владения с ТО, страховкой и
           налогом — в разделе{' '}
-          <Link to="/ownership" className="underline underline-offset-2 hover:text-[#F3F4F4]">
+          <Link to="/ownership" className="underline underline-offset-2 hover:text-[#F4F5F6]">
             «Стоимость владения»
           </Link>
           .
@@ -510,11 +510,11 @@ export default function ComparePage() {
             {r.values.map((v, i) => (
               <TableCell key={details[i].trim.id}>
                 {r.label === 'Источник цены' && v ? (
-                  <a href={v} target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-[#F3F4F4]">
+                  <a href={v} target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-[#F4F5F6]">
                     открыть
                   </a>
                 ) : (
-                  v ?? <span className="text-[#A9AFB7]">нет данных</span>
+                  v ?? <span className="text-[#A2A7AF]">нет данных</span>
                 )}
               </TableCell>
             ))}
@@ -530,7 +530,7 @@ export default function ComparePage() {
             type="button"
             onClick={() => setOnlyDiff((v) => !v)}
             aria-pressed={onlyDiff}
-            className="min-h-[36px] rounded-[8px] border border-[#363B43] bg-[#1A1D22] px-3 text-[11.5px] font-bold text-[#A9AFB7] transition-colors hover:text-[#F3F4F4]"
+            className="min-h-[36px] rounded-lg border border-[#2B3037] bg-[#181B1F] px-3 text-[11.5px] font-bold text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]"
           >
             {onlyDiff ? 'Показать все позиции' : 'Только различия'}
           </button>
@@ -548,7 +548,7 @@ export default function ComparePage() {
         <div className="flex flex-col gap-3">
           {grouped.map(([group, rows]) => (
             <Card key={group} className="flex flex-col gap-2">
-              <p className="text-[12px] font-bold uppercase tracking-wider text-[#E4002B]">{group}</p>
+              <p className="text-[12px] font-bold uppercase tracking-wider text-[#FF334B]">{group}</p>
               <DataTable head={['Позиция', ...details.map((d) => d.trim.name)]} className="border-0">
                 {rows.map((r) => (
                   <tr key={r.feature}>
@@ -578,12 +578,12 @@ export default function ComparePage() {
 
 function Header() {
   return (
-    <header className="flex flex-col gap-1.5">
-      <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">До трёх автомобилей</p>
-      <h1 className="font-display-num text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4] sm:text-[32px]">
+    <header className="flex flex-col gap-1.5 border-b border-[#242930] pb-4">
+      <p className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">До трёх автомобилей</p>
+      <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
         Сравнение комплектаций
       </h1>
-      <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A9AFB7]">
+      <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
         Цена, характеристики, оснащение по группам, кредитные платежи и эксплуатационные расходы — в одной таблице.
         Можно сравнивать разные комплектации одной модели и разные модели HAVAL.
       </p>
@@ -602,8 +602,8 @@ function ComparePicker({ onAdd, compact = false }: { onAdd: (id: string) => bool
   }, [modelId])
 
   return (
-    <div className={`flex flex-col gap-2 rounded-[10px] border border-dashed border-[#363B43] p-3 ${compact ? '' : ''}`}>
-      <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A9AFB7]">Добавить к сравнению</p>
+    <div className={`flex flex-col gap-2 rounded-xl border border-dashed border-[#2B3037] p-3 ${compact ? '' : ''}`}>
+      <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">Добавить к сравнению</p>
       <Select label="Модель" value={modelId} onChange={(e) => setModelId(e.target.value)}>
         {MODELS.map((m) => (
           <option key={m.id} value={m.id}>

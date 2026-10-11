@@ -260,12 +260,12 @@ export default function PlanPage() {
 
   return (
     <div className="animate-page-enter flex flex-col gap-4">
-      <header className="flex flex-col gap-1.5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#E4002B]">Накопление и трейд-ин</p>
-        <h1 className="font-display-num text-[26px] font-bold uppercase tracking-wide text-[#F3F4F4] sm:text-[32px]">
+      <header className="flex flex-col gap-1.5 border-b border-[#242930] pb-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#FF334B]">Накопление и трейд-ин</p>
+        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           План покупки
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A9AFB7]">
+        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
           Сколько нужно накопить, за какой срок вы выйдете на целевой взнос и каким будет платёж в разных сценариях.
           Отдельно — сценарий продажи текущего автомобиля и официальная программа трейд-ин.
         </p>
@@ -289,8 +289,8 @@ export default function PlanPage() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1.2fr]">
           <div className="flex flex-col gap-3">
             <Card className="flex flex-col gap-3">
-              <p className="flex items-center gap-2 text-[13px] font-bold text-[#F3F4F4]">
-                <TargetIcon className="h-4 w-4 text-[#E4002B]" /> Автомобиль и цель
+              <p className="flex items-center gap-2 text-[13px] font-bold text-[#F4F5F6]">
+                <TargetIcon className="h-4 w-4 text-[#FF334B]" /> Автомобиль и цель
               </p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Select
@@ -353,8 +353,8 @@ export default function PlanPage() {
             </Card>
 
             <Card className="flex flex-col gap-3">
-              <p className="flex items-center gap-2 text-[13px] font-bold text-[#F3F4F4]">
-                <SavingsIcon className="h-4 w-4 text-[#E4002B]" /> Накопления
+              <p className="flex items-center gap-2 text-[13px] font-bold text-[#F4F5F6]">
+                <SavingsIcon className="h-4 w-4 text-[#FF334B]" /> Накопления
               </p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field
@@ -417,7 +417,7 @@ export default function PlanPage() {
             ) : !savings.ok ? (
               <Card className="border-[#EF4444]/40">
                 <p className="text-[13px] font-bold text-[#EF4444]">Проверьте параметры плана</p>
-                <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A9AFB7]">
+                <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A2A7AF]">
                   {savings.errors.map((e) => (
                     <li key={e}>{e}</li>
                   ))}
@@ -476,7 +476,7 @@ export default function PlanPage() {
                     <tr key={s.id}>
                       <TableCell sticky>
                         {s.name}
-                        <span className="mt-0.5 block text-[10.5px] font-normal text-[#A9AFB7]">{s.description}</span>
+                        <span className="mt-0.5 block text-[10.5px] font-normal text-[#A2A7AF]">{s.description}</span>
                         {s.reachesGoal && <Tag tone="success">цель достигнута</Tag>}
                       </TableCell>
                       <TableCell>
@@ -487,12 +487,12 @@ export default function PlanPage() {
                       </TableCell>
                       <TableCell>
                         {fmtMoney(s.availableDownPayment)}
-                        <span className="block text-[10.5px] text-[#A9AFB7]">{s.downPaymentPct.toFixed(0)}% цены</span>
+                        <span className="block text-[10.5px] text-[#A2A7AF]">{s.downPaymentPct.toFixed(0)}% цены</span>
                       </TableCell>
                       <TableCell>{fmtMoney(s.creditAmount)}</TableCell>
                       <TableCell strong>{fmtMoney(s.monthlyPayment)}</TableCell>
                       <TableCell>
-                        <span className="text-[#E4002B]">{fmtMoney(s.interestOverpay)}</span>
+                        <span className="text-[#FF334B]">{fmtMoney(s.interestOverpay)}</span>
                       </TableCell>
                     </tr>
                   ))}
@@ -541,12 +541,12 @@ export default function PlanPage() {
       {tab === 'trade-in' && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1.2fr]">
           <Card className="flex flex-col gap-3">
-            <p className="flex items-center gap-2 text-[13px] font-bold text-[#F3F4F4]">
-              <TradeInIcon className="h-4 w-4 text-[#E4002B]" /> Текущий автомобиль
+            <p className="flex items-center gap-2 text-[13px] font-bold text-[#F4F5F6]">
+              <TradeInIcon className="h-4 w-4 text-[#FF334B]" /> Текущий автомобиль
             </p>
 
             <div>
-              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A9AFB7]">Сценарий покупки</span>
+              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A2A7AF]">Сценарий покупки</span>
               <div className="flex flex-col gap-1.5">
                 {(
                   [
@@ -560,10 +560,10 @@ export default function PlanPage() {
                     type="button"
                     onClick={() => set({ mode: value })}
                     aria-pressed={form.mode === value}
-                    className={`min-h-[46px] rounded-[8px] border px-3 py-2 text-left transition-colors ${
+                    className={`min-h-[46px] rounded-lg border px-3 py-2 text-left transition-colors ${
                       form.mode === value
-                        ? 'border-[#E4002B] bg-[#E4002B]/12 text-[#F3F4F4]'
-                        : 'border-[#363B43] bg-[#23272D] text-[#A9AFB7] hover:text-[#F3F4F4]'
+                        ? 'border-[#FF334B] bg-[#FF334B]/12 text-[#F4F5F6]'
+                        : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
                     }`}
                   >
                     <span className="block text-[12.5px] font-bold">{label}</span>
@@ -637,7 +637,7 @@ export default function PlanPage() {
             {!tradeIn.ok ? (
               <Card className="border-[#EF4444]/40">
                 <p className="text-[13px] font-bold text-[#EF4444]">Проверьте данные</p>
-                <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A9AFB7]">
+                <ul className="mt-1.5 flex list-disc flex-col gap-1 pl-4 text-[12px] text-[#A2A7AF]">
                   {tradeIn.errors.map((e) => (
                     <li key={e}>{e}</li>
                   ))}
@@ -657,7 +657,7 @@ export default function PlanPage() {
                     <tr key={`${b.label}-${i}`}>
                       <TableCell sticky>{b.label}</TableCell>
                       <TableCell strong={i === tradeIn.plan.breakdown.length - 1}>
-                        <span className={b.kind === 'minus' ? 'text-[#E4002B]' : 'text-[#F3F4F4]'}>
+                        <span className={b.kind === 'minus' ? 'text-[#FF334B]' : 'text-[#F4F5F6]'}>
                           {b.kind === 'minus' ? '−' : ''}
                           {fmtMoney(b.amount)}
                         </span>
@@ -701,13 +701,13 @@ export default function PlanPage() {
                 </div>
 
                 {targetPrice !== null && (
-                  <p className="text-[11.5px] leading-relaxed text-[#A9AFB7]">
+                  <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
                     При стоимости {fmtMoney(targetPrice)} такой взнос составляет{' '}
                     {fmtNumber((tradeIn.plan.availableForDownPayment / targetPrice) * 100)}% и покрывает{' '}
                     {fmtMoney(Math.max(0, targetPrice - tradeIn.plan.availableForDownPayment))} кредита. Платёж при
                     ставке {String(plan.ok ? plan.plan.annualRate : 0).replace('.', ',')}% на{' '}
                     {plan.ok ? plan.plan.termMonths : calcState.termMonths} мес — в{' '}
-                    <Link to="/calculator" className="underline underline-offset-2 hover:text-[#F3F4F4]">
+                    <Link to="/calculator" className="underline underline-offset-2 hover:text-[#F4F5F6]">
                       кредитном калькуляторе
                     </Link>
                     .
