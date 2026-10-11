@@ -218,8 +218,8 @@ export default function HomePage() {
                 aria-label="Максимальный бюджет"
               />
               <div className="flex justify-between font-mono text-[11px] text-[#747B85]">
-                <span>{fmtMoney(budgetRange.min)} ₽</span>
-                <span>{fmtMoney(budgetRange.max)} ₽</span>
+                <span>{fmtMoney(budgetRange.min)}</span>
+                <span>{fmtMoney(budgetRange.max)}</span>
               </div>
             </div>
 

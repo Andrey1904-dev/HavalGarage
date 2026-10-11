@@ -75,9 +75,9 @@ export const SliderField: React.FC<SliderFieldProps> = ({
           aria-label={label}
         />
         <div className="mt-1 flex justify-between font-mono text-[11px] text-[#747B85]">
-          <span>{fmtMoney(min)} {unit}</span>
+          <span>{fmtMoney(min)}</span>
           {suffix && <span className="text-[#A2A7AF]">{suffix}</span>}
-          <span>{fmtMoney(max)} {unit}</span>
+          <span>{fmtMoney(max)}</span>
         </div>
       </div>
 
