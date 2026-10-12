@@ -1,5 +1,15 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Button, Callout, Card, DataTable, EmptyState, SectionTitle, TableCell, Tag } from '../components/ui'
+import {
+  Button,
+  ButtonLink,
+  Callout,
+  Card,
+  DataTable,
+  EmptyState,
+  SectionTitle,
+  TableCell,
+  Tag,
+} from '../components/ui'
 import {
   BookmarkIcon,
   CompareIcon,
@@ -135,7 +145,7 @@ export default function FavoritesPage() {
           <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
             Избранное и расчёты
           </h1>
-          <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
+          <p className="max-w-2xl text-[13px] leading-relaxed text-[#A2A7AF]">
             Сохранённые автомобили, сравнения, параметры кредита и планы покупки. Регистрация не требуется, данные не
             отправляются на сервер: всё хранится в localStorage этого браузера.
           </p>
@@ -173,14 +183,10 @@ export default function FavoritesPage() {
           text="Добавляйте модели и комплектации в избранное, сохраняйте сравнения и расчёты — они появятся здесь и переживут перезагрузку страницы."
           action={
             <div className="flex flex-wrap justify-center gap-2">
-              <Link to="/catalog">
-                <Button type="button">В каталог</Button>
-              </Link>
-              <Link to="/calculator">
-                <Button type="button" variant="secondary">
-                  К кредитному калькулятору
-                </Button>
-              </Link>
+              <ButtonLink to="/catalog">В каталог</ButtonLink>
+              <ButtonLink to="/calculator" variant="secondary">
+                К кредитному калькулятору
+              </ButtonLink>
             </div>
           }
         />
@@ -202,13 +208,13 @@ export default function FavoritesPage() {
                     <Card key={f.id} className="flex flex-col gap-2">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">
+                          <p className="text-[11px] font-bold uppercase tracking-wider text-[#A2A7AF]">
                             {f.kind === 'trim' ? 'Комплектация' : 'Модель'} · {fmtDate(f.addedAt)}
                           </p>
                           <Link to={`/models/${model.slug}`} className="text-[14px] font-bold text-[#F4F5F6] hover:text-[#FF334B]">
                             {model.name}
                           </Link>
-                          {trim && <p className="text-[11.5px] text-[#A2A7AF]">{trim.name}</p>}
+                          {trim && <p className="text-[12px] text-[#A2A7AF]">{trim.name}</p>}
                         </div>
                         <button
                           type="button"
@@ -244,7 +250,7 @@ export default function FavoritesPage() {
                         {trim && (
                           <Link
                             to={`/compare?trims=${trim.id}`}
-                            className="flex min-h-[38px] items-center gap-1.5 rounded-lg border border-[#2B3037] bg-[#20242A] px-2.5 text-[11.5px] font-bold text-[#A2A7AF] hover:text-[#F4F5F6]"
+                            className="flex min-h-[38px] items-center gap-1.5 rounded-lg border border-[#2B3037] bg-[#20242A] px-2.5 text-[12px] font-bold text-[#A2A7AF] hover:text-[#F4F5F6]"
                             onClick={() => setCompare([trim.id])}
                           >
                             <CompareIcon className="h-3.5 w-3.5" /> Сравнить
@@ -269,13 +275,13 @@ export default function FavoritesPage() {
                   <tr key={c.id}>
                     <TableCell sticky>
                       {c.modelName}
-                      {c.trimName && <span className="block text-[10.5px] font-normal text-[#A2A7AF]">{c.trimName}</span>}
+                      {c.trimName && <span className="block text-[11px] font-normal text-[#A2A7AF]">{c.trimName}</span>}
                       {c.programName && <Tag tone="accent">{c.programName}</Tag>}
                     </TableCell>
                     <TableCell strong>{fmtMoney(c.monthlyPayment)}</TableCell>
                     <TableCell>
                       {fmtMoney(c.downPayment)}
-                      <span className="block text-[10.5px] text-[#A2A7AF]">{c.downPaymentPct.toFixed(0)}%</span>
+                      <span className="block text-[11px] text-[#A2A7AF]">{c.downPaymentPct.toFixed(0)}%</span>
                     </TableCell>
                     <TableCell>
                       {c.termMonths} мес · {String(c.annualRate).replace('.', ',')}%
@@ -331,11 +337,14 @@ export default function FavoritesPage() {
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <Link to={`/compare?trims=${c.trimIds.join(',')}`}>
-                        <Button type="button" variant="secondary" className="min-h-[38px]" onClick={() => setCompare(c.trimIds)}>
-                          Открыть сравнение
-                        </Button>
-                      </Link>
+                      <ButtonLink
+                        to={`/compare?trims=${c.trimIds.join(',')}`}
+                        variant="secondary"
+                        className="min-h-[38px]"
+                        onClick={() => setCompare(c.trimIds)}
+                      >
+                        Открыть сравнение
+                      </ButtonLink>
                       <Button type="button" variant="ghost" className="min-h-[38px]" onClick={() => removeComparison(c.id)}>
                         <TrashIcon className="h-3.5 w-3.5" />
                       </Button>
@@ -360,17 +369,15 @@ export default function FavoritesPage() {
                         <SavingsIcon className="h-4 w-4 text-[#FF334B]" />
                         {p.title}
                       </p>
-                      <p className="text-[11.5px] text-[#A2A7AF]">{p.summary}</p>
-                      <p className="mt-0.5 text-[10.5px] text-[#A2A7AF]">
+                      <p className="text-[12px] text-[#A2A7AF]">{p.summary}</p>
+                      <p className="mt-0.5 text-[11px] text-[#A2A7AF]">
                         {fmtDate(p.createdAt)} · тип: {p.kind === 'savings' ? 'план/владение' : p.kind}
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <Link to="/plan">
-                        <Button type="button" variant="secondary" className="min-h-[38px]">
-                          <BookmarkIcon className="h-3.5 w-3.5" /> К плану покупки
-                        </Button>
-                      </Link>
+                      <ButtonLink to="/plan" variant="secondary" className="min-h-[38px]">
+                        <BookmarkIcon className="h-3.5 w-3.5" /> К плану покупки
+                      </ButtonLink>
                       <Button type="button" variant="ghost" className="min-h-[38px]" onClick={() => removePlan(p.id)}>
                         <TrashIcon className="h-3.5 w-3.5" />
                       </Button>

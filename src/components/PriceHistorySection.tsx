@@ -54,7 +54,7 @@ export default function PriceHistorySection({ model, trims }: { model: HavalMode
             ))}
           </Select>
           <div className="flex items-end">
-            <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
+            <p className="text-[12px] leading-relaxed text-[#A2A7AF]">
               У {model.name} накоплена динамика цен по {dynamicsCount} из {priced.length} комплектаций с
               подтверждённой ценой. По остальным подтверждена одна точка — снимок официального прайс-листа.
             </p>

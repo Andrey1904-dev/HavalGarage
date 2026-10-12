@@ -63,8 +63,48 @@ async function loadPdfMake() {
   return pdfMakePromise
 }
 
+/**
+ * Символы, которых нет во встроенном Roboto (проверено fonttools по всем
+ * четырём начертаниям из public/fonts/pdfmake), и их замены. Без замены
+ * pdfmake оставляет на месте символа пустоту — например, «20 % → 30 %»
+ * превратилось бы в «20 %   30 %».
+ */
+const PDF_GLYPH_FALLBACKS: Record<string, string> = {
+  '\u2192': '->', // →
+  '\u2190': '<-', // ←
+  '\u2191': '(рост)', // ↑
+  '\u2193': '(снижение)', // ↓
+  '\u2713': '+', // ✓
+  '\u25BE': '', // ▾
+  '\u202F': '\u00A0', // узкий неразрывный пробел (Intl в части локалей) → обычный неразрывный
+}
+const PDF_UNSUPPORTED = new RegExp(`[${Object.keys(PDF_GLYPH_FALLBACKS).join('')}]`, 'g')
+
+/** Копия отчёта, где все строки прошли через pdfSafeText */
+function sanitizeReport(options: ReportOptions): ReportOptions {
+  return {
+    ...options,
+    title: pdfSafeText(options.title),
+    subtitle: options.subtitle === undefined ? undefined : pdfSafeText(options.subtitle),
+    sourceNote: options.sourceNote === undefined ? undefined : pdfSafeText(options.sourceNote),
+    disclaimers: options.disclaimers?.map(pdfSafeText),
+    sections: options.sections.map((section) => ({
+      ...section,
+      title: pdfSafeText(section.title),
+      note: section.note === undefined ? undefined : pdfSafeText(section.note),
+      rows: section.rows.map((row) => ({ ...row, label: pdfSafeText(row.label), value: pdfSafeText(row.value) })),
+    })),
+  }
+}
+
+/** Текст, который гарантированно отрисуется шрифтом PDF-документа */
+export function pdfSafeText(text: string): string {
+  return text.replace(PDF_UNSUPPORTED, (ch) => PDF_GLYPH_FALLBACKS[ch] ?? ch)
+}
+
 /** Преобразовать отчёт в структуру документа pdfmake */
-export function buildDocDefinition(options: ReportOptions, createdAt = new Date()): DocDefinition {
+export function buildDocDefinition(rawOptions: ReportOptions, createdAt = new Date()): DocDefinition {
+  const options = sanitizeReport(rawOptions)
   const content: unknown[] = [
     { text: 'HAVAL Гараж', style: 'brand' },
     { text: options.title, style: 'title' },
@@ -109,7 +149,7 @@ export function buildDocDefinition(options: ReportOptions, createdAt = new Date(
   if (options.sourceNote) content.push({ text: options.sourceNote, style: 'note', margin: [0, 10, 0, 0] as [number, number, number, number] })
 
   content.push({
-    text: `Документ сформирован ${createdAt.toLocaleString('ru-RU')}. HavalGarage — независимый информационный сервис, не официальный сайт HAVAL.`,
+    text: `Документ сформирован ${pdfSafeText(createdAt.toLocaleString('ru-RU'))}. HavalGarage — независимый информационный сервис, не официальный сайт HAVAL.`,
     style: 'note',
     margin: [0, 12, 0, 0] as [number, number, number, number],
   })

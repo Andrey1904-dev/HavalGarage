@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Suspense, useEffect, useRef, useState } from 'react'
+import { Link, NavLink, Outlet, useLocation, useNavigationType } from 'react-router-dom'
 import {
   Car,
   Layers,
@@ -30,8 +30,11 @@ import {
   todayIso,
 } from '../data/haval'
 import { fmtDate } from '../utils/format'
+import { cn } from '../utils/cn'
 import { useCompare } from '../context/CompareContext'
 import { useSaved } from '../context/SavedContext'
+import ErrorBoundary from './ErrorBoundary'
+import { Spinner } from './ui'
 
 /** Основная навигация шапки — реальные маршруты HavalGarage */
 const HEADER_NAV = [
@@ -41,8 +44,8 @@ const HEADER_NAV = [
   { to: '/compare', label: 'Сравнение', icon: Scale, end: false },
   { to: '/calculator', label: 'Кредит', icon: Calculator, end: false },
   { to: '/ownership', label: 'Владение', icon: Wrench, end: false },
-  { to: '/plan', label: 'План покупки', icon: PiggyBank, end: false },
-  { to: '/sources', label: 'Источники и цены', icon: FileCheck2, end: false },
+  { to: '/plan', label: 'План покупки', short: 'План', icon: PiggyBank, end: false },
+  { to: '/sources', label: 'Источники и цены', short: 'Источники', icon: FileCheck2, end: false },
   { to: '/advisor', label: 'Помощник', icon: Bot, end: false, highlight: true },
 ]
 
@@ -74,9 +77,20 @@ const FOOTER_FINANCE: Array<{ to: string; label: string }> = [
   { to: '/stock', label: 'Наличие у дилера' },
 ]
 
+/** Заглушка на время загрузки раздела (страницы подгружаются лениво) */
+function RouteFallback() {
+  return (
+    <div className="flex min-h-[45dvh] flex-col items-center justify-center gap-3" role="status">
+      <Spinner className="h-8 w-8" />
+      <p className="text-xs text-[#A2A7AF]">Загрузка раздела…</p>
+    </div>
+  )
+}
+
 export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
+  const navigationType = useNavigationType()
   const { trimIds } = useCompare()
   const { favorites, calculations } = useSaved()
 
@@ -84,6 +98,46 @@ export default function Layout() {
   useEffect(() => {
     setMenuOpen(false)
   }, [location.pathname, location.search])
+
+  // Новая страница открывается сверху, а не с прокруткой предыдущей.
+  // Смена только query-параметров (фильтры) и «назад/вперёд» позицию не трогают.
+  useEffect(() => {
+    if (navigationType !== 'POP') window.scrollTo(0, 0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- реагируем только на смену страницы
+  }, [location.pathname])
+
+  // Фокус на заголовок новой страницы (SPA-переход): иначе он остаётся на
+  // нажатой ссылке в шапке (или теряется вместе с закрытым мобильным меню),
+  // и скринридер не сообщает о смене страницы. Раздел грузится лениво, поэтому
+  // ждём появления h1 — не дольше ~3 с, затем фокусируем сам <main>.
+  const mainRef = useRef<HTMLElement>(null)
+  // Сравнение с прошлым адресом, а не флаг «первый рендер»: StrictMode
+  // запускает эффект монтирования дважды, и флаг сбрасывался бы сразу.
+  const focusedPathRef = useRef(location.pathname)
+  useEffect(() => {
+    if (focusedPathRef.current === location.pathname) return
+    focusedPathRef.current = location.pathname
+    const main = mainRef.current
+    if (!main) return
+    let frame = 0
+    let attempts = 0
+    const focusHeading = () => {
+      const heading = main.querySelector<HTMLElement>('h1')
+      if (heading) {
+        if (!heading.hasAttribute('tabindex')) {
+          heading.setAttribute('tabindex', '-1')
+          heading.addEventListener('blur', () => heading.removeAttribute('tabindex'), { once: true })
+        }
+        heading.focus({ preventScroll: true })
+      } else if (attempts++ < 180) {
+        frame = requestAnimationFrame(focusHeading)
+      } else {
+        main.focus({ preventScroll: true })
+      }
+    }
+    frame = requestAnimationFrame(focusHeading)
+    return () => cancelAnimationFrame(frame)
+  }, [location.pathname])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -106,53 +160,67 @@ export default function Layout() {
     <div className="flex min-h-dvh flex-col justify-between bg-[#0B0C0E] text-[#F4F5F6]">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:rounded-xl focus:bg-[#FF334B] focus:px-3 focus:py-2 focus:text-[13px] focus:font-bold focus:text-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-xl focus:bg-[#E11D38] focus:px-3 focus:py-2 focus:text-[13px] focus:font-bold focus:text-white"
       >
         К основному содержимому
       </a>
 
       {/* ======================= ШАПКА (SiteHeader из HavalDesign) ======================= */}
-      <header className="glass-panel sticky top-0 z-50 w-full border-b border-[#242930] bg-[#0B0C0E]/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          {/* Бренд */}
-          <Link to="/" className="group flex shrink-0 select-none items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#FF334B] to-[#990014] shadow-lg shadow-[#FF334B]/20 transition-all duration-300 group-hover:shadow-[#FF334B]/40">
+      <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-[#181B1F]/75 backdrop-blur-[16px]">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 xl:gap-4">
+          {/* Бренд: на узких телефонах (<400px) подпись скрыта, чтобы кнопки
+              справа помещались в 360px, а не уезжали за край экрана */}
+          {/* Имя ссылки — видимый текст (WCAG 2.5.3 «Label in Name») + скрытое «на главную» */}
+          <Link to="/" className="group flex min-w-0 select-none items-center gap-2.5 sm:gap-3">
+            <div
+              aria-hidden="true"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#FF334B] to-[#990014] shadow-lg shadow-[#FF334B]/20 transition-all duration-300 group-hover:shadow-[#FF334B]/40"
+            >
               <span className="text-sm font-extrabold tracking-tighter text-white">H</span>
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="text-lg font-extrabold tracking-tight text-[#F4F5F6] group-hover:text-white">
+                <span className="whitespace-nowrap text-lg font-extrabold leading-tight tracking-tight text-[#F4F5F6] group-hover:text-white">
                   HAVAL<span className="text-[#FF334B]">GARAGE</span>
                 </span>
-                <span className="rounded border border-[#FF334B]/30 bg-[#FF334B]/20 px-1.5 py-0.5 text-[10px] font-bold text-[#FF6B7E]">
+                <span className="shrink-0 rounded border border-[#FF334B]/30 bg-[#FF334B]/20 px-1.5 py-0.5 text-[11px] font-bold leading-none text-[#FF6B7E]">
                   3.0
                 </span>
               </div>
-              <div className="-mt-0.5 flex items-center gap-1 text-[10px] text-[#747B85]">
-                <ShieldCheck className="h-3 w-3 text-emerald-400" /> Официальные прайс-листы haval.ru
+              <div className="hidden items-center gap-1 text-[11px] leading-tight text-[#8A919B] min-[400px]:flex">
+                <ShieldCheck className="h-3 w-3 shrink-0 text-emerald-400" aria-hidden="true" />
+                {/* Без truncate: при пользовательских интервалах текста (WCAG 1.4.12)
+                    слоган переносится, а не обрезается */}
+                <span>Официальные прайс-листы haval.ru</span>
               </div>
+              <span className="sr-only">, на главную</span>
             </div>
           </Link>
 
-          {/* Десктопная навигация */}
-          <nav className="hidden items-center gap-0.5 xl:flex" aria-label="Основная навигация">
+          {/* Десктопная навигация: пункты не переносятся и не сжимают иконки,
+              длинные подписи сокращены (полные — в title и мобильном меню) */}
+          <nav className="hidden min-w-0 items-center gap-0.5 xl:flex" aria-label="Основная навигация">
             {HEADER_NAV.map((link) => {
               const Icon = link.icon
               return (
-                <NavLink key={link.to} to={link.to} end={link.end} aria-label={link.label}>
+                <NavLink key={link.to} to={link.to} end={link.end} title={link.short ? link.label : undefined}>
                   {({ isActive }) => (
                     <span
-                      className={`relative flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all duration-150 ${
+                      className={cn(
+                        'relative flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg border px-2 py-1.5 text-xs font-medium transition-all duration-150',
                         isActive
-                          ? 'border border-[#333A44] bg-[#20242A] text-white shadow-sm'
-                          : `border border-transparent text-[#A2A7AF] hover:bg-white/5 hover:text-[#F4F5F6]${link.highlight ? ' text-[#FF6B7E] hover:text-white' : ''}`
-                      }`}
+                          ? 'border-[#333A44] bg-[#20242A] text-white shadow-sm'
+                          : link.highlight
+                            ? 'border-transparent text-[#FF6B7E] hover:bg-white/5 hover:text-white'
+                            : 'border-transparent text-[#A2A7AF] hover:bg-white/5 hover:text-[#F4F5F6]',
+                      )}
                     >
-                      <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-[#FF334B]' : ''}`} />
-                      <span>{link.label}</span>
+                      <Icon className={cn('h-3.5 w-3.5 shrink-0', isActive && 'text-[#FF334B]')} aria-hidden="true" />
+                      <span>{link.short ?? link.label}</span>
                       {link.to === '/compare' && trimIds.length > 0 && (
-                        <span className="rounded-full bg-[#FF334B] px-1.5 py-[1px] text-[10px] font-bold text-white">
-                          {trimIds.length}
+                        <span className="rounded-full bg-[#E11D38] px-1.5 py-px text-[11px] font-bold leading-4 text-white">
+                          <span aria-hidden="true">{trimIds.length}</span>
+                          <span className="sr-only">(выбрано: {trimIds.length})</span>
                         </span>
                       )}
                     </span>
@@ -163,7 +231,7 @@ export default function Layout() {
           </nav>
 
           {/* Правые действия */}
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <NavLink to="/favorites" aria-label={`Избранное и сохранённые расчёты: ${savedCount}`} title="Избранное">
               {({ isActive }) => (
                 <span
@@ -221,16 +289,17 @@ export default function Layout() {
                         }`}
                       >
                         <span className="flex items-center gap-3">
-                          <Icon className={`h-4 w-4 ${isActive ? 'text-[#FF334B]' : 'text-[#747B85]'}`} />
+                          <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-[#FF334B]' : 'text-[#8A919B]'}`} aria-hidden="true" />
                           {link.label}
                         </span>
                         <span className="flex items-center gap-2">
                           {link.to === '/compare' && trimIds.length > 0 && (
-                            <span className="rounded-full bg-[#FF334B] px-2 py-0.5 text-xs font-bold text-white">
-                              {trimIds.length}
+                            <span className="rounded-full bg-[#E11D38] px-2 py-0.5 text-xs font-bold text-white">
+                              <span aria-hidden="true">{trimIds.length}</span>
+                              <span className="sr-only">(выбрано: {trimIds.length})</span>
                             </span>
                           )}
-                          <ChevronRight className="h-4 w-4 text-[#747B85]" />
+                          <ChevronRight className="h-4 w-4 text-[#8A919B]" />
                         </span>
                       </span>
                     )}
@@ -238,7 +307,7 @@ export default function Layout() {
                 )
               })}
             </div>
-            <div className="flex items-center justify-between border-t border-[#242930] pt-4 text-xs text-[#747B85]">
+            <div className="mt-4 flex items-center justify-between border-t border-[#242930] pt-4 text-xs text-[#8A919B]">
               <span>HAVALGARAGE · снимок данных {fmtDate(CATALOG_FIXED_AT)}</span>
             </div>
           </nav>
@@ -246,8 +315,19 @@ export default function Layout() {
       </header>
 
       {/* ======================= Контент ======================= */}
-      <main id="main" className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
-        <Outlet />
+      <main
+        id="main"
+        ref={mainRef}
+        tabIndex={-1}
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 outline-none sm:px-6 lg:px-8"
+      >
+        {/* Граница ошибок и Suspense внутри макета: шапка и подвал остаются на месте,
+            пока грузится раздел или если он упал; ключ сбрасывает ошибку при переходе */}
+        <ErrorBoundary key={location.pathname}>
+          <Suspense fallback={<RouteFallback />}>
+            <Outlet />
+          </Suspense>
+        </ErrorBoundary>
       </main>
 
       {/* ======================= ПОДВАЛ (SiteFooter из HavalDesign) ======================= */}
@@ -257,14 +337,17 @@ export default function Layout() {
             {/* Бренд и миссия */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#FF334B] text-xs font-black text-white">
+                <div
+                  className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#E11D38] text-xs font-extrabold text-white"
+                  aria-hidden="true"
+                >
                   H
                 </div>
                 <span className="text-base font-extrabold tracking-tight text-[#F4F5F6]">
                   HAVAL<span className="text-[#FF334B]">GARAGE</span> 3.0
                 </span>
               </div>
-              <p className="text-xs leading-relaxed text-[#747B85]">
+              <p className="text-xs leading-relaxed text-[#8A919B]">
                 Независимая цифровая платформа для изучения, точного сравнения и финансового планирования покупки
                 автомобилей HAVAL.
               </p>
@@ -275,11 +358,11 @@ export default function Layout() {
 
             {/* Каталог и подбор */}
             <div className="space-y-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#F4F5F6]">Каталог и подбор</h4>
-              <ul className="space-y-1.5 text-xs">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F5F6]">Каталог и подбор</h2>
+              <ul className="space-y-1 text-xs">
                 {FOOTER_LINKS.map((l) => (
                   <li key={l.to}>
-                    <Link to={l.to} className="transition-colors hover:text-white">
+                    <Link to={l.to} className="inline-flex min-h-6 items-center transition-colors hover:text-white">
                       {l.label}
                     </Link>
                   </li>
@@ -289,11 +372,11 @@ export default function Layout() {
 
             {/* Финансовые инструменты */}
             <div className="space-y-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#F4F5F6]">Финансовые инструменты</h4>
-              <ul className="space-y-1.5 text-xs">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F5F6]">Финансовые инструменты</h2>
+              <ul className="space-y-1 text-xs">
                 {FOOTER_FINANCE.map((l) => (
                   <li key={l.to}>
-                    <Link to={l.to} className="transition-colors hover:text-white">
+                    <Link to={l.to} className="inline-flex min-h-6 items-center transition-colors hover:text-white">
                       {l.label}
                     </Link>
                   </li>
@@ -303,20 +386,20 @@ export default function Layout() {
 
             {/* Официальные источники */}
             <div className="space-y-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#F4F5F6]">Официальные первоисточники</h4>
-              <ul className="space-y-1.5 text-xs">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#F4F5F6]">Официальные первоисточники</h2>
+              <ul className="space-y-1 text-xs">
                 <li>
                   <a
                     href={HAVAL_PRICE_LISTS_URL}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 transition-colors hover:text-white"
+                    className="inline-flex min-h-6 items-center gap-1 transition-colors hover:text-white"
                   >
-                    Каталоги и прайс-листы haval.ru <ExternalLink className="h-3 w-3 text-[#747B85]" />
+                    Каталоги и прайс-листы haval.ru <ExternalLink className="h-3 w-3 text-[#8A919B]" />
                   </a>
                 </li>
                 <li>
-                  <Link to="/sources" className="transition-colors hover:text-white">
+                  <Link to="/sources" className="inline-flex min-h-6 items-center transition-colors hover:text-white">
                     Реестр документов и дат проверки
                   </Link>
                 </li>
@@ -325,9 +408,9 @@ export default function Layout() {
                     href={DEALER_URL}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 transition-colors hover:text-white"
+                    className="inline-flex min-h-6 items-center gap-1 transition-colors hover:text-white"
                   >
-                    Данные дилера «АГАТ» (Екатеринбург) <ExternalLink className="h-3 w-3 text-[#747B85]" />
+                    Данные дилера «АГАТ» (Екатеринбург) <ExternalLink className="h-3 w-3 text-[#8A919B]" />
                   </a>
                 </li>
               </ul>
@@ -335,7 +418,7 @@ export default function Layout() {
           </div>
 
           {/* Актуальность данных */}
-          <div className="space-y-2 border-t border-[#1C2026] pt-6 text-[11px] leading-relaxed text-[#747B85]">
+          <div className="space-y-2 border-t border-[#1C2026] pt-6 text-[11px] leading-relaxed text-[#8A919B]">
             <p>
               <strong className="text-[#A2A7AF]">HavalGarage — независимый информационный инструмент.</strong> Сервис
               не является официальным сайтом HAVAL, официальным дилером или банком. Цены, комплектации и
@@ -349,7 +432,8 @@ export default function Layout() {
               {lastCheck !== CATALOG_FIXED_AT
                 ? ` · последняя успешная проверка источников ${fmtDate(lastCheck)}`
                 : ''}
-              . Автоматическое обновление в реальном времени не выполняется: каталог обновляется скриптами и ручной
+              {/* Дата уже заканчивается на «г.» — отдельная точка давала «г..» */}{' '}
+              Автоматическое обновление в реальном времени не выполняется: каталог обновляется скриптами и ручной
               проверкой прайс-листов.
             </p>
             {catalogStale && (

@@ -60,7 +60,7 @@ export default class ErrorBoundary extends Component<Props, State> {
               this.setState({ error: null })
               window.location.reload()
             }}
-            className="min-h-[42px] rounded-lg bg-[#FF334B] px-5 text-[13px] font-bold text-white transition-opacity hover:opacity-90"
+            className="min-h-[42px] rounded-lg bg-[#E11D38] px-5 text-[13px] font-bold text-white transition-colors hover:bg-[#C8172F]"
           >
             Обновить страницу
           </button>

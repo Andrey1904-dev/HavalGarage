@@ -236,8 +236,23 @@ export interface ModelSummary {
   priceFrom: number | null
   priceTo: number | null
   powerRange: string | null
+  /** Привод по комплектациям: «2WD», «4WD» или «2WD / 4WD» */
+  driveRange: string | null
   specs: OfficialSpecs | null
   equipment: ModelEquipment | null
+}
+
+/**
+ * Сводка привода по свободным описаниям из прайс-листов
+ * («передний 2WD», «Подключаемый полный 4WD (Part-time)», …).
+ */
+export function driveSummary(drivetrains: string[]): string | null {
+  const has2wd = drivetrains.some((d) => /передн|2wd/i.test(d))
+  const has4wd = drivetrains.some((d) => /полн|4wd/i.test(d))
+  if (has2wd && has4wd) return '2WD / 4WD'
+  if (has4wd) return '4WD'
+  if (has2wd) return '2WD'
+  return null
 }
 
 export function modelSummary(modelId: string): ModelSummary | null {
@@ -257,6 +272,7 @@ export function modelSummary(modelId: string): ModelSummary | null {
           ? `${Math.min(...powers)} л.с.`
           : `${Math.min(...powers)}–${Math.max(...powers)} л.с.`
         : null,
+    driveRange: driveSummary(trims.map((t) => t.drivetrain)),
     specs: getOfficialSpecs(modelId),
     equipment: getModelEquipment(modelId),
   }

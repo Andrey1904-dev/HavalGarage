@@ -140,7 +140,7 @@ export default function PrepaymentCalculator() {
 
         <div>
           <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
-            <p className="text-[12.5px] font-semibold text-[#A2A7AF]">Что пересчитывает банк</p>
+            <p className="text-[13px] font-semibold text-[#A2A7AF]">Что пересчитывает банк</p>
             <InfoTip title="Сократить срок или уменьшить платёж">
               При досрочном погашении вы выбираете, что банк пересчитает. «Сократить срок» — платёж остаётся
               прежним, но месяцев до конца кредита становится меньше: проценты начисляются на остаток, поэтому
@@ -191,10 +191,10 @@ export default function PrepaymentCalculator() {
                 <p className="font-display-num mt-1 text-[26px] font-bold leading-none text-[#10B981]">
                   {fmtMoney(Math.max(0, saved))}
                 </p>
-                <p className="mt-1.5 text-[12.5px] leading-relaxed text-[#A2A7AF]">
+                <p className="mt-1.5 text-[13px] leading-relaxed text-[#A2A7AF]">
                   {mode === 'term'
                     ? monthsSaved > 0
-                      ? `Кредит закроется на ${monthsSaved} ${plural(monthsSaved, ['месяц', 'месяца', 'месяцев'])} раньше — ${fmtDate(addMonths(new Date(), chosen.months))} вместо ${fmtDate(addMonths(new Date(), baseline.months))}.`
+                      ? `Кредит закроется на ${monthsSaved} ${plural(monthsSaved, ['месяц', 'месяца', 'месяцев'])} раньше — ${fmtDate(addMonths(new Date(), chosen.months))} вместо ${fmtDate(addMonths(new Date(), baseline.months))}`
                       : 'Взнос слишком мал, чтобы сократить срок хотя бы на месяц.'
                     : `Платёж уменьшится до ${fmtMoney(chosen.payment)} вместо ${fmtMoney(base.payment)} при том же сроке.`}
                 </p>
@@ -221,7 +221,7 @@ export default function PrepaymentCalculator() {
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FF334B]/14 text-[#FF334B]">
               <SparklesIcon className="h-5 w-5" />
             </span>
-            <div className="text-[12.5px] leading-relaxed text-[#A2A7AF]">
+            <div className="text-[13px] leading-relaxed text-[#A2A7AF]">
               <p className="mb-1 font-semibold text-[#F4F5F6]">Как это работает у банка</p>
               Проценты начисляются на остаток долга, поэтому досрочный взнос выгоднее вносить как можно раньше и
               направлять на <strong className="text-[#F4F5F6]">сокращение срока</strong>: платёж остаётся прежним, но
@@ -239,7 +239,7 @@ export default function PrepaymentCalculator() {
           </Card>
         </>
       )}
-      <p className="text-[10.5px] text-[#A2A7AF]">Сценарий: {state.modelId} · расчёт симуляцией, не оферта.</p>
+      <p className="text-[11px] text-[#A2A7AF]">Сценарий: {state.modelId} · расчёт симуляцией, не оферта.</p>
     </div>
   )
 }
@@ -267,12 +267,12 @@ function PlanCard({
       <div className="flex items-center justify-between gap-2">
         <p className="text-[13px] font-bold text-[#F4F5F6]">{title}</p>
         {active && (
-          <span className="rounded-full bg-[#FF334B]/14 px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-[#FF334B]">
+          <span className="rounded-full bg-[#FF334B]/14 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-[#FF6B7E]">
             выбрано
           </span>
         )}
       </div>
-      <p className="text-[11.5px] leading-snug text-[#A2A7AF]">{hint}</p>
+      <p className="text-[12px] leading-snug text-[#A2A7AF]">{hint}</p>
       {plan ? (
         <>
           <Row label="Экономия процентов" value={fmtMoney(saved)} accent />
@@ -291,7 +291,7 @@ function Row({ label, value, accent }: { label: string; value: string; accent?: 
   return (
     <div className="flex items-baseline justify-between gap-2 border-t border-[#2B3037]/70 pt-1.5 first:border-0 first:pt-0">
       <span className="text-[12px] text-[#A2A7AF]">{label}</span>
-      <span className={`font-display-num text-[13.5px] font-bold ${accent ? 'text-[#10B981]' : 'text-[#F4F5F6]'}`}>
+      <span className={`font-display-num text-[14px] font-bold ${accent ? 'text-[#10B981]' : 'text-[#F4F5F6]'}`}>
         {value}
       </span>
     </div>

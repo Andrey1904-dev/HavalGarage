@@ -31,6 +31,8 @@ export const RadialChart: React.FC<RadialChartProps> = ({
   strokeWidth = 22,
   glow = true,
 }) => {
+  // уникальный id фильтра: несколько диаграмм на странице не должны делить один <filter>
+  const filterId = `radial-glow-${React.useId().replace(/:/g, '')}`
   const total = segments.reduce((sum, s) => sum + Math.max(0, s.value), 0)
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
@@ -41,13 +43,13 @@ export const RadialChart: React.FC<RadialChartProps> = ({
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="relative" style={{ width: size, height: size }}>
-        <svg width={size} height={size} className="transform -rotate-90" role="img" aria-label={centerLabel}>
+        <svg width={size} height={size} className="transform -rotate-90" role="img" aria-label={`${centerLabel}: ${centerValue}`}>
           {/* Фоновая дорожка */}
           <circle cx={center} cy={center} r={radius} fill="transparent" stroke="#181B1F" strokeWidth={strokeWidth} />
 
           {glow && (
             <defs>
-              <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
+              <filter id={filterId} x="-20%" y="-20%" width="140%" height="140%">
                 <feGaussianBlur stdDeviation="3" result="blur" />
                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
@@ -74,7 +76,7 @@ export const RadialChart: React.FC<RadialChartProps> = ({
                   strokeDasharray={strokeDasharray}
                   strokeDashoffset={strokeDashoffset}
                   strokeLinecap="round"
-                  filter={glow ? 'url(#glowFilter)' : undefined}
+                  filter={glow ? `url(#${filterId})` : undefined}
                   className="transition-all duration-700 ease-out"
                 />
               )
@@ -83,8 +85,8 @@ export const RadialChart: React.FC<RadialChartProps> = ({
 
         {/* Центр */}
         <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#747B85]">{centerLabel}</span>
-          <span className="mt-0.5 font-mono text-xl font-extrabold tabular-nums tracking-tight text-[#F4F5F6] md:text-2xl">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8A919B]">{centerLabel}</span>
+          <span className="mt-0.5 max-w-full font-mono text-xl font-extrabold tabular-nums tracking-tight break-words text-[#F4F5F6] md:text-2xl">
             {centerValue}
           </span>
           {centerSubvalue && <span className="mt-0.5 text-xs font-medium text-[#A2A7AF]">{centerSubvalue}</span>}

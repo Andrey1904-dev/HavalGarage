@@ -67,12 +67,20 @@ npm run check      # типы, линтер, тесты, smoke, сборка
 
 ## 7. Размер бандла
 
-`manualChunks` выносит React, Chart.js и Supabase в отдельные файлы; страницы
-и pdfmake загружаются лениво (`React.lazy` + динамический `import`).
+`manualChunks` (функция по пути в `node_modules`) выносит React (вместе с
+`react-dom/client` и `react/jsx-runtime`), Chart.js и Supabase в отдельные
+файлы. Страницы и pdfmake загружаются лениво (`React.lazy` + динамический
+`import`). Chart.js скачивается только на страницах с графиками: в
+`dist/index.html` нет `modulepreload` для чанка `charts`.
+
+Шрифты (`@fontsource-variable`) — отдельные woff2 в `dist/assets`. В CSS
+они не встраиваются (`assetsInlineLimit`), а для кириллицы и латиницы
+Manrope в `index.html` добавляется `<link rel="preload">`.
 
 Контроль: последний шаг CI суммирует `dist/assets/*.js` и падает при
-превышении 3 MiB. pdfmake (~997 kB) и шрифты (~855 kB) — отдельные chunk'и,
-которые грузятся только при нажатии «PDF».
+превышении 3 MiB. pdfmake (~997 kB) — отдельный chunk, а шрифты Roboto для PDF
+(4 TTF, ~632 kB) лежат статикой в `public/fonts/pdfmake`; и то и другое
+скачивается только при нажатии «PDF».
 
 ## 8. Проверка после публикации
 

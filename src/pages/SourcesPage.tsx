@@ -68,7 +68,7 @@ export default function SourcesPage() {
         <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Источники данных и актуальность
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
+        <p className="max-w-2xl text-[13px] leading-relaxed text-[#A2A7AF]">
           HavalGarage — независимый информационный сервис. Единственный первоисточник цен, комплектаций и характеристик —
           официальные каталоги и прайс-листы производителя. Данные дилера используются как вторичные и помечаются.
         </p>
@@ -105,7 +105,7 @@ export default function SourcesPage() {
               <Link to={`/models/${model.slug}`} className="hover:text-[#FF334B]">
                 {model.name}
               </Link>
-              <span className="block text-[10.5px] font-normal text-[#A2A7AF]">{model.bodyType}</span>
+              <span className="block text-[11px] font-normal text-[#A2A7AF]">{model.bodyType}</span>
             </TableCell>
             <TableCell>{trims > 0 ? trims : <Tag tone="warn">нет данных</Tag>}</TableCell>
             <TableCell>
@@ -252,7 +252,7 @@ export default function SourcesPage() {
                 · модели: {entry.models.length}
               </p>
               {entry.errors && entry.errors.length > 0 && (
-                <ul className="ml-4 list-disc text-[11.5px] text-[#F59E0B]">
+                <ul className="ml-4 list-disc text-[12px] text-[#F59E0B]">
                   {entry.errors.map((e) => (
                     <li key={e}>{e}</li>
                   ))}
@@ -283,7 +283,7 @@ export default function SourcesPage() {
           </li>
         </ul>
         <p className="mt-2">
-          Последняя успешная проверка источников: {fmtDate(lastSuccessfulCheck() ?? CATALOG_FIXED_AT)}.
+          Последняя успешная проверка источников: {fmtDate(lastSuccessfulCheck() ?? CATALOG_FIXED_AT)}
         </p>
       </Callout>
 
@@ -295,7 +295,7 @@ export default function SourcesPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-[13px] font-bold text-[#F4F5F6]">Внешняя система аналитики</p>
-            <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
+            <p className="text-[12px] leading-relaxed text-[#A2A7AF]">
               По умолчанию провайдер не подключён: события остаются в локальном буфере браузера и никуда не отправляются.
               При согласии события могут передаваться подключённому счётчику (без персональных данных).
             </p>
@@ -309,7 +309,7 @@ export default function SourcesPage() {
               setAnalyticsConsent(next)
               setConsent(next)
             }}
-            className={`relative min-h-[40px] w-[92px] shrink-0 rounded-full border px-1 text-[11.5px] font-bold transition-colors ${
+            className={`relative min-h-[40px] w-[92px] shrink-0 rounded-full border px-1 text-[12px] font-bold transition-colors ${
               consent ? 'border-[#10B981] bg-[#10B981]/20 text-[#10B981]' : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF]'
             }`}
           >
@@ -324,7 +324,7 @@ export default function SourcesPage() {
         </div>
 
         <Disclosure title="Какие события отслеживаются" defaultOpen={false}>
-          <ul className="ml-4 list-disc text-[11.5px] leading-relaxed text-[#A2A7AF]">
+          <ul className="ml-4 list-disc text-[12px] leading-relaxed text-[#A2A7AF]">
             <li>открытие модели и просмотр комплектации;</li>
             <li>запуск калькулятора и изменение параметров кредита;</li>
             <li>использование подбора по бюджету и сортировки;</li>
@@ -332,7 +332,7 @@ export default function SourcesPage() {
             <li>сохранение расчёта, печать/экспорт;</li>
             <li>переход к официальному источнику.</li>
           </ul>
-          <p className="mt-2 text-[11.5px] text-[#A2A7AF]">
+          <p className="mt-2 text-[12px] text-[#A2A7AF]">
             Не собираются: имя, телефон, e-mail, адрес, паспортные и банковские данные, VIN. Поля с такими ключами
             отбрасываются до записи события.
           </p>
@@ -340,7 +340,7 @@ export default function SourcesPage() {
 
         <Disclosure title="Последние события в этой сессии" defaultOpen={false}>
           {recentEvents(15).length === 0 ? (
-            <p className="text-[11.5px] text-[#A2A7AF]">Событий пока нет.</p>
+            <p className="text-[12px] text-[#A2A7AF]">Событий пока нет.</p>
           ) : (
             <ul className="flex flex-col gap-1">
               {recentEvents(15).map((e, i) => (
@@ -354,7 +354,7 @@ export default function SourcesPage() {
           )}
         </Disclosure>
 
-        <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
+        <p className="text-[12px] leading-relaxed text-[#A2A7AF]">
           Избранное, сравнения, расчёты и планы хранятся только в localStorage этого браузера. На сервер отправляются
           лишь те данные, которые вы сами вводите в форме заявки (имя и телефон) — и только при явной отправке.
         </p>
@@ -397,10 +397,10 @@ function PriceTypeCard({
   return (
     <Card className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[12.5px] font-bold text-[#F4F5F6]">{title}</p>
+        <p className="text-[13px] font-bold text-[#F4F5F6]">{title}</p>
         {warn ? <Tag tone="warn">{count}</Tag> : <Tag>{count}</Tag>}
       </div>
-      <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">{text}</p>
+      <p className="text-[12px] leading-relaxed text-[#A2A7AF]">{text}</p>
     </Card>
   )
 }

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useId, useRef, useState, type FormEvent } from 'react'
 import { Button, Card, Field, Tag } from '../ui'
 import { useCalculator } from '../../context/CalculatorContext'
 import { MODELS, getTrim } from '../../data/haval'
@@ -6,6 +6,7 @@ import { isSupabaseConfigured, submitCreditApplication } from '../../lib/supabas
 import { AlertIcon, CheckIcon, DatabaseIcon } from '../icons'
 
 type Status = 'idle' | 'sending' | 'success' | 'error'
+type InvalidField = 'name' | 'phone' | null
 
 /**
  * Отправка расчёта в базу данных (Supabase): сохраняет текущий сценарий
@@ -19,6 +20,10 @@ export default function ApplicationForm() {
   const [status, setStatus] = useState<Status>('idle')
   const [message, setMessage] = useState('')
   const [formError, setFormError] = useState('')
+  const [invalidField, setInvalidField] = useState<InvalidField>(null)
+  const nameRef = useRef<HTMLInputElement>(null)
+  const phoneRef = useRef<HTMLInputElement>(null)
+  const errorId = useId()
 
   if (!plan.ok) return null
   const model = MODELS.find((m) => m.id === state.modelId)
@@ -28,15 +33,22 @@ export default function ApplicationForm() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setFormError('')
+    setInvalidField(null)
 
     const trimmedName = name.trim()
     const trimmedPhone = phone.replace(/[^\d+()\-\s]/g, '').trim()
+    // Ошибка связана с полем (aria-invalid + aria-describedby), а фокус
+    // переносится на него — скринридер сразу зачитает текст ошибки.
     if (!trimmedName) {
       setFormError('Укажите имя — так дилеру будет к кому обратиться.')
+      setInvalidField('name')
+      nameRef.current?.focus()
       return
     }
     if (trimmedPhone.replace(/\D/g, '').length < 10) {
       setFormError('Укажите корректный номер телефона (не менее 10 цифр).')
+      setInvalidField('phone')
+      phoneRef.current?.focus()
       return
     }
 
@@ -76,7 +88,7 @@ export default function ApplicationForm() {
     <Card className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
         <DatabaseIcon className="h-4 w-4 text-[#FF334B]" />
-        <h3 className="text-[15px] font-bold text-[#F4F5F6]">Отправить расчёт дилеру</h3>
+        <h2 className="text-[15px] font-bold text-[#F4F5F6]">Отправить расчёт дилеру</h2>
         {isSupabaseConfigured ? (
           <Tag tone="success">БД подключена</Tag>
         ) : (
@@ -93,25 +105,35 @@ export default function ApplicationForm() {
 
       <form className="grid grid-cols-1 gap-3 sm:grid-cols-2" onSubmit={handleSubmit}>
         <Field
+          ref={nameRef}
           label="Ваше имя"
           value={name}
           onChange={(e) => {
             setName(e.target.value)
             setFormError('')
+            setInvalidField(null)
           }}
           placeholder="Иван"
           autoComplete="name"
+          aria-required="true"
+          aria-invalid={invalidField === 'name' || undefined}
+          aria-describedby={invalidField === 'name' ? errorId : undefined}
         />
         <Field
+          ref={phoneRef}
           label="Телефон"
           value={phone}
           onChange={(e) => {
             setPhone(e.target.value)
             setFormError('')
+            setInvalidField(null)
           }}
           placeholder="+7 900 000-00-00"
           type="tel"
           autoComplete="tel"
+          aria-required="true"
+          aria-invalid={invalidField === 'phone' || undefined}
+          aria-describedby={invalidField === 'phone' ? errorId : undefined}
         />
         <div className="flex flex-col gap-2 sm:col-span-2">
           <Button type="submit" disabled={!isSupabaseConfigured || status === 'sending'}>
@@ -119,25 +141,29 @@ export default function ApplicationForm() {
           </Button>
 
           {formError && (
-            <p className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#F59E0B]">
+            <p id={errorId} className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#F59E0B]">
               <AlertIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               {formError}
             </p>
           )}
 
-          {status === 'success' && (
-            <p className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#10B981]">
-              <CheckIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              {message}
-            </p>
-          )}
-
-          {status === 'error' && (
-            <p className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#FF334B]">
-              <AlertIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              {message} Расчёт доступен локально — калькулятор продолжает работать без БД.
-            </p>
-          )}
+          {/* Результат отправки объявляется скринридером: live-регион есть в
+              DOM постоянно, меняется только содержимое. Пустой — absolute,
+              чтобы не добавлять лишний gap во flex-контейнере. */}
+          <div role="status" className="flex flex-col gap-2 empty:absolute">
+            {status === 'success' && (
+              <p className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#10B981]">
+                <CheckIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                {message}
+              </p>
+            )}
+            {status === 'error' && (
+              <p className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#FF334B]">
+                <AlertIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                {message} Расчёт доступен локально — калькулятор продолжает работать без БД.
+              </p>
+            )}
+          </div>
         </div>
       </form>
     </Card>

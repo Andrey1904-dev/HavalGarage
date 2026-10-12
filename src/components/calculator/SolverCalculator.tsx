@@ -113,7 +113,7 @@ export default function SolverCalculator() {
 
   const labels: Record<CalcField, { label: string; suffix: string; placeholder: string; inputMode: 'numeric' | 'decimal' }> = {
     amount: { label: 'Сумма кредита', suffix: '₽', placeholder: '2 500 000', inputMode: 'numeric' },
-    rate: { label: 'Ставка, % годовых', suffix: '%', placeholder: '16.4', inputMode: 'decimal' },
+    rate: { label: 'Ставка, % годовых', suffix: '%', placeholder: '16,4', inputMode: 'decimal' },
     payment: { label: 'Ежемесячный платёж', suffix: '₽', placeholder: '61 000', inputMode: 'numeric' },
     term: { label: 'Срок кредита', suffix: 'мес', placeholder: '60', inputMode: 'numeric' },
   }
@@ -124,9 +124,9 @@ export default function SolverCalculator() {
         <div>
           <div className="flex items-center gap-2">
             <span className="h-4 w-1 rounded-full bg-[#FF334B]" aria-hidden="true" />
-            <h3 className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F4F5F6]">
+            <h2 className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F4F5F6]">
               Подбор параметров кредита
-            </h3>
+            </h2>
           </div>
           <p className="mt-1 text-[12px] leading-relaxed text-[#A2A7AF]">
             Заполните любые 3 поля — четвёртое рассчитается автоматически (ставка ищется бисекцией)
@@ -167,7 +167,7 @@ export default function SolverCalculator() {
         </div>
 
         {error && (
-          <div role="alert" className="mt-3.5 rounded-lg border border-[#EF4444]/40 bg-[#EF4444]/12 px-3.5 py-2.5 text-[12.5px] font-medium text-[#EF4444]">
+          <div role="alert" className="mt-3.5 rounded-lg border border-[#EF4444]/40 bg-[#EF4444]/12 px-3.5 py-2.5 text-[13px] font-medium text-[#F87171]">
             {error}
           </div>
         )}

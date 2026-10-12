@@ -1,6 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Button, Callout, Card, DataTable, Field, InfoTip, Select, StatTile, TableCell } from '../ui'
+import {
+  Button,
+  ButtonLink,
+  Callout,
+  Card,
+  DataTable,
+  Field,
+  InfoTip,
+  Select,
+  StatTile,
+  TableCell,
+} from '../ui'
 import { AlertIcon, CardIcon, PercentIcon, TrendDownIcon } from '../icons'
 import { useCalculator } from '../../context/CalculatorContext'
 import { useSaved } from '../../context/SavedContext'
@@ -112,9 +122,9 @@ export default function RequiredDownCalculator() {
       <Card className="flex flex-col gap-3.5">
         <div className="flex items-center gap-2">
           <span className="h-4 w-1 rounded-full bg-[#FF334B]" aria-hidden="true" />
-          <h3 className="font-display-num text-[16px] font-bold uppercase tracking-wide">
+          <h2 className="font-display-num text-[16px] font-bold uppercase tracking-wide">
             Какой взнос нужен, чтобы платить меньше
-          </h3>
+          </h2>
           <InfoTip title="Обратный расчёт">
             Максимальная сумма кредита считается из желаемого платежа обратной аннуитетной формулой
             S = P · ((1+r)^n − 1) / (r · (1+r)^n). Минимальный взнос — разница между ценой автомобиля и этой суммой.
@@ -294,11 +304,9 @@ export default function RequiredDownCalculator() {
               <Button type="button" variant="secondary" onClick={handleSave}>
                 <CardIcon className="h-4 w-4" /> Сохранить расчёт
               </Button>
-              <Link to="/plan">
-                <Button type="button" variant="ghost">
-                  План накопления →
-                </Button>
-              </Link>
+              <ButtonLink to="/plan" variant="ghost">
+                План накопления →
+              </ButtonLink>
             </div>
             {note && <Callout tone="success">{note}</Callout>}
 

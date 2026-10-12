@@ -172,7 +172,7 @@ export default function CatalogPage() {
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11.5px] font-semibold text-[#A2A7AF]">Сортировка:</span>
+            <span className="text-[12px] font-semibold text-[#A2A7AF]">Сортировка:</span>
             {(
               [
                 ['price-asc', 'по цене ↑'],
@@ -184,6 +184,7 @@ export default function CatalogPage() {
               <button
                 key={value}
                 type="button"
+                aria-pressed={sort === value}
                 onClick={() => {
                   setParam('sort', value === 'price-asc' ? null : value)
                   track('budget_sort', { section: 'catalog', sort: value })
@@ -198,7 +199,7 @@ export default function CatalogPage() {
               </button>
             ))}
           </div>
-          <p className="text-[11.5px] text-[#A2A7AF]">
+          <p className="text-[12px] text-[#A2A7AF]" role="status">
             Найдено моделей: <strong className="text-[#F4F5F6]">{filtered.length}</strong> из {MODELS.length}
           </p>
         </div>
@@ -216,11 +217,17 @@ export default function CatalogPage() {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((m) => (
-            <ModelCard key={m.id} model={m} />
-          ))}
-        </div>
+        <section aria-labelledby="catalog-models-heading">
+          {/* заголовок секции для скринридеров: карточки моделей — h3 */}
+          <h2 id="catalog-models-heading" className="sr-only">
+            Модели HAVAL: {filtered.length}
+          </h2>
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((m) => (
+              <ModelCard key={m.id} model={m} />
+            ))}
+          </div>
+        </section>
       )}
 
       {/* ---------------- Вне официального каталога ---------------- */}
@@ -276,11 +283,11 @@ export default function CatalogPage() {
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {GENERATED_PRICES.teasers.map((t) => (
                 <div key={`${t.slug}-${t.trimName ?? ''}`} className="rounded-lg border border-[#2B3037] bg-[#0B0C0E]/70 px-2.5 py-2">
-                  <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#A2A7AF]">
                     {getModel(t.slug)?.name ?? t.slug}
                   </p>
                   <p className="font-display-num mt-0.5 text-[15px] font-bold text-[#F4F5F6]">{fmtMoney(t.price)}</p>
-                  {t.trimName && <p className="text-[10px] text-[#A2A7AF]">{t.trimName}</p>}
+                  {t.trimName && <p className="text-[11px] text-[#A2A7AF]">{t.trimName}</p>}
                 </div>
               ))}
             </div>
@@ -296,7 +303,7 @@ export default function CatalogPage() {
           href={HAVAL_PRICE_LISTS_URL}
           target="_blank"
           rel="noreferrer"
-          className="text-[11.5px] text-[#A2A7AF] underline decoration-[#2B3037] underline-offset-2 transition-colors hover:text-[#F4F5F6]"
+          className="text-[12px] text-[#A2A7AF] underline decoration-[#2B3037] underline-offset-2 transition-colors hover:text-[#F4F5F6]"
           onClick={() => track('official_source_click', { source: 'catalog', url: HAVAL_PRICE_LISTS_URL })}
         >
           Открыть каталоги и прайс-листы haval.ru

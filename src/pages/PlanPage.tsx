@@ -265,7 +265,7 @@ export default function PlanPage() {
         <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           План покупки
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
+        <p className="max-w-2xl text-[13px] leading-relaxed text-[#A2A7AF]">
           Сколько нужно накопить, за какой срок вы выйдете на целевой взнос и каким будет платёж в разных сценариях.
           Отдельно — сценарий продажи текущего автомобиля и официальная программа трейд-ин.
         </p>
@@ -476,7 +476,7 @@ export default function PlanPage() {
                     <tr key={s.id}>
                       <TableCell sticky>
                         {s.name}
-                        <span className="mt-0.5 block text-[10.5px] font-normal text-[#A2A7AF]">{s.description}</span>
+                        <span className="mt-0.5 block text-[11px] font-normal text-[#A2A7AF]">{s.description}</span>
                         {s.reachesGoal && <Tag tone="success">цель достигнута</Tag>}
                       </TableCell>
                       <TableCell>
@@ -487,7 +487,7 @@ export default function PlanPage() {
                       </TableCell>
                       <TableCell>
                         {fmtMoney(s.availableDownPayment)}
-                        <span className="block text-[10.5px] text-[#A2A7AF]">{s.downPaymentPct.toFixed(0)}% цены</span>
+                        <span className="block text-[11px] text-[#A2A7AF]">{s.downPaymentPct.toFixed(0)}% цены</span>
                       </TableCell>
                       <TableCell>{fmtMoney(s.creditAmount)}</TableCell>
                       <TableCell strong>{fmtMoney(s.monthlyPayment)}</TableCell>
@@ -546,7 +546,7 @@ export default function PlanPage() {
             </p>
 
             <div>
-              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A2A7AF]">Сценарий покупки</span>
+              <span className="mb-1.5 block text-[13px] font-semibold text-[#A2A7AF]">Сценарий покупки</span>
               <div className="flex flex-col gap-1.5">
                 {(
                   [
@@ -566,8 +566,8 @@ export default function PlanPage() {
                         : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
                     }`}
                   >
-                    <span className="block text-[12.5px] font-bold">{label}</span>
-                    <span className="block text-[10.5px] leading-relaxed">{hint}</span>
+                    <span className="block text-[13px] font-bold">{label}</span>
+                    <span className="block text-[11px] leading-relaxed">{hint}</span>
                   </button>
                 ))}
               </div>
@@ -701,7 +701,7 @@ export default function PlanPage() {
                 </div>
 
                 {targetPrice !== null && (
-                  <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
+                  <p className="text-[12px] leading-relaxed text-[#A2A7AF]">
                     При стоимости {fmtMoney(targetPrice)} такой взнос составляет{' '}
                     {fmtNumber((tradeIn.plan.availableForDownPayment / targetPrice) * 100)}% и покрывает{' '}
                     {fmtMoney(Math.max(0, targetPrice - tradeIn.plan.availableForDownPayment))} кредита. Платёж при
