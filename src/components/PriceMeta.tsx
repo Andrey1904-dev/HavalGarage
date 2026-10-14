@@ -14,7 +14,7 @@ export default function PriceMeta({ trim, compact = false }: { trim: Trim; compa
       ? 'agat-ekb-haval.ru'
       : 'каталог наличия ГК АГАТ'
   return (
-    <p className={`text-[10.5px] leading-relaxed text-[#A2A7AF] ${compact ? 'line-clamp-2' : ''}`}>
+    <p className={`text-[11px] leading-relaxed text-[#A2A7AF] ${compact ? 'line-clamp-2' : ''}`}>
       Источник:{' '}
       <a href={trim.priceSourceUrl} target="_blank" rel="noreferrer" className="underline decoration-[#2B3037] underline-offset-2 hover:text-[#F4F5F6]">
         {sourceLabel}

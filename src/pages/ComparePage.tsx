@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
   Button,
+  ButtonLink,
   Callout,
   Card,
   DataTable,
@@ -28,7 +29,7 @@ import { useCompare, MAX_COMPARE } from '../context/CompareContext'
 import { useCalculator } from '../context/CalculatorContext'
 import { useSaved } from '../context/SavedContext'
 import { annuityPayment } from '../utils/loan'
-import { fmtMoney, fmtNumber, parseLocaleNumber } from '../utils/format'
+import { fmtDate, fmtMoney, fmtNumber, parseLocaleNumber } from '../utils/format'
 import { openReport, type ReportOptions, type ReportSection } from '../utils/export'
 import PdfExportButton from '../components/PdfExportButton'
 import { useSeo } from '../utils/seo'
@@ -165,7 +166,7 @@ export default function ComparePage() {
     push('Цвет салона', (d) => (d.colorsInterior.length > 0 ? d.colorsInterior.join(', ') : null))
     push('Мест', (_d, s) => (s?.seats ? String(s.seats) : null))
     push('Внедорожные функции', (_d, s) => (s && s.offroad.length > 0 ? s.offroad.join('; ') : null))
-    push('Дата проверки цены', (d) => d.trim.priceUpdatedAt)
+    push('Дата проверки цены', (d) => (d.trim.priceUpdatedAt ? fmtDate(d.trim.priceUpdatedAt) : null))
     push('Цена действует с', (d) => d.trim.priceValidFrom)
     push('Источник цены', (d) => d.trim.priceSourceUrl)
     return rows
@@ -196,11 +197,9 @@ export default function ComparePage() {
           title="Выберите комплектации для сравнения"
           text={`Можно сравнить до ${MAX_COMPARE} автомобилей: разные комплектации одной модели или разные модели HAVAL. Добавьте их в каталоге или выберите ниже.`}
           action={
-            <Link to="/catalog">
-              <Button type="button" variant="secondary">
-                В каталог
-              </Button>
-            </Link>
+            <ButtonLink to="/catalog" variant="secondary">
+              В каталог
+            </ButtonLink>
           }
         />
         <ComparePicker onAdd={add} />
@@ -292,7 +291,7 @@ export default function ComparePage() {
       {/* Выбор участников */}
       <Card className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-[12.5px] font-bold text-[#F4F5F6]">
+          <p className="text-[13px] font-bold text-[#F4F5F6]">
             Выбрано {details.length} из {MAX_COMPARE}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -314,11 +313,11 @@ export default function ComparePage() {
             <div key={d.trim.id} className="flex flex-col gap-2 rounded-2xl border border-[#2B3037] bg-[#0B0C0E]/70 p-3">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">Вариант {i + 1}</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#A2A7AF]">Вариант {i + 1}</p>
                   <Link to={`/models/${d.model.slug}`} className="text-[13px] font-bold text-[#F4F5F6] hover:text-[#FF334B]">
                     {d.model.name}
                   </Link>
-                  <p className="text-[11.5px] text-[#A2A7AF]">{d.trim.name}</p>
+                  <p className="text-[12px] text-[#A2A7AF]">{d.trim.name}</p>
                 </div>
                 <button
                   type="button"
@@ -336,7 +335,7 @@ export default function ComparePage() {
                 <FavoriteButton modelId={d.model.id} trimId={d.trim.id} />
                 <Link
                   to={`/calculator?trim=${d.trim.id}`}
-                  className="flex min-h-[38px] items-center rounded-lg border border-[#2B3037] bg-[#20242A] px-2.5 text-[11.5px] font-bold text-[#A2A7AF] hover:text-[#F4F5F6]"
+                  className="flex min-h-[38px] items-center rounded-lg border border-[#2B3037] bg-[#20242A] px-2.5 text-[12px] font-bold text-[#A2A7AF] hover:text-[#F4F5F6]"
                 >
                   В калькулятор
                 </Link>
@@ -530,7 +529,7 @@ export default function ComparePage() {
             type="button"
             onClick={() => setOnlyDiff((v) => !v)}
             aria-pressed={onlyDiff}
-            className="min-h-[36px] rounded-lg border border-[#2B3037] bg-[#181B1F] px-3 text-[11.5px] font-bold text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]"
+            className="min-h-[36px] rounded-lg border border-[#2B3037] bg-[#181B1F] px-3 text-[12px] font-bold text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]"
           >
             {onlyDiff ? 'Показать все позиции' : 'Только различия'}
           </button>
@@ -549,7 +548,7 @@ export default function ComparePage() {
           {grouped.map(([group, rows]) => (
             <Card key={group} className="flex flex-col gap-2">
               <p className="text-[12px] font-bold uppercase tracking-wider text-[#FF334B]">{group}</p>
-              <DataTable head={['Позиция', ...details.map((d) => d.trim.name)]} className="border-0">
+              <DataTable head={['Позиция', ...details.map((d) => d.trim.name)]} label={`Оснащение: ${group}`} className="border-0">
                 {rows.map((r) => (
                   <tr key={r.feature}>
                     <TableCell sticky>{r.feature}</TableCell>
@@ -583,7 +582,7 @@ function Header() {
       <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
         Сравнение комплектаций
       </h1>
-      <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
+      <p className="max-w-2xl text-[13px] leading-relaxed text-[#A2A7AF]">
         Цена, характеристики, оснащение по группам, кредитные платежи и эксплуатационные расходы — в одной таблице.
         Можно сравнивать разные комплектации одной модели и разные модели HAVAL.
       </p>
@@ -603,7 +602,7 @@ function ComparePicker({ onAdd, compact = false }: { onAdd: (id: string) => bool
 
   return (
     <div className={`flex flex-col gap-2 rounded-xl border border-dashed border-[#2B3037] p-3 ${compact ? '' : ''}`}>
-      <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">Добавить к сравнению</p>
+      <p className="text-[11px] font-bold uppercase tracking-wider text-[#A2A7AF]">Добавить к сравнению</p>
       <Select label="Модель" value={modelId} onChange={(e) => setModelId(e.target.value)}>
         {MODELS.map((m) => (
           <option key={m.id} value={m.id}>

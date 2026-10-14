@@ -66,7 +66,7 @@ export function ModelGallery({ model }: { model: HavalModel }) {
   if (visible.length === 0) {
     return (
       <div className="flex h-56 items-center justify-center rounded-2xl border border-[#2B3037] bg-[#0B0C0E] text-[12px] text-[#A2A7AF] sm:h-72">
-        Фотография модели недоступны — проверьте соединение или откройте официальный источник
+        Фотографии модели недоступны — проверьте соединение или откройте официальный источник
       </div>
     )
   }

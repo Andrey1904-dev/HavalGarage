@@ -64,9 +64,9 @@ export default function PdnCalculator() {
       <div className="border-b border-[#2B3037] bg-[#20242A]/60 px-4 py-3.5">
         <div className="flex flex-wrap items-center gap-2">
           <PercentIcon className="h-4 w-4 text-[#FF334B]" />
-          <h3 className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F4F5F6]">
+          <h2 className="font-display-num text-[16px] font-bold uppercase tracking-wide text-[#F4F5F6]">
             Показатель долговой нагрузки (ПДН)
-          </h3>
+          </h2>
           <InfoTip title="ПДН">
             ПДН = сумма всех ежемесячных платежей по кредитам ÷ ваш среднемесячный доход × 100 %.
             Банк считает его сам по данным бюро кредитных историй и обязан учитывать с 2023 года:
@@ -110,7 +110,7 @@ export default function PdnCalculator() {
         <div className="mt-4 rounded-2xl border border-[#2B3037] bg-[#0B0C0E] p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <div>
-              <span className="text-[11.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">Расчётный ПДН</span>
+              <span className="text-[12px] font-bold uppercase tracking-wider text-[#A2A7AF]">Расчётный ПДН</span>
               <p
                 className="font-display-num mt-0.5 text-[30px] font-bold leading-none"
                 style={{ color: zone ? zoneConfig[zone].color : '#F4F5F6' }}
@@ -120,7 +120,7 @@ export default function PdnCalculator() {
             </div>
             {zone && (
               <span
-                className="rounded-[6px] border px-2.5 py-1 text-[11.5px] font-bold"
+                className="rounded-[6px] border px-2.5 py-1 text-[12px] font-bold"
                 style={{
                   borderColor: `${zoneConfig[zone].color}55`,
                   backgroundColor: `${zoneConfig[zone].color}18`,
@@ -155,12 +155,12 @@ export default function PdnCalculator() {
           </div>
 
           {zone && calc ? (
-            <div className="mt-3 border-t border-[#2B3037]/70 pt-2.5 text-[12.5px] leading-relaxed text-[#A2A7AF]">
+            <div className="mt-3 border-t border-[#2B3037]/70 pt-2.5 text-[13px] leading-relaxed text-[#A2A7AF]">
               Суммарный платёж <strong className="text-[#F4F5F6]">{fmtMoney(calc.total)}</strong> в месяц.{' '}
               {zoneConfig[zone].text}
             </div>
           ) : (
-            <p className="mt-3 border-t border-[#2B3037]/70 pt-2.5 text-[12.5px] text-[#A2A7AF]">
+            <p className="mt-3 border-t border-[#2B3037]/70 pt-2.5 text-[13px] text-[#A2A7AF]">
               Укажите ваш ежемесячный доход и платежи, чтобы рассчитать ПДН и увидеть зону нагрузки.
             </p>
           )}
@@ -169,9 +169,9 @@ export default function PdnCalculator() {
         {calc && (calc.safe || calc.limit) && (
           <div className="mt-3 rounded-2xl border border-[#2B3037] bg-[#0B0C0E] p-4">
             <div className="flex flex-wrap items-center gap-2">
-              <h4 className="font-display-num text-[13.5px] font-bold uppercase tracking-wide text-[#F4F5F6]">
+              <h3 className="font-display-num text-[14px] font-bold uppercase tracking-wide text-[#F4F5F6]">
                 Что закрыть, чтобы снизить ПДН
-              </h4>
+              </h3>
               <InfoTip title="Как считаем">
                 Сначала считаем, на сколько рублей нужно уменьшить суммарный ежемесячный платёж,
                 чтобы уложиться в порог. Затем переводим этот платёж в остаток долга по формуле
@@ -188,14 +188,14 @@ export default function PdnCalculator() {
                 return (
                   <div
                     key={key}
-                    className="rounded-lg border px-3 py-2.5 text-[12.5px] leading-relaxed"
+                    className="rounded-lg border px-3 py-2.5 text-[13px] leading-relaxed"
                     style={{ borderColor: `${color}45`, backgroundColor: `${color}12` }}
                   >
                     <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                      <span className="text-[11.5px] font-bold uppercase tracking-wider" style={{ color }}>
+                      <span className="text-[12px] font-bold uppercase tracking-wider" style={{ color }}>
                         Цель — ПДН до {r.targetPercent}%
                       </span>
-                      <span className="font-mono text-[11.5px] text-[#A2A7AF]">
+                      <span className="font-mono text-[12px] text-[#A2A7AF]">
                         предел платежей {fmtMoney(r.allowedPayment)}/мес
                       </span>
                     </div>
@@ -237,7 +237,7 @@ export default function PdnCalculator() {
                 onChange={(e) => setCloseTerm(e.target.value)}
               />
             </div>
-            <p className="mt-2 text-[11.5px] leading-relaxed text-[#A2A7AF]">
+            <p className="mt-2 text-[12px] leading-relaxed text-[#A2A7AF]">
               Выгоднее закрывать самые дорогие и короткие долги — кредитные карты и микрозаймы: они дают
               максимальное снижение платежа на каждый вложенный рубль.
             </p>

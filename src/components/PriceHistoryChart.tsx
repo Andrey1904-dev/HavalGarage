@@ -11,11 +11,12 @@ import {
   Tooltip,
   type TooltipItem,
 } from 'chart.js'
-import { Button, Callout, Select, TableCell, Tag } from './ui'
+import { Button, Callout, ScrollRegion, Select, TableCell, Tag } from './ui'
 import { priceChangesForTrim, pricePointsForTrim, priceHistoryTypesForTrim, type PricePoint } from '../data/haval/price-changes'
 import { fmtDate, fmtMoney } from '../utils/format'
 import { downloadCsv } from '../utils/export-data'
 import { track } from '../utils/analytics'
+import './chart-setup'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend, Filler)
 
@@ -62,6 +63,12 @@ export default function PriceHistoryChart({ trimId, trimName }: { trimId: string
 
   const hasDynamics = points.length > 1
   const dates = points.map((p) => fmtDate(p.date))
+  // текстовая альтернатива графика для скринридеров (canvas сам по себе немой)
+  const chartLabel = hasDynamics
+    ? `График цены «${TYPE_LABELS[activeType] ?? activeType}»: ${points.length} точек с ${dates[0]} по ${dates[dates.length - 1]}, ` +
+      `от ${fmtMoney(Math.min(...points.map((p) => p.amount)))} до ${fmtMoney(Math.max(...points.map((p) => p.amount)))}, ` +
+      `последняя цена ${fmtMoney(points[points.length - 1].amount)}`
+    : ''
 
   const exportCsv = () => {
     downloadCsv(
@@ -107,68 +114,69 @@ export default function PriceHistoryChart({ trimId, trimName }: { trimId: string
       </div>
 
       {hasDynamics ? (
-        <div className="h-56 w-full">
-          <Line
-            data={{
-              labels: dates,
-              datasets: [
-                {
-                  label: TYPE_LABELS[activeType] ?? activeType,
-                  data: points.map((p) => p.amount),
-                  borderColor: COLORS[0],
-                  backgroundColor: 'rgba(255, 51, 75, 0.12)',
-                  borderWidth: 2,
-                  fill: true,
-                  tension: 0.25,
-                  pointRadius: points.map((p) => (p.origin === 'archive' ? 5 : 4)),
-                  pointBackgroundColor: points.map((p) => (p.origin === 'archive' ? '#F59E0B' : COLORS[0])),
-                  pointBorderColor: '#0B0C0E',
-                  pointBorderWidth: 2,
-                  spanGaps: true,
-                },
-              ],
-            }}
-            options={{
-              maintainAspectRatio: false,
-              interaction: { mode: 'index', intersect: false },
-              scales: {
-                x: {
-                  grid: { display: false },
-                  border: { color: '#2B3037' },
-                  ticks: { color: '#A2A7AF', font: { size: 10 }, maxRotation: 0, autoSkipPadding: 12 },
-                },
-                y: {
-                  grid: { color: '#2B3037' },
-                  border: { display: false },
-                  ticks: {
-                    color: '#A2A7AF',
-                    font: { size: 10 },
-                    maxTicksLimit: 5,
-                    callback: (value) => `${Math.round(Number(value) / 1000)} тыс. ₽`,
+        <div className="w-full">
+          <div className="relative h-56 w-full">
+            <Line
+              aria-label={chartLabel}
+              data={{
+                labels: dates,
+                datasets: [
+                  {
+                    label: TYPE_LABELS[activeType] ?? activeType,
+                    data: points.map((p) => p.amount),
+                    borderColor: COLORS[0],
+                    backgroundColor: 'rgba(255, 51, 75, 0.12)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.25,
+                    pointRadius: points.map((p) => (p.origin === 'archive' ? 5 : 4)),
+                    pointBackgroundColor: points.map((p) => (p.origin === 'archive' ? '#F59E0B' : COLORS[0])),
+                    pointBorderColor: '#0B0C0E',
+                    pointBorderWidth: 2,
+                    spanGaps: true,
                   },
-                },
-              },
-              plugins: {
-                legend: { display: false },
-                tooltip: {
-                  backgroundColor: '#0B0C0E',
-                  titleColor: '#A2A7AF',
-                  bodyColor: '#F4F5F6',
-                  borderColor: '#2B3037',
-                  borderWidth: 1,
-                  padding: 10,
-                  callbacks: {
-                    label: (ctx: TooltipItem<'line'>) => ` ${fmtMoney(Number(ctx.parsed.y))}`,
-                    afterBody: (items: TooltipItem<'line'>[]) => {
-                      const point = points[items[0]?.dataIndex ?? 0]
-                      return point ? [`Происхождение: ${ORIGIN_LABELS[point.origin]}`, point.note ?? ''].filter(Boolean) : []
+                ],
+              }}
+              options={{
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                  x: {
+                    grid: { display: false },
+                    border: { color: '#2B3037' },
+                    ticks: { maxRotation: 0, autoSkipPadding: 12 },
+                  },
+                  y: {
+                    grid: { color: '#2B3037' },
+                    border: { display: false },
+                    ticks: {
+                      maxTicksLimit: 5,
+                      callback: (value) => `${Math.round(Number(value) / 1000)} тыс. ₽`,
                     },
                   },
                 },
-              },
-            }}
-          />
-          <div className="mt-2 flex flex-wrap gap-4 text-[10.5px] text-[#A2A7AF]">
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    backgroundColor: '#0B0C0E',
+                    titleColor: '#A2A7AF',
+                    bodyColor: '#F4F5F6',
+                    borderColor: '#2B3037',
+                    borderWidth: 1,
+                    padding: 10,
+                    callbacks: {
+                      label: (ctx: TooltipItem<'line'>) => ` ${fmtMoney(Number(ctx.parsed.y))}`,
+                      afterBody: (items: TooltipItem<'line'>[]) => {
+                        const point = points[items[0]?.dataIndex ?? 0]
+                        return point ? [`Происхождение: ${ORIGIN_LABELS[point.origin]}`, point.note ?? ''].filter(Boolean) : []
+                      },
+                    },
+                  },
+                },
+              }}
+            />
+          </div>
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[#A2A7AF]">
             <span className="inline-flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-[#FF334B]" /> подтверждённая цена прайс-листа
             </span>
@@ -185,10 +193,10 @@ export default function PriceHistoryChart({ trimId, trimName }: { trimId: string
         </Callout>
       )}
 
-      <div className="overflow-x-auto rounded-2xl border border-[#2B3037]/70">
-        <table className="w-full min-w-[560px] border-collapse text-left text-[11.5px]">
+      <ScrollRegion label="История изменений цены" className="rounded-2xl border border-[#2B3037]/70">
+        <table className="w-full min-w-[560px] border-collapse text-left text-[12px]">
           <thead>
-            <tr className="bg-[#181B1F] text-[10px] uppercase tracking-wider text-[#A2A7AF]">
+            <tr className="bg-[#181B1F] text-[11px] uppercase tracking-wider text-[#A2A7AF]">
               <th className="px-3 py-2 font-semibold">Дата</th>
               <th className="px-3 py-2 font-semibold">Цена</th>
               <th className="px-3 py-2 font-semibold">Тип</th>
@@ -217,7 +225,7 @@ export default function PriceHistoryChart({ trimId, trimName }: { trimId: string
             ))}
           </tbody>
         </table>
-      </div>
+      </ScrollRegion>
     </div>
   )
 }

@@ -2,7 +2,8 @@
  * Тесты интерфейса в jsdom.
  *
  * Проверяется то, что нельзя проверить модульными тестами: состояние, которое
- * живёт в URL и localStorage, мобильное меню и работа помощника.
+ * живёт в URL и localStorage, мобильное меню, работа помощника и доступность
+ * (связь подсказок и ошибок с полями, фокус при смене страницы).
  *
  * Порядок важен: jsdom поднимается до первого импорта React, поэтому модули
  * загружаются динамически (esbuild превращает dynamic import в require, порядок
@@ -41,7 +42,7 @@ g.IS_REACT_ACT_ENVIRONMENT = true
 
 const React = await import('react')
 const { createRoot } = await import('react-dom/client')
-const { MemoryRouter } = await import('react-router-dom')
+const { MemoryRouter, Routes, Route } = await import('react-router-dom')
 const { act, cleanup, fireEvent } = await import('@testing-library/react')
 const { SavedProvider, useSaved } = await import('../src/context/SavedContext')
 const { CompareProvider, useCompare } = await import('../src/context/CompareContext')
@@ -49,6 +50,8 @@ const { CalculatorProvider } = await import('../src/context/CalculatorContext')
 const Layout = (await import('../src/components/Layout')).default
 const ComparePage = (await import('../src/pages/ComparePage')).default
 const AdvisorPage = (await import('../src/pages/AdvisorPage')).default
+const ApplicationForm = (await import('../src/components/calculator/ApplicationForm')).default
+const { Field, Checkbox } = await import('../src/components/ui')
 const { TRIMS, getModel } = await import('../src/data/haval')
 
 type Root = ReturnType<typeof createRoot>
@@ -121,6 +124,8 @@ const buttonByLabel = (root: HTMLElement, label: string): HTMLElement => {
 }
 
 before(() => {
+  // jsdom не реализует прокрутку: Layout прокручивает новую страницу наверх
+  dom.window.scrollTo = (() => {}) as typeof dom.window.scrollTo
   // jsdom не реализует matchMedia, а часть компонентов его вызывает
   dom.window.matchMedia =
     dom.window.matchMedia ??
@@ -297,5 +302,118 @@ describe('помощник по выбору', () => {
     assert.ok(m6, 'модель найдена')
     assert.ok(answer.includes('Справка по HAVAL M6'), 'шапка справки показывает модель')
     assert.ok(/Комплектаций в каталоге/.test(answer))
+  })
+})
+
+describe('доступность: подписи, подсказки и ошибки полей', () => {
+  test('подсказка Field — описание (aria-describedby), а не часть имени поля', () => {
+    const handle = mount(
+      React.createElement(Field, { label: 'Ставка', suffix: '%', hint: 'Годовая ставка по договору', defaultValue: '16,4' }),
+    )
+    const input = handle.container.querySelector('input') as HTMLInputElement
+    const label = input.closest('label') as HTMLLabelElement
+    assert.ok(label, 'поле обёрнуто в label')
+    assert.ok(!text(label).includes('Годовая ставка'), 'текст подсказки не входит в label (доступное имя)')
+
+    const describedBy = input.getAttribute('aria-describedby') ?? ''
+    const hint = dom.window.document.getElementById(describedBy)
+    assert.ok(hint, 'aria-describedby указывает на существующий элемент')
+    assert.equal(text(hint as HTMLElement), 'Годовая ставка по договору')
+  })
+
+  test('Field объединяет собственный aria-describedby с подсказкой', () => {
+    const handle = mount(React.createElement(Field, { label: 'Имя', hint: 'Подсказка', 'aria-describedby': 'external-error' }))
+    const ids = ((handle.container.querySelector('input') as HTMLInputElement).getAttribute('aria-describedby') ?? '').split(' ')
+    assert.equal(ids.length, 2)
+    assert.equal(ids[0], 'external-error')
+  })
+
+  test('Checkbox: имя — подпись, подсказка — описание', () => {
+    const handle = mount(
+      React.createElement(Checkbox, { label: 'Полный привод', hint: 'Только 4WD', checked: false, onChange: () => {} }),
+    )
+    const input = handle.container.querySelector('input[type="checkbox"]') as HTMLInputElement
+    const doc = dom.window.document
+    assert.equal(text(doc.getElementById(input.getAttribute('aria-labelledby') ?? '') as HTMLElement), 'Полный привод')
+    assert.equal(text(doc.getElementById(input.getAttribute('aria-describedby') ?? '') as HTMLElement), 'Только 4WD')
+  })
+
+  test('форма заявки: ошибка связана с полем, фокус переходит на него', () => {
+    const handle = mount(React.createElement(ApplicationForm), '/calculator')
+    const form = handle.container.querySelector('form') as HTMLFormElement
+    assert.ok(form, 'форма отрисована при расчёте по умолчанию')
+    const [name, phone] = Array.from(form.querySelectorAll('input')) as HTMLInputElement[]
+    assert.equal(name.getAttribute('aria-required'), 'true')
+    assert.equal(phone.getAttribute('aria-required'), 'true')
+    assert.equal(name.getAttribute('aria-invalid'), null, 'до отправки поле не помечено ошибкой')
+
+    act(() => {
+      fireEvent.submit(form)
+    })
+    assert.equal(name.getAttribute('aria-invalid'), 'true')
+    const error = dom.window.document.getElementById(name.getAttribute('aria-describedby') ?? '')
+    assert.ok(error && /Укажите имя/.test(text(error)), 'aria-describedby указывает на текст ошибки')
+    assert.equal(dom.window.document.activeElement, name, 'фокус перенесён на поле с ошибкой')
+
+    act(() => {
+      fireEvent.change(name, { target: { value: 'Иван' } })
+    })
+    assert.equal(name.getAttribute('aria-invalid'), null, 'исправленное поле больше не помечено')
+
+    act(() => {
+      fireEvent.change(phone, { target: { value: '123' } })
+    })
+    act(() => {
+      fireEvent.submit(form)
+    })
+    assert.equal(phone.getAttribute('aria-invalid'), 'true')
+    assert.equal(name.getAttribute('aria-invalid'), null)
+    assert.equal(dom.window.document.activeElement, phone)
+    assert.ok(/номер телефона/.test(text(dom.window.document.getElementById(phone.getAttribute('aria-describedby') ?? '') as HTMLElement)))
+  })
+})
+
+describe('доступность: фокус при смене страницы', () => {
+  const page = (title: string) => React.createElement('h1', null, title)
+  const app = () =>
+    React.createElement(
+      Routes,
+      null,
+      React.createElement(
+        Route,
+        { element: React.createElement(Layout) },
+        React.createElement(Route, { path: '/', element: page('Главная страница') }),
+        React.createElement(Route, { path: '/catalog', element: page('Каталог моделей') }),
+      ),
+    )
+  // Перенос фокуса — DOM-операция в requestAnimationFrame, без setState, поэтому
+  // кадры ждём вне act(). Асинхронный act() здесь нельзя: в ESM-бандле React
+  // планирует его через MessageChannel, открытый порт не даёт процессу
+  // завершиться, и npm test зависает после последнего теста.
+  const frames = () => new Promise((resolve) => setTimeout(resolve, 80))
+
+  test('при первой загрузке фокус не переносится', async () => {
+    mount(app(), '/')
+    await frames()
+    assert.equal(dom.window.document.activeElement, dom.window.document.body)
+  })
+
+  test('после перехода по ссылке фокус на заголовке h1 новой страницы', async () => {
+    const handle = mount(app(), '/')
+    const link = handle.container.querySelector('header nav a[href="/catalog"]') as HTMLAnchorElement
+    assert.ok(link, 'ссылка на каталог в шапке')
+    link.focus()
+    click(link)
+    await frames()
+
+    const active = dom.window.document.activeElement as HTMLElement
+    assert.equal(active.tagName, 'H1')
+    assert.equal(text(active), 'Каталог моделей')
+    assert.equal(active.getAttribute('tabindex'), '-1', 'заголовок фокусируется программно, но не попадает в порядок Tab')
+
+    act(() => {
+      active.blur()
+    })
+    assert.equal(active.getAttribute('tabindex'), null, 'после потери фокуса tabindex убран')
   })
 })

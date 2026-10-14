@@ -3,6 +3,7 @@ import PriceHistorySection from '../components/PriceHistorySection'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   Button,
+  ButtonLink,
   Callout,
   Card,
   DataTable,
@@ -97,15 +98,14 @@ export default function ModelPage() {
   if (!model) {
     return (
       <EmptyState
+        titleAs="h1"
         icon={<CarIcon className="h-6 w-6" />}
         title="Модель не найдена"
         text="Вернитесь в каталог и выберите модель из списка."
         action={
-          <Link to="/catalog">
-            <Button type="button" variant="secondary">
-              В каталог
-            </Button>
-          </Link>
+          <ButtonLink to="/catalog" variant="secondary">
+            В каталог
+          </ButtonLink>
         }
       />
     )
@@ -180,16 +180,12 @@ export default function ModelPage() {
             >
               Рассчитать кредит
             </Button>
-            <Link to="/budget">
-              <Button type="button" variant="secondary">
-                Подобрать по бюджету
-              </Button>
-            </Link>
-            <Link to="/catalog">
-              <Button type="button" variant="ghost">
-                ← В каталог
-              </Button>
-            </Link>
+            <ButtonLink to="/budget" variant="secondary">
+              Подобрать по бюджету
+            </ButtonLink>
+            <ButtonLink to="/catalog" variant="ghost">
+              ← В каталог
+            </ButtonLink>
           </div>
 
           <div className="rounded-2xl border border-[#2B3037] bg-[#0B0C0E]/70 p-3">
@@ -236,10 +232,10 @@ export default function ModelPage() {
                 </div>
                 <p className="text-[12px] leading-relaxed text-[#A2A7AF]">{o.conditions}</p>
                 <div className="rounded-lg border border-[#2B3037] bg-[#0B0C0E]/70 px-3 py-2">
-                  <p className="text-[10.5px] font-bold uppercase tracking-wider text-[#A2A7AF]">Условия получения</p>
-                  <p className="mt-1 text-[11.5px] leading-relaxed text-[#A2A7AF]">{o.eligibilityConditions}</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#A2A7AF]">Условия получения</p>
+                  <p className="mt-1 text-[12px] leading-relaxed text-[#A2A7AF]">{o.eligibilityConditions}</p>
                 </div>
-                <p className="text-[10.5px] text-[#A2A7AF]">
+                <p className="text-[11px] text-[#A2A7AF]">
                   Источник:{' '}
                   <SourceLink href={o.sourceUrl} label={sourceLabel(o.sourceUrl)} model={model.id} />
                   {o.validFrom ? ` · действует с ${fmtDate(o.validFrom)}` : ' · дата начала действия не опубликована'}
@@ -260,7 +256,7 @@ export default function ModelPage() {
             <button
               type="button"
               onClick={() => update({ showArchiveTrims: !state.showArchiveTrims })}
-              className="min-h-[36px] rounded-lg border border-[#2B3037] bg-[#181B1F] px-3 py-1.5 text-[11.5px] font-semibold text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]"
+              className="min-h-[36px] rounded-lg border border-[#2B3037] bg-[#181B1F] px-3 py-1.5 text-[12px] font-semibold text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]"
             >
               {state.showArchiveTrims ? 'Скрыть архивные цены' : `Показать архивные цены (${trimsArchive.length})`}
             </button>
@@ -276,11 +272,9 @@ export default function ModelPage() {
           title="Нет данных о комплектациях"
           text="Официальный прайс-лист для этой модели не опубликован. Проверьте раздел «Источники данных»."
           action={
-            <Link to="/sources">
-              <Button type="button" variant="secondary">
-                Источники данных
-              </Button>
-            </Link>
+            <ButtonLink to="/sources" variant="secondary">
+              Источники данных
+            </ButtonLink>
           }
         />
       ) : (
@@ -343,7 +337,7 @@ export default function ModelPage() {
                 {t.equipment.length > 0 && (
                   <ul className="flex flex-col gap-1">
                     {t.equipment.slice(0, 6).map((e) => (
-                      <li key={e} className="flex items-start gap-1.5 text-[11.5px] text-[#A2A7AF]">
+                      <li key={e} className="flex items-start gap-1.5 text-[12px] text-[#A2A7AF]">
                         <CheckIcon className="mt-0.5 h-3 w-3 shrink-0 text-[#10B981]" />
                         {e}
                       </li>
@@ -384,11 +378,13 @@ export default function ModelPage() {
           <SectionTitle
             tip="Таблица различий из официального прайс-листа: ● — есть, ○ — опция, × — нет, «?» — не подтверждено официальными данными."
             action={
-              <Link to={`/compare?trims=${trimsCurrent.slice(0, 3).map((t) => t.id).join(',')}`}>
-                <Button type="button" variant="secondary" className="min-h-[38px]">
-                  Открыть подробное сравнение
-                </Button>
-              </Link>
+              <ButtonLink
+                to={`/compare?trims=${trimsCurrent.slice(0, 3).map((t) => t.id).join(',')}`}
+                variant="secondary"
+                className="min-h-[38px]"
+              >
+                Открыть подробное сравнение
+              </ButtonLink>
             }
           >
             Сравнение комплектаций {model.name}
@@ -451,7 +447,7 @@ export default function ModelPage() {
                 <p className="text-[12px] font-bold uppercase tracking-wider text-[#FF334B]">{group.group}</p>
                 <ul className="flex flex-col gap-1">
                   {group.items.map((item) => (
-                    <li key={item} className="flex items-start gap-1.5 text-[11.5px] leading-relaxed text-[#A2A7AF]">
+                    <li key={item} className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#A2A7AF]">
                       <CheckIcon className="mt-0.5 h-3 w-3 shrink-0 text-[#10B981]" />
                       {item}
                     </li>
@@ -488,21 +484,15 @@ export default function ModelPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Link to={`/ownership?trim=${trimsCurrent[0]?.id ?? ''}`}>
-            <Button type="button">
-              <GaugeIcon className="h-4 w-4" /> Рассчитать стоимость владения
-            </Button>
-          </Link>
-          <Link to="/plan">
-            <Button type="button" variant="secondary">
-              План покупки и накопления
-            </Button>
-          </Link>
-          <Link to="/calculator">
-            <Button type="button" variant="ghost">
-              <WrenchIcon className="h-4 w-4" /> Обратный расчёт взноса
-            </Button>
-          </Link>
+          <ButtonLink to={`/ownership?trim=${trimsCurrent[0]?.id ?? ''}`}>
+            <GaugeIcon className="h-4 w-4" /> Рассчитать стоимость владения
+          </ButtonLink>
+          <ButtonLink to="/plan" variant="secondary">
+            План покупки и накопления
+          </ButtonLink>
+          <ButtonLink to="/calculator" variant="ghost">
+            <WrenchIcon className="h-4 w-4" /> Обратный расчёт взноса
+          </ButtonLink>
         </div>
 
         <p className="text-[11px] leading-relaxed text-[#A2A7AF]">
@@ -594,7 +584,7 @@ function priceTypeLabel(type: string): string {
 function SpecRow({ label, value }: { label: string; value: string | null }) {
   return (
     <div className="flex items-baseline justify-between gap-3 border-b border-[#2B3037]/60 pb-1 last:border-0">
-      <span className="text-[11.5px] text-[#A2A7AF]">{label}</span>
+      <span className="text-[12px] text-[#A2A7AF]">{label}</span>
       <span className={`text-right text-[12px] font-semibold ${value ? 'text-[#F4F5F6]' : 'text-[#A2A7AF]'}`}>
         {value ?? 'нет данных'}
       </span>
@@ -637,7 +627,7 @@ function SpecsCard({ specs }: { specs: NonNullable<ReturnType<typeof getOfficial
       <SpecRow label="Цвета кузова" value={specs.colorsExterior.length > 0 ? specs.colorsExterior.join(', ') : null} />
       <SpecRow label="Цвет салона" value={specs.colorsInterior.length > 0 ? specs.colorsInterior.join(', ') : null} />
       {specs.offroad.length > 0 && <SpecRow label="Внедорожные функции" value={specs.offroad.join('; ')} />}
-      <p className="mt-1 text-[10.5px] leading-relaxed text-[#A2A7AF]">
+      <p className="mt-1 text-[11px] leading-relaxed text-[#A2A7AF]">
         Источник:{' '}
         <a
           href={specs.sourceUrl}
@@ -715,7 +705,7 @@ function TrimMatrix({ trimIds }: { trimIds: string[] }) {
         <button
           type="button"
           onClick={() => setOnlyDiff((v) => !v)}
-          className="min-h-[36px] rounded-lg border border-[#2B3037] bg-[#181B1F] px-3 text-[11.5px] font-bold text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]"
+          className="min-h-[36px] rounded-lg border border-[#2B3037] bg-[#181B1F] px-3 text-[12px] font-bold text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]"
           aria-pressed={onlyDiff}
         >
           {onlyDiff ? 'Показать все позиции' : 'Показать только различия'}
@@ -727,7 +717,7 @@ function TrimMatrix({ trimIds }: { trimIds: string[] }) {
         {shown.map((row) => (
           <tr key={`${row.group}-${row.feature}`}>
             <TableCell sticky>
-              <span className="block text-[10px] uppercase tracking-wider text-[#A2A7AF]">{row.group}</span>
+              <span className="block text-[11px] uppercase tracking-wider text-[#A2A7AF]">{row.group}</span>
               {row.feature}
             </TableCell>
             {row.values.map((v, i) => (
@@ -763,9 +753,30 @@ function TrimMatrix({ trimIds }: { trimIds: string[] }) {
   )
 }
 
-function AvailabilityMark({ value }: { value: 'standard' | 'optional' | 'unavailable' | 'unknown' }) {
-  if (value === 'standard') return <CheckIcon className="mx-auto h-4 w-4 text-[#10B981]" aria-label="есть" />
-  if (value === 'optional') return <span className="font-bold text-[#F59E0B]" aria-label="доступно опционально">○</span>
-  if (value === 'unavailable') return <CloseIcon className="mx-auto h-4 w-4 text-[#A2A7AF]" aria-label="нет" />
-  return <span className="text-[#A2A7AF]" aria-label="не подтверждено официальными данными">?</span>
+const AVAILABILITY_LABELS = {
+  standard: 'есть',
+  optional: 'доступно опционально',
+  unavailable: 'нет',
+  unknown: 'не подтверждено официальными данными',
+} as const
+
+function AvailabilityMark({ value }: { value: keyof typeof AVAILABILITY_LABELS }) {
+  // Иконки из icons.tsx всегда aria-hidden, а aria-label на <span> без роли
+  // скринридеры игнорируют, поэтому смысл передаётся скрытым текстом.
+  const mark =
+    value === 'standard' ? (
+      <CheckIcon className="mx-auto h-4 w-4 text-[#10B981]" />
+    ) : value === 'optional' ? (
+      <span className="font-bold text-[#F59E0B]" aria-hidden="true">○</span>
+    ) : value === 'unavailable' ? (
+      <CloseIcon className="mx-auto h-4 w-4 text-[#A2A7AF]" />
+    ) : (
+      <span className="text-[#A2A7AF]" aria-hidden="true">?</span>
+    )
+  return (
+    <>
+      {mark}
+      <span className="sr-only">{AVAILABILITY_LABELS[value]}</span>
+    </>
+  )
 }

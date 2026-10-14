@@ -83,7 +83,7 @@
 npm install
 npm run dev            # локальная разработка (http://localhost:5173)
 npm run build          # продакшн-сборка в dist/ (base /HavalGarage/)
-npm run preview        # предпросмотр сборки
+npm run preview        # предпросмотр продакшн-сборки (http://localhost:4173/HavalGarage/)
 npm run check          # typecheck + lint + тесты + smoke-рендер + сборка
 ```
 
@@ -92,7 +92,7 @@ npm run check          # typecheck + lint + тесты + smoke-рендер + с
 ```bash
 npm run typecheck      # tsc -b --noEmit (strict)
 npm run lint           # eslint (flat config, 0 ошибок и 0 предупреждений)
-npm test               # 200 модульных тестов (node:test + esbuild), включая DOM-тесты в jsdom
+npm test               # 234 модульных теста (node:test + esbuild), включая DOM-тесты в jsdom
 npm run smoke          # рендер 35 маршрутов через react-dom/server
 npm run seo            # генерация public/sitemap.xml по каталогу
 ```
@@ -140,9 +140,10 @@ Supabase (доступ к данным ограничивается полити
 
 ## Тесты и качество
 
-- **200 модульных тестов** (`tests/unit.test.ts`, `tests/catalog.test.ts`,
+- **234 модульных теста** (`tests/unit.test.ts`, `tests/catalog.test.ts`,
   `tests/calculators.test.ts`, `tests/imports.test.ts`,
-  `tests/import-pipeline.test.ts`, `tests/advisor.test.ts`, `tests/ui.test.tsx`):
+  `tests/import-pipeline.test.ts`, `tests/advisor.test.ts`, `tests/ui.test.tsx`,
+  `tests/typography.test.ts`, `tests/a11y.test.ts`):
   аннуитет и обратные задачи,
   нулевая ставка, взнос 0% и 100%, невозможные значения, округление денег, изменение цены,
   применение скидок и ограничения предложений, подбор по бюджету, обратный расчёт взноса,
@@ -151,7 +152,11 @@ Supabase (доступ к данным ограничивается полити
   разбор текста официальных прайс-листов, отказ при неполном разборе,
   сопоставление с каталогом, детерминированность помощника, а также
   DOM-тесты в jsdom: восстановление избранного из localStorage, синхронизация
-  сравнения с URL, мобильное меню, ответы помощника.
+  сравнения с URL, мобильное меню, ответы помощника; регрессии типографики:
+  шрифты без внешнего CDN, начертания в пределах осей вариативных шрифтов,
+  кегль от 11px, печать и PDF; доступность: контраст цветов-токенов (WCAG AA),
+  ARIA-атрибуты в JSX, связь подсказок и ошибок с полями, фокус при смене
+  страницы. Отчёт аудита — `docs/UI_AUDIT.md`.
 - **Smoke-рендер 35 маршрутов** без браузера: ловит падения на уровне выполнения
   (в песочнице/CI нет Chromium, поэтому браузерных e2e-тестов нет — это известное ограничение).
 - **Линтер**: ESLint (flat config) + `typescript-eslint` + `react-hooks`; 0 ошибок и 0 предупреждений.
@@ -191,12 +196,12 @@ src/
   pages/          15 экранов (ленивая загрузка, разделение кода по маршрутам)
 scripts/          тесты, smoke-рендер, генерация sitemap, проверка источников,
                   сбор и импорт прайс-листов
-tests/            7 наборов модульных тестов + fixtures официальных прайс-листов
+tests/            8 наборов модульных тестов + fixtures официальных прайс-листов
 supabase/         схема БД и политики RLS
 price-lists/      формат импорта официальных прайс-листов
 docs/             ARCHITECTURE, DATA_SOURCES, DATA_IMPORT, PRICING_RULES,
                   CREDIT_MATH, TESTING, DEPLOYMENT, FEATURE_AUDIT,
-                  KNOWN_LIMITATIONS, REPORT
+                  UI_AUDIT, KNOWN_LIMITATIONS, REPORT
 ```
 
 ## Новое в 2.0
@@ -216,6 +221,19 @@ docs/             ARCHITECTURE, DATA_SOURCES, DATA_IMPORT, PRICING_RULES,
 - **Раздел комплектаций** (`/trims`) с фильтрами по приводу, мощности, коробке,
   цене и платежу.
 
+## Типографика
+
+- **Шрифты** — Manrope (интерфейс) и JetBrains Mono (цифры) из пакетов
+  `@fontsource-variable/*`. Они раздаются с того же домена, без Google Fonts.
+  Кириллица и латиница Manrope подгружаются через `<link rel="preload">`,
+  остальные подмножества — по `unicode-range`.
+- **Шкала кегля** — только целые пиксели, минимум 11px: 11 / 12 / 13 / 14 /
+  15–16 / 18+. На телефонах поля ввода 16px, без автозума iOS. Описание шкалы
+  лежит в `src/index.css`, соблюдение проверяет `tests/typography.test.ts`.
+- **Графики** (Chart.js) получают тот же шрифт через `src/components/chart-setup.ts`.
+  Печатная версия встраивает `@font-face` приложения, а PDF заменяет
+  символы, которых нет в Roboto (`pdfSafeText`).
+
 ## Ограничения
 
 - Расчёты — симуляция, не оферта и не одобрение кредита; индивидуальные условия банка неизвестны.
@@ -234,6 +252,7 @@ docs/             ARCHITECTURE, DATA_SOURCES, DATA_IMPORT, PRICING_RULES,
 | --- | --- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | стек, структура, слой данных, расчёты, ограничения GitHub Pages |
 | [docs/FEATURE_AUDIT.md](docs/FEATURE_AUDIT.md) | аудит всех 20 групп функций: состояние, где реализовано, проверки, дефекты |
+| [docs/UI_AUDIT.md](docs/UI_AUDIT.md) | аудит интерфейса: шрифты, кегль, вёрстка 360–1280 px, печать, размер бандла |
 | [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) | источники, даты, неподтверждённые данные |
 | [docs/DATA_IMPORT.md](docs/DATA_IMPORT.md) | пайплайн импорта, правила разбора, проверка без сети |
 | [docs/PRICING_RULES.md](docs/PRICING_RULES.md) | типы цен, свежесть, что такое подтверждённая цена |

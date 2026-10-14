@@ -69,7 +69,7 @@ export default function CalculatorPage() {
         <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Кредитный калькулятор
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
+        <p className="max-w-2xl text-[13px] leading-relaxed text-[#A2A7AF]">
           Выберите модель и комплектацию — цена подставится из официального прайс-листа. Задайте взнос в рублях или
           процентах, срок и ставку: результат пересчитывается мгновенно. Официальные программы и их ограничения — в
           разделе «Программы».

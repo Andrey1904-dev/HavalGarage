@@ -1,5 +1,15 @@
 import { Link } from 'react-router-dom'
-import { Button, Callout, Card, DataTable, EmptyState, SectionTitle, StatTile, TableCell, Tag } from '../components/ui'
+import {
+  ButtonLink,
+  Callout,
+  Card,
+  DataTable,
+  EmptyState,
+  SectionTitle,
+  StatTile,
+  TableCell,
+  Tag,
+} from '../components/ui'
 import { AlertIcon, ArrowUpRightIcon, CarIcon } from '../components/icons'
 import { FavoriteButton } from '../components/ActionButtons'
 import {
@@ -44,7 +54,7 @@ export default function StockPage() {
         <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Автомобили в наличии
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
+        <p className="max-w-2xl text-[13px] leading-relaxed text-[#A2A7AF]">
           Раздел работает в условном режиме: мы показываем только те предложения, которые подтверждены публикуемым
           источником. VIN, остатки на складе и конкретные автомобили не выдумываются.
         </p>
@@ -77,11 +87,9 @@ export default function StockPage() {
           title="Подтверждённых предложений нет"
           text="Как только источник позволит надёжно получать данные об остатках, позиции появятся здесь. Пока доступны цены официальных прайс-листов в каталоге."
           action={
-            <Link to="/catalog">
-              <Button type="button" variant="secondary">
-                В каталог
-              </Button>
-            </Link>
+            <ButtonLink to="/catalog" variant="secondary">
+              В каталог
+            </ButtonLink>
           }
         />
       ) : (
@@ -124,7 +132,11 @@ export default function StockPage() {
                     </div>
                   </div>
 
-                  <DataTable head={['Параметр', 'Значение']} className="border-0">
+                  <DataTable
+                    head={['Параметр', 'Значение']}
+                    label={`Параметры предложения: ${model?.name ?? item.modelId} ${item.trimName}, ${fmtMoney(item.price)}`}
+                    className="border-0"
+                  >
                     <tr>
                       <TableCell sticky>Год производства</TableCell>
                       <TableCell>{item.productionYear ?? 'не опубликован'}</TableCell>
@@ -182,16 +194,12 @@ export default function StockPage() {
                   <div className="mt-auto flex flex-wrap gap-2">
                     {item.trimId && details && (
                       <>
-                        <Link to={`/models/${details.model.slug}`}>
-                          <Button type="button" variant="secondary" className="min-h-[40px]">
-                            Страница модели
-                          </Button>
-                        </Link>
-                        <Link to={`/calculator?trim=${item.trimId}`}>
-                          <Button type="button" variant="ghost" className="min-h-[40px]">
-                            Рассчитать кредит
-                          </Button>
-                        </Link>
+                        <ButtonLink to={`/models/${details.model.slug}`} variant="secondary" className="min-h-[40px]">
+                          Страница модели
+                        </ButtonLink>
+                        <ButtonLink to={`/calculator?trim=${item.trimId}`} variant="ghost" className="min-h-[40px]">
+                          Рассчитать кредит
+                        </ButtonLink>
                         <FavoriteButton modelId={item.modelId} trimId={item.trimId} />
                       </>
                     )}

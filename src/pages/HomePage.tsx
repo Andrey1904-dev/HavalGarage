@@ -15,7 +15,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import ModelCard from '../components/ModelCard'
-import { Badge, Button, Callout, Card, SectionTitle, Tag } from '../components/ui'
+import { Badge, Button, ButtonLink, Callout, Card, RangeInput, SectionTitle, Tag } from '../components/ui'
 import {
   CATALOG_FIXED_AT,
   HAVAL_PRICE_LISTS_URL,
@@ -131,7 +131,7 @@ export default function HomePage() {
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-4xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
+              <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-balance text-white sm:text-5xl lg:text-6xl">
                 ВЫБЕРИ СВОЙ{' '}
                 <span className="text-[#FF334B] drop-shadow-[0_0_30px_rgba(255,51,75,0.6)]">HAVAL</span>
               </h1>
@@ -190,7 +190,7 @@ export default function HomePage() {
               </div>
               <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#F4F5F6]">Подбор под ваш бюджет и платёж</h2>
             </div>
-            <div className="text-xs text-[#A2A7AF]">
+            <div className="text-xs text-[#A2A7AF]" role="status">
               Найдено подходящих моделей:{' '}
               <span className="font-mono text-sm font-bold text-white">{quickMatches.length}</span>
             </div>
@@ -198,54 +198,42 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 gap-6 pt-6 md:grid-cols-2">
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-xs">
                 <span className="font-medium text-[#A2A7AF]">Максимальный бюджет (цена «от»):</span>
-                <span className="font-mono text-sm font-bold text-white">до {fmtMoney(budgetMax)}</span>
+                <span className="whitespace-nowrap font-mono text-sm font-bold text-white">до {fmtMoney(budgetMax)}</span>
               </div>
-              <input
-                type="range"
+              <RangeInput
                 min={budgetRange.min}
                 max={budgetRange.max}
                 step={50_000}
-                value={Math.min(budgetRange.max, Math.max(budgetRange.min, budgetMax))}
+                value={budgetMax}
                 onChange={(e) => setBudgetMax(Number(e.target.value))}
-                className="h-2 w-full cursor-pointer rounded-lg bg-[#20242A]"
-                style={{
-                  background: `linear-gradient(to right, #FF334B 0%, #FF334B ${
-                    ((budgetMax - budgetRange.min) / (budgetRange.max - budgetRange.min)) * 100
-                  }%, #20242A ${((budgetMax - budgetRange.min) / (budgetRange.max - budgetRange.min)) * 100}%, #20242A 100%)`,
-                }}
                 aria-label="Максимальный бюджет"
               />
-              <div className="flex justify-between font-mono text-[11px] text-[#747B85]">
+              <div className="flex justify-between font-mono text-[11px] text-[#8A919B]">
                 <span>{fmtMoney(budgetRange.min)}</span>
                 <span>{fmtMoney(budgetRange.max)}</span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-xs">
                 <span className="font-medium text-[#A2A7AF]">
                   Желаемый платёж в месяц (по ставкам официальных программ):
                 </span>
-                <span className="font-mono text-sm font-bold text-emerald-400">~ {fmtMoney(desiredPayment)}/мес</span>
+                <span className="whitespace-nowrap font-mono text-sm font-bold text-emerald-400">
+                  ~ {fmtMoney(desiredPayment)}/мес
+                </span>
               </div>
-              <input
-                type="range"
+              <RangeInput
                 min={20_000}
                 max={150_000}
                 step={5_000}
                 value={desiredPayment}
                 onChange={(e) => setDesiredPayment(Number(e.target.value))}
-                className="h-2 w-full cursor-pointer rounded-lg bg-[#20242A]"
-                style={{
-                  background: `linear-gradient(to right, #FF334B 0%, #FF334B ${
-                    ((desiredPayment - 20_000) / (150_000 - 20_000)) * 100
-                  }%, #20242A ${((desiredPayment - 20_000) / (150_000 - 20_000)) * 100}%, #20242A 100%)`,
-                }}
                 aria-label="Желаемый ежемесячный платёж"
               />
-              <div className="flex justify-between font-mono text-[11px] text-[#747B85]">
+              <div className="flex justify-between font-mono text-[11px] text-[#8A919B]">
                 <span>20 000 ₽</span>
                 <span>150 000 ₽</span>
               </div>
@@ -255,7 +243,7 @@ export default function HomePage() {
           {/* Результаты подбора */}
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[#2B3037] pt-6">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-[#747B85]">Подходят:</span>
+              <span className="text-xs text-[#8A919B]">Подходят:</span>
               {quickMatches.length === 0 ? (
                 <span className="text-xs text-[#A2A7AF]">нет подтверждённых моделей под эти условия</span>
               ) : (
@@ -265,7 +253,7 @@ export default function HomePage() {
                     to={`/models/${s.model.slug}`}
                     className="rounded-lg border border-[#333A44] bg-[#20242A] px-3 py-1.5 text-xs font-medium text-[#F4F5F6] transition-all hover:border-[#FF334B]/50 hover:bg-[#2A3038]"
                   >
-                    {s.model.name} <span className="ml-1 text-[#747B85]">от {fmtMoney(s.priceFrom as number)}</span>
+                    {s.model.name} <span className="ml-1 text-[#8A919B]">от {fmtMoney(s.priceFrom as number)}</span>
                   </Link>
                 ))
               )}
@@ -416,11 +404,9 @@ export default function HomePage() {
                 и импортом прайс-листов (<code>npm run import:price-list</code>).
               </li>
             </ul>
-            <Link to="/sources" className="mt-1 self-start">
-              <Button type="button" variant="outline" size="sm">
-                Источники данных и история проверок
-              </Button>
-            </Link>
+            <ButtonLink to="/sources" variant="outline" size="sm" className="mt-1 self-start">
+              Источники данных и история проверок
+            </ButtonLink>
           </Card>
 
           <div className="flex flex-col gap-3">

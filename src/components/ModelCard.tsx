@@ -5,7 +5,7 @@ import { minCurrentPrice, modelSummary } from '../data/haval'
 import { fmtMoney } from '../utils/format'
 import { estimateMonthlyPayment } from '../utils/payment-estimate'
 import { useCalculator } from '../context/CalculatorContext'
-import { Badge, Button } from './ui'
+import { Badge, Button, ButtonLink } from './ui'
 import { ModelImage } from './ModelImage'
 import { FavoriteButton } from './ActionButtons'
 
@@ -22,6 +22,9 @@ export default function ModelCard({ model }: { model: HavalModel }) {
   const summary = modelSummary(model.id)
   const comingSoon = model.availability === 'coming-soon'
   const unconfirmed = model.priceListUrl === null
+
+  const drive = summary?.driveRange ?? null
+  const hasPrice = !comingSoon && Boolean(minTrim?.basePrice)
 
   const estimate =
     summary?.priceFrom != null ? estimateMonthlyPayment(model.id, summary.priceFrom) : null
@@ -87,7 +90,7 @@ export default function ModelCard({ model }: { model: HavalModel }) {
           {/* Спецификации-пилюли (реальные данные) */}
           <div className="grid grid-cols-3 gap-2 border-y border-[#2B3037]/60 py-2 text-xs">
             <div className="flex flex-col">
-              <span className="flex items-center gap-1 text-[10px] text-[#747B85]">
+              <span className="flex items-center gap-1 text-[11px] text-[#8A919B]">
                 <Gauge className="h-3 w-3 text-[#FF334B]" /> Мощность
               </span>
               <span className="mt-0.5 font-mono font-semibold tabular-nums text-[#F4F5F6]">
@@ -95,7 +98,7 @@ export default function ModelCard({ model }: { model: HavalModel }) {
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="flex items-center gap-1 text-[10px] text-[#747B85]">
+              <span className="flex items-center gap-1 text-[11px] text-[#8A919B]">
                 <Layers3 className="h-3 w-3 text-[#3B82F6]" /> Комплектаций
               </span>
               <span className="mt-0.5 font-mono font-semibold tabular-nums text-[#F4F5F6]">
@@ -103,28 +106,28 @@ export default function ModelCard({ model }: { model: HavalModel }) {
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="flex items-center gap-1 text-[10px] text-[#747B85]">
-                <Car className="h-3 w-3 text-[#10B981]" /> Тип кузова
+              <span className="flex items-center gap-1 text-[11px] text-[#8A919B]">
+                <Car className="h-3 w-3 text-[#10B981]" /> Привод
               </span>
-              <span className="mt-0.5 truncate font-semibold text-[#F4F5F6]" title={model.bodyType}>
-                {model.bodyType}
-              </span>
+              <span className="mt-0.5 font-mono font-semibold text-[#F4F5F6]">{drive ?? 'нет данных'}</span>
             </div>
           </div>
 
           {/* Цена и платёж */}
-          <div className="flex items-end justify-between pt-1">
-            <div>
-              <div className="text-[11px] text-[#747B85]">
-                {comingSoon || !minTrim?.basePrice ? 'Цена' : 'Цена от · прайс-лист'}
-              </div>
-              <div className="font-mono text-xl font-extrabold tabular-nums tracking-tight text-[#F4F5F6]">
-                {comingSoon || !minTrim?.basePrice ? 'нет подтверждённых данных' : fmtMoney(minTrim.basePrice)}
-              </div>
+          <div className="flex items-end justify-between gap-3 pt-1">
+            <div className="min-w-0">
+              <div className="text-[11px] text-[#8A919B]">{hasPrice ? 'Цена от · прайс-лист' : 'Цена'}</div>
+              {hasPrice && minTrim?.basePrice ? (
+                <div className="font-mono text-xl font-extrabold tabular-nums tracking-tight text-[#F4F5F6]">
+                  {fmtMoney(minTrim.basePrice)}
+                </div>
+              ) : (
+                <div className="mt-0.5 text-sm font-semibold leading-snug text-[#A2A7AF]">нет подтверждённых данных</div>
+              )}
             </div>
             {estimate && (
-              <div className="text-right">
-                <div className="text-[10px] font-medium text-emerald-400">в кредит от</div>
+              <div className="shrink-0 text-right">
+                <div className="text-[11px] font-medium text-emerald-400">в кредит от</div>
                 <div className="font-mono text-sm font-bold tabular-nums text-emerald-400">
                   {fmtMoney(estimate.monthly)}/мес
                 </div>
@@ -137,15 +140,16 @@ export default function ModelCard({ model }: { model: HavalModel }) {
             <Button variant="secondary" size="sm" onClick={openCalculator}>
               Кредит
             </Button>
-            <Button
+            <ButtonLink
+              to={`/models/${model.slug}`}
               variant="primary"
               size="sm"
               icon={<ArrowRight className="h-3.5 w-3.5" />}
               iconPosition="right"
-              onClick={() => navigate(`/models/${model.slug}`)}
+              aria-label={`Выбрать ${model.name}`}
             >
               Выбрать
-            </Button>
+            </ButtonLink>
           </div>
         </div>
       </div>

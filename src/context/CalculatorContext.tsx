@@ -57,7 +57,8 @@ const DEFAULT_STATE: ScenarioState = {
   downPaymentRub: '0',
   downPaymentPercent: '20',
   termMonths: 60,
-  annualRate: '16.4',
+  // десятичная запятая — как во всех полях ввода интерфейса (parseLocaleNumber понимает оба варианта)
+  annualRate: '16,4',
   offerId: 'none',
   programId: 'none',
   customDiscountRub: '0',

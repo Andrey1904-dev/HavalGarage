@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
   Button,
+  ButtonLink,
   Callout,
   Card,
+  Checkbox,
   DataTable,
   Disclosure,
   Field,
@@ -230,7 +232,7 @@ export default function OwnershipPage() {
         <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Стоимость владения
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
+        <p className="max-w-2xl text-[13px] leading-relaxed text-[#A2A7AF]">
           Сколько автомобиль будет стоить за выбранный период: топливо, обслуживание, страхование, налоги, шины,
           шиномонтаж, прочие расходы и кредитные платежи. Подтверждённые значения отделены от ваших оценок.
         </p>
@@ -307,7 +309,7 @@ export default function OwnershipPage() {
             <p className="flex items-center gap-2 text-[13px] font-bold text-[#F4F5F6]">
               <WrenchIcon className="h-4 w-4 text-[#FF334B]" /> Расходы (ваши оценки)
             </p>
-            <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
+            <p className="text-[12px] leading-relaxed text-[#A2A7AF]">
               Тарифы дилера, страховых и налоговой не публикуются в прайс-листах, поэтому поля оставлены пустыми.
               Заполните те статьи, которые знаете: пропущенные не учитываются и помечаются в результатах.
             </p>
@@ -378,19 +380,19 @@ export default function OwnershipPage() {
               <TaxIcon className="h-4 w-4 text-[#FF334B]" /> Кредитные платежи
             </p>
             <div className="flex flex-wrap gap-2">
-              <CheckboxRow
+              <Checkbox
                 label="Учитывать платежи по кредиту"
                 checked={form.includeLoan}
                 onChange={(v) => set({ includeLoan: v })}
               />
-              <CheckboxRow
+              <Checkbox
                 label="Страховка включена в тело кредита"
                 hint="Исключает страхование из эксплуатационных расходов, чтобы не считать его дважды"
                 checked={form.loanIncludesInsurance}
                 onChange={(v) => set({ loanIncludesInsurance: v })}
               />
             </div>
-            <p className="text-[11.5px] leading-relaxed text-[#A2A7AF]">
+            <p className="text-[12px] leading-relaxed text-[#A2A7AF]">
               {plan.ok
                 ? `Текущий расчёт калькулятора: ${fmtMoney(plan.plan.monthlyPayment)} в месяц на ${plan.plan.termMonths} мес (ставка ${String(
                     plan.plan.annualRate,
@@ -515,7 +517,7 @@ export default function OwnershipPage() {
               )}
 
               <Disclosure title="Подтверждённые значения и ваши оценки">
-                <div className="flex flex-col gap-2 text-[11.5px] leading-relaxed text-[#A2A7AF]">
+                <div className="flex flex-col gap-2 text-[12px] leading-relaxed text-[#A2A7AF]">
                   {result.result.confirmed.length > 0 && (
                     <div>
                       <p className="mb-1 font-bold text-[#10B981]">Подтверждено официальными данными:</p>
@@ -547,11 +549,9 @@ export default function OwnershipPage() {
                 <Button type="button" variant="secondary" onClick={handleSave}>
                   Сохранить расчёт
                 </Button>
-                <Link to="/plan">
-                  <Button type="button" variant="ghost">
-                    К плану покупки
-                  </Button>
-                </Link>
+                <ButtonLink to="/plan" variant="ghost">
+                  К плану покупки
+                </ButtonLink>
               </div>
               {savedNote && <Callout tone="success">{savedNote}</Callout>}
 
@@ -573,32 +573,6 @@ function nullIfEmpty(raw: string): number | null {
   return Number.isFinite(n) ? n : null
 }
 
-function CheckboxRow({
-  label,
-  hint,
-  checked,
-  onChange,
-}: {
-  label: string
-  hint?: string
-  checked: boolean
-  onChange: (v: boolean) => void
-}) {
-  return (
-    <label className="flex min-h-[40px] cursor-pointer items-start gap-2.5 rounded-lg border border-[#2B3037] bg-[#20242A] px-3 py-2 text-[12px] text-[#A2A7AF] transition-colors hover:text-[#F4F5F6]">
-      <input
-        type="checkbox"
-        className="mt-0.5 h-4 w-4 accent-[#FF334B]"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <span>
-        {label}
-        {hint && <span className="mt-0.5 block text-[10.5px] text-[#A2A7AF]">{hint}</span>}
-      </span>
-    </label>
-  )
-}
 
 function CategoryIcon({ category }: { category: string }) {
   const cls = 'h-3.5 w-3.5 shrink-0 text-[#FF334B]'

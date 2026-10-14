@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   Button,
+  ButtonLink,
   Callout,
   Card,
   Checkbox,
@@ -154,7 +155,7 @@ export default function BudgetPage() {
         <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#F4F5F6] sm:text-4xl">
           Подбор по бюджету
         </h1>
-        <p className="max-w-2xl text-[12.5px] leading-relaxed text-[#A2A7AF]">
+        <p className="max-w-2xl text-[13px] leading-relaxed text-[#A2A7AF]">
           Расчёт воспроизводимый: максимальная сумма кредита определяется обратной аннуитетной формулой, затем к ней
           добавляется ваш взнос. Обязательные ограничения (кузов, привод, функции, лимиты программы) исключают
           неподходящие варианты; превышающие бюджет показываются отдельно и помечаются.
@@ -238,7 +239,7 @@ export default function BudgetPage() {
             />
 
             <div>
-              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A2A7AF]">Какую цену использовать</span>
+              <span className="mb-1.5 block text-[13px] font-semibold text-[#A2A7AF]">Какую цену использовать</span>
               <div className="flex gap-1.5">
                 {(
                   [
@@ -250,7 +251,7 @@ export default function BudgetPage() {
                     key={value}
                     type="button"
                     onClick={() => setPriceMode(value)}
-                    className={`min-h-[40px] flex-1 rounded-lg border px-2.5 text-[11.5px] font-bold transition-colors ${
+                    className={`min-h-[40px] flex-1 rounded-lg border px-2.5 text-[12px] font-bold transition-colors ${
                       priceMode === value
                         ? 'border-[#FF334B] bg-[#FF334B]/12 text-[#F4F5F6]'
                         : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
@@ -261,7 +262,7 @@ export default function BudgetPage() {
                 ))}
               </div>
               {priceMode === 'best-available' && (
-                <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A2A7AF]">
+                <p className="mt-1.5 text-[11px] leading-relaxed text-[#A2A7AF]">
                   Показываются и варианты с выгодой (трейд-ин, спеццены в наличии). Выгода не применяется автоматически:
                   в карточке указаны условия её получения.
                 </p>
@@ -273,7 +274,7 @@ export default function BudgetPage() {
             <p className="text-[13px] font-bold text-[#F4F5F6]">Обязательные требования</p>
 
             <div>
-              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A2A7AF]">Тип кузова</span>
+              <span className="mb-1.5 block text-[13px] font-semibold text-[#A2A7AF]">Тип кузова</span>
               <div className="grid grid-cols-2 gap-1.5">
                 {['Кроссовер', 'Купе-кроссовер', 'Внедорожник', 'Пикап'].map((b) => (
                   <Checkbox
@@ -297,7 +298,7 @@ export default function BudgetPage() {
             </Select>
 
             <div>
-              <span className="mb-1.5 block text-[12.5px] font-semibold text-[#A2A7AF]">Минимально необходимые функции</span>
+              <span className="mb-1.5 block text-[13px] font-semibold text-[#A2A7AF]">Минимально необходимые функции</span>
               <div className="flex flex-wrap gap-1.5">
                 {FEATURE_PRESETS.map((f) => (
                   <button
@@ -305,7 +306,7 @@ export default function BudgetPage() {
                     type="button"
                     onClick={() => toggleFeature(f)}
                     aria-pressed={features.includes(f)}
-                    className={`min-h-[36px] rounded-lg border px-2.5 text-[11.5px] font-semibold transition-colors ${
+                    className={`min-h-[36px] rounded-lg border px-2.5 text-[12px] font-semibold transition-colors ${
                       features.includes(f)
                         ? 'border-[#FF334B] bg-[#FF334B]/12 text-[#F4F5F6]'
                         : 'border-[#2B3037] bg-[#20242A] text-[#A2A7AF] hover:text-[#F4F5F6]'
@@ -319,6 +320,7 @@ export default function BudgetPage() {
                 <Field
                   className="flex-1"
                   label=""
+                  aria-label="Своя функция для подбора"
                   placeholder="Своя функция, например «массаж»"
                   value={customFeature}
                   onChange={(e) => setCustomFeature(e.target.value)}
@@ -334,7 +336,7 @@ export default function BudgetPage() {
                 </Button>
               </div>
               {features.length > 0 && (
-                <p className="mt-1.5 text-[10.5px] leading-relaxed text-[#A2A7AF]">
+                <p className="mt-1.5 text-[11px] leading-relaxed text-[#A2A7AF]">
                   Требования проверяются по официальным прайс-листам. Если документ не раскрывает функцию для
                   комплектации, вариант исключается — отсутствие сведений не считается наличием функции.
                 </p>
@@ -345,6 +347,12 @@ export default function BudgetPage() {
 
         {/* ---------------- Результаты ---------------- */}
         <div className="flex flex-col gap-3">
+          {/* Краткая сводка для скринридера: объявляется при каждом пересчёте */}
+          <p className="sr-only" role="status">
+            {result.ok
+              ? `Подходят под бюджет: ${fitting.length}. Превышают бюджет: ${over.length}.`
+              : `Проверьте параметры подбора: ${result.errors.join(' ')}`}
+          </p>
           {!result.ok ? (
             <Card className="border-[#EF4444]/40">
               <div className="flex items-start gap-3">
@@ -426,11 +434,9 @@ export default function BudgetPage() {
                       >
                         Сбросить требования
                       </Button>
-                      <Link to="/calculator">
-                        <Button type="button" variant="ghost">
-                          К кредитному калькулятору
-                        </Button>
-                      </Link>
+                      <ButtonLink to="/calculator" variant="ghost">
+                        К кредитному калькулятору
+                      </ButtonLink>
                     </div>
                   }
                 />
@@ -538,7 +544,7 @@ function MatchCard({ match, onOpen }: { match: BudgetMatch; onOpen: (trimId: str
 
       <ul className="flex flex-col gap-1">
         {match.reasons.map((r) => (
-          <li key={r} className="flex items-start gap-1.5 text-[11.5px] leading-relaxed text-[#A2A7AF]">
+          <li key={r} className="flex items-start gap-1.5 text-[12px] leading-relaxed text-[#A2A7AF]">
             <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#10B981]" aria-hidden="true" />
             {r}
           </li>
@@ -582,7 +588,7 @@ function MiniStat({
 }) {
   return (
     <div className="rounded-lg border border-[#2B3037] bg-[#0B0C0E]/70 px-2.5 py-2">
-      <p className="text-[10px] font-bold uppercase tracking-wider text-[#A2A7AF]">{label}</p>
+      <p className="text-[11px] font-bold uppercase tracking-wider text-[#A2A7AF]">{label}</p>
       <p
         className={`font-display-num mt-0.5 text-[14px] font-bold ${
           tone === 'accent' ? 'text-[#FF334B]' : 'text-[#F4F5F6]'
@@ -590,7 +596,7 @@ function MiniStat({
       >
         {value}
       </p>
-      {hint && <p className="mt-0.5 text-[10px] text-[#A2A7AF]">{hint}</p>}
+      {hint && <p className="mt-0.5 text-[11px] text-[#A2A7AF]">{hint}</p>}
     </div>
   )
 }

@@ -16,7 +16,9 @@
 
   --color-ink: #f4f5f6;         /* --text-primary */
   --color-muted: #a2a7af;       /* --text-secondary */
-  --color-faint: #747b85;       /* --text-muted */
+  /* #8a919b из HavalDesign давал 3,6–4,4:1 на поверхностях карточек — ниже
+     WCAG AA (4,5:1) для мелкого текста. #8a919b: ≥ 4,9:1 на всех фонах до #20242a. */
+  --color-faint: #8a919b;       /* --text-muted */
 
   --color-line: #242930;        /* --border-subtle */
   --color-line-card: #2b3037;   /* границы карточек */
@@ -25,6 +27,11 @@
   /* Акцент HAVAL Red */
   --color-sport: #ff334b;
   --color-sport-hover: #e5223a;
+  /* Фон кнопок и бейджей с белым текстом: на #ff334b белый даёт лишь 3,6:1,
+     на #e11d38 — 4,74:1 (WCAG AA). Сам #ff334b остаётся акцентом текста,
+     рамок и иконок — на тёмных фонах он проходит AA. */
+  --color-sport-strong: #e11d38;
+  --color-sport-strong-hover: #c8172f;
   --color-sport-bright: #ff6b7e;
   --color-sport-glow: rgba(255, 51, 75, 0.35);
   --color-sport-soft: rgba(255, 51, 75, 0.14);
@@ -37,173 +44,231 @@
 
   --breakpoint-xs: 30rem;
 
-  /* Типографика */
-  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* ----------------------------------------------------------------
+     Типографика.
+     Manrope и JetBrains Mono раздаются с собственного домена
+     (@fontsource-variable, см. src/main.tsx): вариативные файлы
+     покрывают все используемые веса (Manrope 200–800, JetBrains Mono
+     100–800), кириллицу и знак рубля «₽». Имя «… Variable» — так
+     семейства называются в пакетах; обычное имя оставлено на случай,
+     если шрифт установлен в системе. Средняя ширина знака Manrope
+     практически совпадает с Arial (99,6 % на текстах интерфейса),
+     поэтому подмена шрифта после загрузки не сдвигает строки.
+
+     Шкала размеров (только целые пиксели, минимум 11px):
+       11 — микроподписи, uppercase-лейблы, шапки таблиц
+       12 — подписи, подсказки, вторичный текст
+       13 — основной текст карточек, кнопки-чипы
+       14 — акцентный текст, заголовки карточек
+       15–16 — поля ввода (16px на телефонах — без автозума iOS)
+       18+ — суммы и заголовки
+     Регрессионный тест tests/typography.test.ts не даёт вернуть
+     дробные и слишком мелкие размеры.
+     ---------------------------------------------------------------- */
+  --font-sans: "Manrope Variable", "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+    sans-serif;
+  --font-display: "Manrope Variable", "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+    sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-html {
-  -webkit-tap-highlight-color: transparent;
-  color-scheme: dark;
-  background-color: var(--color-bg);
-  overflow-x: hidden;
-}
-
-body {
-  background-color: var(--color-bg);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-}
-
-::selection {
-  background: #ff334b;
-  color: #fff;
-}
-
-/* Плотный гротеск для коротких заголовков и сумм (в типографике
-   HavalDesign — тяжёлое начертание sans + tabular-nums) */
-.font-display-num {
-  font-family: var(--font-display);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.005em;
-}
-
-.tabular-nums {
-  font-variant-numeric: tabular-nums;
-}
-
-/* Технический фокус с клавиатуры */
-:focus-visible {
-  outline: 2px solid var(--color-sport);
-  outline-offset: 2px;
-}
-
-/* Аккуратный тёмный скроллбар (HavalDesign) */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-bg-3);
-}
-::-webkit-scrollbar-thumb {
-  background: #282e37;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #3b4350;
-}
-
-/* Убираем стрелки у number-инпутов */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-/* ---------- Glassmorphism-утилиты HavalDesign ---------- */
-.glass-panel {
-  background: rgba(24, 27, 31, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.glass-card {
-  background: linear-gradient(180deg, rgba(32, 36, 42, 0.8) 0%, rgba(24, 27, 31, 0.95) 100%);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.glass-card-hover {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.glass-card-hover:hover {
-  border-color: rgba(255, 51, 75, 0.4);
-  transform: translateY(-2px);
-  box-shadow:
-    0 12px 30px -10px rgba(0, 0, 0, 0.7),
-    0 0 20px -5px rgba(255, 51, 75, 0.15);
-}
-
-.glow-red {
-  box-shadow: 0 0 25px -5px rgba(255, 51, 75, 0.5);
-}
-
-.glow-red-sm {
-  box-shadow: 0 0 12px -2px rgba(255, 51, 75, 0.4);
-}
-
-/* ---------- Слайдеры HavalDesign ---------- */
-input[type="range"] {
-  accent-color: #ff334b;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 18px;
-  width: 18px;
-  border-radius: 50%;
-  background: #ff334b;
-  box-shadow: 0 0 10px rgba(255, 51, 75, 0.8);
-  cursor: pointer;
-  border: 2px solid #ffffff;
-  margin-top: -5px;
-}
-input[type="range"]::-webkit-slider-runnable-track {
-  height: 8px;
-  border-radius: 8px;
-}
-input[type="range"]::-moz-range-thumb {
-  height: 18px;
-  width: 18px;
-  border-radius: 50%;
-  background: #ff334b;
-  box-shadow: 0 0 10px rgba(255, 51, 75, 0.8);
-  cursor: pointer;
-  border: 2px solid #ffffff;
-}
-input[type="range"]:disabled {
-  opacity: 0.5;
-}
-
-/* ---------- Анимации ---------- */
-@keyframes pulseGlow {
-  0%,
-  100% {
-    opacity: 0.6;
-    transform: scale(1);
+/* ================================================================
+   Базовые стили элементов.
+   Слой base: любые утилиты Tailwind (слой utilities) их переопределяют.
+   Раньше эти правила были вне слоёв и перебивали утилиты — например,
+   глобальная обводка :focus-visible рисовалась поверх outline-none
+   у полей, а стеклянные классы игнорировали bg-/border-утилиты.
+   ================================================================ */
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    color-scheme: dark;
+    background-color: var(--color-bg);
+    /* clip, а не hidden: hidden делает элемент контейнером прокрутки и
+       ломает position: sticky у шапки. hidden — запасной вариант для
+       браузеров без поддержки clip. */
+    overflow-x: hidden;
+    overflow-x: clip;
+    /* Липкая шапка высотой 65px: без отступа браузер прокручивает элемент,
+       получивший фокус с клавиатуры (или якорь), под неё — WCAG 2.4.11.
+       Проявлялось при Tab между колонками сетки, например на /programs. */
+    scroll-padding-top: 5rem;
   }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: #ff334b;
+    color: #fff;
+  }
+
+  /* Видимый фокус с клавиатуры для ссылок и кнопок без собственного стиля.
+     Компоненты с outline-none / focus-visible:ring-* задают свой. */
+  :focus-visible {
+    outline: 2px solid var(--color-sport);
+    outline-offset: 2px;
+  }
+
+  /* Заголовок, на который переносится фокус при смене страницы, —
+     не элемент управления: обводка вокруг него только мешает. */
+  h1[tabindex="-1"]:focus,
+  main[tabindex="-1"]:focus {
+    outline: none;
+  }
+
+  /* Аккуратный тёмный скроллбар (HavalDesign) */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-3);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #282e37;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3b4350;
+  }
+
+  /* Убираем стрелки у number-инпутов */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  /* ---------- Слайдеры HavalDesign ----------
+     Одинаковый вид во всех браузерах: трек 8px, бегунок 18px.
+     Элемент выше трека (24px) — удобная зона касания на телефоне;
+     фон рисуется только в content-box, заполнение задаёт --range-fill. */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    height: 24px;
+    padding: 8px 0;
+    margin: 0;
+    background: linear-gradient(
+        to right,
+        var(--color-sport) 0%,
+        var(--color-sport) var(--range-fill, 0%),
+        var(--color-surface-2) var(--range-fill, 0%),
+        var(--color-surface-2) 100%
+      )
+      content-box;
+    border-radius: 9999px;
+    accent-color: var(--color-sport);
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 8px;
+    background: transparent;
+  }
+  input[type="range"]::-moz-range-track {
+    height: 8px;
+    border-radius: 8px;
+    background: transparent;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 18px;
+    width: 18px;
+    margin-top: -5px;
+    border-radius: 50%;
+    background: var(--color-sport);
+    box-shadow: 0 0 10px rgba(255, 51, 75, 0.8);
+    border: 2px solid #ffffff;
+    cursor: pointer;
+  }
+  input[type="range"]::-moz-range-thumb {
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: var(--color-sport);
+    box-shadow: 0 0 10px rgba(255, 51, 75, 0.8);
+    border: 2px solid #ffffff;
+    cursor: pointer;
+  }
+  input[type="range"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
-@keyframes floatSlow {
-  0%,
-  100% {
-    transform: translateY(0);
+/* ================================================================
+   Компонентные классы HavalDesign.
+   Слой components: утилиты рядом с ними (bg-*, border-*, font-*)
+   имеют приоритет, как и задумано в разметке.
+   ================================================================ */
+@layer components {
+  /* Плотный гротеск для коротких заголовков и сумм (в типографике
+     HavalDesign — тяжёлое начертание sans + tabular-nums) */
+  .font-display-num {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.005em;
   }
-  50% {
-    transform: translateY(-6px);
+
+  /* ---------- Glassmorphism-утилиты HavalDesign ---------- */
+  .glass-panel {
+    background: rgba(24, 27, 31, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
-}
 
-.animate-pulse-glow {
-  animation: pulseGlow 4s ease-in-out infinite;
-}
+  .glass-card {
+    background: linear-gradient(180deg, rgba(32, 36, 42, 0.8) 0%, rgba(24, 27, 31, 0.95) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
 
-.animate-float {
-  animation: floatSlow 6s ease-in-out infinite;
+  .glass-card-hover {
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .glass-card-hover:hover {
+    border-color: rgba(255, 51, 75, 0.4);
+    transform: translateY(-2px);
+    box-shadow:
+      0 12px 30px -10px rgba(0, 0, 0, 0.7),
+      0 0 20px -5px rgba(255, 51, 75, 0.15);
+  }
+
+  /* ---------- Анимации появления ---------- */
+  /* Алиас из HavalDesign (animate-fadeIn в компонентах дизайн-проекта) */
+  .animate-fadeIn {
+    animation: fade-in 220ms ease-out;
+  }
+
+  .animate-pop-in {
+    animation: pop-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .animate-page-enter {
+    animation: page-enter 380ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .animate-car-in {
+    animation: car-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
 }
 
 @keyframes fade-in {
@@ -229,18 +294,7 @@ input[type="range"]:disabled {
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(14px) scale(0.996);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -259,74 +313,6 @@ input[type="range"]:disabled {
   }
 }
 
-.animate-fade-in {
-  animation: fade-in 180ms ease-out;
-}
-
-/* Алиас из HavalDesign (animate-fadeIn в компонентах дизайн-проекта) */
-.animate-fadeIn {
-  animation: fade-in 220ms ease-out;
-}
-
-.animate-pop-in {
-  animation: pop-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.animate-page-enter {
-  animation: page-enter 380ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.animate-rise {
-  animation: rise-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.animate-car-in {
-  animation: car-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-/* Интерактивные карточки: лёгкий подъём и тень при наведении */
-.hover-lift {
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
-    border-color 0.18s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38);
-}
-.hover-lift:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-/* Бегущий блик по главному кадру каталога */
-@keyframes scene-sheen {
-  0% {
-    transform: translateX(-120%) skewX(-12deg);
-  }
-  100% {
-    transform: translateX(220%) skewX(-12deg);
-  }
-}
-.animate-sheen {
-  animation: scene-sheen 5.5s ease-in-out 1.2s infinite;
-}
-
-/* Прогресс-бары вырастают слева направо при появлении */
-@keyframes bar-in {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-.animate-bar {
-  transform-origin: left center;
-  animation: bar-in 900ms cubic-bezier(0.22, 0.8, 0.36, 1) both;
-}
-
 /* Учёт prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -342,10 +328,10 @@ input[type="range"]:disabled {
 /* ------------------------------------------------------------------ */
 /*  Печатная версия интерфейса                                          */
 /*                                                                      */
-/*  Расчёты можно вывести на печать и сохранить в PDF через диалог       */
-/*  браузера (отдельная библиотека PDF не подключается). Для печати       */
-/*  убираются тёмные фоны, интерактивные элементы и декор, таблицы        */
-/*  переносятся целиком. Документ расчёта формируется в utils/export.ts.  */
+/*  Текущую страницу можно распечатать диалогом браузера; отдельный      */
+/*  документ расчёта формирует utils/export.ts, настоящий PDF-файл —     */
+/*  utils/pdf-export.ts. Для печати убираются тёмные фоны,               */
+/*  интерактивные элементы и декор, таблицы переносятся целиком.         */
 /* ------------------------------------------------------------------ */
 @media print {
   html,
@@ -375,8 +361,8 @@ input[type="range"]:disabled {
   section,
   article,
   table,
-  [class*='rounded-[' ],
-  [class*='glass'] {
+  [class*="rounded-["],
+  [class*="glass"] {
     break-inside: avoid;
     page-break-inside: avoid;
     background: #fff !important;
@@ -399,8 +385,8 @@ input[type="range"]:disabled {
     text-shadow: none !important;
   }
 
-  a[href^='http']::after {
-    content: ' (' attr(href) ')';
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
     font-size: 9px;
     color: #5b636d !important;
     word-break: break-all;
@@ -424,7 +410,7 @@ input[type="range"]:disabled {
   table {
     min-width: 0 !important;
     width: 100% !important;
-    font-size: 10.5px !important;
+    font-size: 11px !important;
   }
   td,
   th {

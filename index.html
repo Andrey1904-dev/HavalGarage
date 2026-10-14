@@ -55,13 +55,14 @@
     </script>
 
     <link rel="preload" as="image" href="%BASE_URL%images/hero-haval-flagship.jpg" fetchpriority="high" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://img.perxis.ru" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Manrope:wght@400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
+    <!--
+      Шрифты Manrope и JetBrains Mono раздаются с собственного домена
+      (@fontsource-variable, подключаются в src/main.tsx), а не с Google Fonts:
+      внешний запрос с весом Manrope 900 (у семейства есть только 200–800)
+      молча отбрасывался, и интерфейс рисовался системным шрифтом.
+      Preload кириллицы и латиницы Manrope добавляет плагин в vite.config.ts.
+    -->
   </head>
   <body class="bg-[#0B0C0E] text-[#F4F5F6] antialiased selection:bg-[#FF334B] selection:text-white">
     <div id="root"></div>
